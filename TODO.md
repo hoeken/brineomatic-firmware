@@ -1,7 +1,3 @@
-# v2.5
-
-* fork repo into brineomatic-firmware, frothfet-firmware, and sendit-firmware
-
 # LONG TERM:
 
 * custom gauge layout for each state?  idle, running, stopping, pickling, etc?
