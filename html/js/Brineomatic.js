@@ -1060,9 +1060,19 @@
       let totalRuntime = (msg.total_runtime / (60 * 60)).toFixed(1);
       totalRuntime = totalRuntime.toLocaleString('en-US');
 
+      let avgRuntime = msg.total_cycles > 0 ? (msg.total_runtime / msg.total_cycles / (60 * 60)).toFixed(2) : 0;
+      avgRuntime = parseFloat(avgRuntime).toLocaleString('en-US');
+
+      let flowrateUnits = YB.App.config.brineomatic.flowrate_units;
+      let avgFlowrate = msg.total_runtime > 0 ? YB.bom.convertFlowrate(msg.total_volume / (msg.total_runtime / 3600), "lph", flowrateUnits) : 0;
+      avgFlowrate = parseFloat(avgFlowrate.toFixed(1)).toLocaleString('en-US');
+      let shortFlowrateUnits = YB.bom.getShortFlowrateUnits(flowrateUnits);
+
       $("#bomTotalCycles").html(msg.total_cycles.toLocaleString('en-US'));
       $("#bomTotalVolume").html(`${totalVolume} ${volumeUnits}`);
       $("#bomTotalRuntime").html(`${totalRuntime} hours`);
+      $("#bomAverageRuntime").html(`${avgRuntime} hours`);
+      $("#bomAverageFlowrate").html(`${avgFlowrate} ${shortFlowrateUnits}`);
     }
   }
 
@@ -4272,6 +4282,14 @@
                 <tr>
                     <th scope="row">Total Runtime</th>
                     <td class="text-end" id="bomTotalRuntime"></td>
+                </tr>
+                <tr>
+                    <th scope="row">Average Runtime</th>
+                    <td class="text-end" id="bomAverageRuntime"></td>
+                </tr>
+                <tr>
+                    <th scope="row">Average Flowrate</th>
+                    <td class="text-end" id="bomAverageFlowrate"></td>
                 </tr>
             </tbody>
         </table>
