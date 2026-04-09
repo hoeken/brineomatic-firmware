@@ -8,12 +8,10 @@
 
 #include "config.h"
 
-#ifdef YB_IS_BRINEOMATIC
-
-  #include "BrineomaticController.h"
-  #include "UnitConversion.h"
-  #include <YarrboardApp.h>
-  #include <YarrboardDebug.h>
+#include "BrineomaticController.h"
+#include "UnitConversion.h"
+#include <YarrboardApp.h>
+#include <YarrboardDebug.h>
 
 // Define the static member variable
 BrineomaticController* BrineomaticController::_instance = nullptr;
@@ -132,41 +130,41 @@ void BrineomaticController::generateConfigHook(JsonVariant output)
 
 void BrineomaticController::generateCapabilitiesHook(JsonVariant config)
 {
-  #ifdef YB_DS18B20_MOTOR_PIN
+#ifdef YB_DS18B20_MOTOR_PIN
   config["brineomatic"]["motor_temperature"] = true;
-  #endif
+#endif
 
-  #ifdef YB_DS18B20_WATER_PIN
+#ifdef YB_DS18B20_WATER_PIN
   config["brineomatic"]["water_temperature"] = true;
-  #endif
+#endif
 
-  #ifdef YB_PRODUCT_FLOWMETER_PIN
+#ifdef YB_PRODUCT_FLOWMETER_PIN
   config["brineomatic"]["product_flowmeter"] = true;
-  #endif
+#endif
 
-  #ifdef YB_BRINE_FLOWMETER_PIN
+#ifdef YB_BRINE_FLOWMETER_PIN
   config["brineomatic"]["brine_flowmeter"] = true;
-  #endif
+#endif
 
-  #ifdef YB_BRINE_TDS_CHANNEL
+#ifdef YB_BRINE_TDS_CHANNEL
   config["brineomatic"]["brine_tds"] = true;
-  #endif
+#endif
 
-  #ifdef YB_PRODUCT_TDS_CHANNEL
+#ifdef YB_PRODUCT_TDS_CHANNEL
   config["brineomatic"]["product_tds"] = true;
-  #endif
+#endif
 
-  #ifdef YB_LP_SENSOR_CHANNEL
+#ifdef YB_LP_SENSOR_CHANNEL
   config["brineomatic"]["lp_sensor"] = true;
-  #endif
+#endif
 
-  #ifdef YB_HP_SENSOR_CHANNEL
+#ifdef YB_HP_SENSOR_CHANNEL
   config["brineomatic"]["hp_sensor"] = true;
-  #endif
+#endif
 
-  #ifdef YB_HAS_MODBUS
+#ifdef YB_HAS_MODBUS
   config["brineomatic"]["modbus"] = true;
-  #endif
+#endif
 }
 
 void BrineomaticController::generateUpdateHook(JsonVariant output)
@@ -1145,5 +1143,3 @@ void BrineomaticController::handleSaveSafeguardsConfig(JsonVariantConst input, J
   if (!_cfg.saveConfig(error, sizeof(error)))
     return _app.protocol.generateErrorJSON(output, error);
 }
-
-#endif

@@ -8,21 +8,19 @@
 
 #include "config.h"
 
-#ifdef YB_IS_BRINEOMATIC
-
-  #include "brineomatic.h"
-  #include "channels/RelayChannel.h"
-  #include "channels/ServoChannel.h"
-  #include "channels/StepperChannel.h"
-  #include "controllers/RelayController.h"
-  #include "controllers/ServoController.h"
-  #include "controllers/StepperController.h"
-  #include "etl/deque.h"
-  #include "validate.h"
-  #include <Arduino.h>
-  #include <ConfigManager.h>
-  #include <YarrboardApp.h>
-  #include <YarrboardDebug.h>
+#include "brineomatic.h"
+#include "channels/RelayChannel.h"
+#include "channels/ServoChannel.h"
+#include "channels/StepperChannel.h"
+#include "controllers/RelayController.h"
+#include "controllers/ServoController.h"
+#include "controllers/StepperController.h"
+#include "etl/deque.h"
+#include "validate.h"
+#include <Arduino.h>
+#include <ConfigManager.h>
+#include <YarrboardApp.h>
+#include <YarrboardDebug.h>
 
 Brineomatic::Brineomatic(YarrboardApp& app, RelayController& relays, ServoController& servos, StepperController& steppers) : _app(app),
                                                                                                                              _relays(relays),
@@ -115,8 +113,8 @@ void Brineomatic::init()
 
   this->initChannels();
 
-  // DS18B20 Sensor
-  #if YB_DS18B20_MOTOR_PIN
+// DS18B20 Sensor
+#if YB_DS18B20_MOTOR_PIN
   if (motorTemperatureSensorType == "DS18B20") {
     motorTemperatureOneWire.begin(YB_DS18B20_MOTOR_PIN);
     motorTemperatureSensor.setOneWire(&motorTemperatureOneWire);
@@ -131,9 +129,9 @@ void Brineomatic::init()
       motorTemperatureSensor.requestTemperatures();
     }
   }
-  #endif
+#endif
 
-  #if YB_DS18B20_WATER_PIN
+#if YB_DS18B20_WATER_PIN
   if (waterTemperatureSensorType == "DS18B20") {
     waterTemperatureOneWire.begin(YB_DS18B20_WATER_PIN);
     waterTemperatureSensor.setOneWire(&waterTemperatureOneWire);
@@ -148,15 +146,15 @@ void Brineomatic::init()
       waterTemperatureSensor.requestTemperatures();
     }
   }
-  #endif
+#endif
 
-  #ifdef YB_PRODUCT_FLOWMETER_PIN
+#ifdef YB_PRODUCT_FLOWMETER_PIN
   productFlowmeter.begin(YB_PRODUCT_FLOWMETER_PIN, productFlowmeterPPL);
-  #endif
+#endif
 
-  #ifdef YB_BRINE_FLOWMETER_PIN
+#ifdef YB_BRINE_FLOWMETER_PIN
   brineFlowmeter.begin(YB_BRINE_FLOWMETER_PIN, brineFlowmeterPPL);
-  #endif
+#endif
 
   gravityTds.setAref(YB_ADS1115_VREF); // reference voltage on ADC
   gravityTds.setAdcRange(15);          // 16 bit ADC, but its differential, so lose 1 bit.
@@ -179,7 +177,7 @@ void Brineomatic::init()
 
 void Brineomatic::initModbus()
 {
-  #ifdef YB_HAS_MODBUS
+#ifdef YB_HAS_MODBUS
   if (highPressurePumpControl == "MODBUS") {
     if (highPressurePumpModbusDevice == "GD20") {
       gd20 = new GD20Modbus(YB_MODBUS_SERIAL, YB_MODBUS_RX, YB_MODBUS_TX);
@@ -189,7 +187,7 @@ void Brineomatic::initModbus()
       gd20->decodeStatus(status);
     }
   }
-  #endif
+#endif
 }
 
 void Brineomatic::loop()
@@ -219,7 +217,7 @@ void Brineomatic::measureProductFlowmeter()
   if (!hasProductFlowSensor)
     return;
 
-  #ifdef YB_PRODUCT_FLOWMETER_PIN
+#ifdef YB_PRODUCT_FLOWMETER_PIN
   if (productFlowmeter.measure()) {
     float flowrate = productFlowmeter.getFlowrate();
     float volume = productFlowmeter.getVolume();
@@ -231,7 +229,7 @@ void Brineomatic::measureProductFlowmeter()
 
     currentProductFlowrate = flowrate;
   }
-  #endif
+#endif
 }
 
 void Brineomatic::measureBrineFlowmeter()
@@ -239,7 +237,7 @@ void Brineomatic::measureBrineFlowmeter()
   if (!hasBrineFlowSensor)
     return;
 
-  #ifdef YB_BRINE_FLOWMETER_PIN
+#ifdef YB_BRINE_FLOWMETER_PIN
   if (brineFlowmeter.measure()) {
     float flowrate = brineFlowmeter.getFlowrate();
     float volume = brineFlowmeter.getVolume();
@@ -250,12 +248,12 @@ void Brineomatic::measureBrineFlowmeter()
 
     currentBrineFlowrate = flowrate;
   }
-  #endif
+#endif
 }
 
 void Brineomatic::measureMotorTemperature()
 {
-  #if YB_DS18B20_MOTOR_PIN
+#if YB_DS18B20_MOTOR_PIN
   if (motorTemperatureSensorType != "DS18B20")
     return;
 
@@ -263,12 +261,12 @@ void Brineomatic::measureMotorTemperature()
     currentMotorTemperature = motorTemperatureSensor.getTempC(motorTemperatureAddress);
     motorTemperatureSensor.requestTemperatures();
   }
-  #endif
+#endif
 }
 
 void Brineomatic::measureWaterTemperature()
 {
-  #if YB_DS18B20_WATER_PIN
+#if YB_DS18B20_WATER_PIN
   if (waterTemperatureSensorType != "DS18B20")
     return;
 
@@ -276,7 +274,7 @@ void Brineomatic::measureWaterTemperature()
     currentWaterTemperature = waterTemperatureSensor.getTempC(waterTemperatureAddress);
     waterTemperatureSensor.requestTemperatures();
   }
-  #endif
+#endif
 }
 
 void Brineomatic::measureProductSalinity()
@@ -679,23 +677,23 @@ void Brineomatic::disableHighPressurePump()
 
 void Brineomatic::modbusEnableHighPressurePump()
 {
-  #ifdef YB_HAS_MODBUS
+#ifdef YB_HAS_MODBUS
   if (highPressurePumpModbusDevice.equals("GD20")) {
     YBP.println("GD20 Pump Enable");
     gd20->setFrequency(highPressurePumpModbusFrequency);
     gd20->runMotor();
   }
-  #endif
+#endif
 }
 
 void Brineomatic::modbusDisableHighPressurePump()
 {
-  #ifdef YB_HAS_MODBUS
+#ifdef YB_HAS_MODBUS
   if (highPressurePumpModbusDevice.equals("GD20")) {
     YBP.println("GD20 Pump Disable");
     gd20->stopMotor();
   }
-  #endif
+#endif
 }
 
 bool Brineomatic::hasDiverterValve()
@@ -1008,11 +1006,11 @@ Brineomatic::Result Brineomatic::getDepickleResult()
 const char* Brineomatic::resultToString(Result result)
 {
   switch (result) {
-  #define X(name)      \
-    case Result::name: \
-      return #name;
+#define X(name)      \
+  case Result::name: \
+    return #name;
     BOM_RESULT_LIST
-  #undef X
+#undef X
     default:
       return "UNKNOWN";
   }
@@ -3589,5 +3587,3 @@ void Brineomatic::updateMQTT()
 
   _app.mqtt.traverseJSON(output, "watermaker");
 }
-
-#endif
