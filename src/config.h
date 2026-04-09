@@ -21,6 +21,10 @@
   #error "No board config has been defined"
 #endif
 
+#ifndef YB_BOARD_NAME
+  #define YB_BOARD_NAME "Brineomatic"
+#endif
+
 #ifndef YB_PROJECT_NAME
   #define YB_PROJECT_NAME "Brineomatic"
 #endif
@@ -42,9 +46,6 @@
 #endif
 
 // basic board defines.
-#ifndef YB_BOARD_NAME
-  #define YB_BOARD_NAME "Brineomatic"
-#endif
 #ifndef YB_PIEZO_DEFAULT_MELODY
   #define YB_PIEZO_DEFAULT_MELODY "NONE"
 #endif
