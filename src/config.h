@@ -30,7 +30,7 @@
 #endif
 
 #ifndef YB_PROJECT_URL
-  #define YB_PROJECT_URL "https://github.com/hoeken/brineomatic"
+  #define YB_PROJECT_URL "https://www.brineomatic.com"
 #endif
 
 #ifndef YB_GIT_URL
@@ -38,7 +38,7 @@
 #endif
 
 #ifndef YB_OTA_MANIFEST_URL
-  #define YB_OTA_MANIFEST_URL "https://hoeken.github.io/brineomatic-firmware/releases/ota_manifest.json";
+  #define YB_OTA_MANIFEST_URL "https://firmware.brineomatic.com/releases/ota_manifest.json";
 #endif
 
 #ifndef YB_IS_DEVELOPMENT
