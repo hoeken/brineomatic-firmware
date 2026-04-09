@@ -1880,8 +1880,8 @@ bool Brineomatic::checkRunTotalFlowrateLow()
 
 bool Brineomatic::checkDiverterValveClosed()
 {
-  if (!hasProductFlowSensor)
-    return false;
+  // if (!hasProductFlowSensor)
+  //   return false;
 
   if (!hasBrineFlowSensor)
     return false;
@@ -1890,7 +1890,7 @@ bool Brineomatic::checkDiverterValveClosed()
     return false;
 
   return checkTimedError(
-    getTotalFlowrate() > getBrineFlowrate() + getProductFlowrate(),
+    getBrineFlowrate() > diverterValveClosedFlowrateHighThreshold,
     diverterValveOpenStart,
     diverterValveClosedDelay,
     Result::ERR_DIVERTER_VALVE_OPEN,
@@ -2320,6 +2320,7 @@ void Brineomatic::generateConfigJSON(JsonVariant output)
   bom["pickle_total_flowrate_low_delay"] = this->pickleTotalFlowrateLowDelay;
 
   bom["enable_diverter_valve_closed_check"] = this->enableDiverterValveClosedCheck;
+  bom["diverter_valve_closed_flowrate_high_threshold"] = this->diverterValveClosedFlowrateHighThreshold;
   bom["diverter_valve_closed_delay"] = this->diverterValveClosedDelay;
 
   bom["enable_product_salinity_high_check"] = this->enableProductSalinityHighCheck;
@@ -3230,6 +3231,13 @@ bool Brineomatic::validateSafeguardsConfigJSON(JsonVariant config,
       ok = false;
     }
   }
+  if (config["diverter_valve_closed_high_threshold"]) {
+    if (!checkIsNumber(config, "diverter_valve_closed_high_threshold", error, err_size) ||
+        !checkNumGE(config, "diverter_valve_closed_high_threshold", 0.0f, error, err_size)) {
+      config.remove("diverter_valve_closed_high_threshold");
+      ok = false;
+    }
+  }
   if (config["diverter_valve_closed_delay"]) {
     if (!checkIsNumber(config, "diverter_valve_closed_delay", error, err_size) ||
         !checkNumGE(config, "diverter_valve_closed_delay", 0.0f, error, err_size)) {
@@ -3549,6 +3557,7 @@ void Brineomatic::loadSafeguardsConfigJSON(JsonVariant config)
   this->pickleTotalFlowrateLowDelay = config["pickle_total_flowrate_low_delay"] | YB_PICKLE_TOTAL_FLOWRATE_LOW_DELAY;
 
   this->enableDiverterValveClosedCheck = config["enable_diverter_valve_closed_check"] | YB_ENABLE_DIVERTER_VALVE_CLOSED_CHECK;
+  this->diverterValveClosedFlowrateHighThreshold = config["diverter_valve_closed_flowrate_high_threshold"] | YB_DIVERTER_VALVE_CLOSED_FLOWRATE_HIGH_THRESHOLD;
   this->diverterValveClosedDelay = config["diverter_valve_closed_delay"] | YB_DIVERTER_VALVE_CLOSED_DELAY;
 
   this->enableProductSalinityHighCheck = config["enable_product_salinity_high_check"] | YB_ENABLE_PRODUCT_SALINITY_HIGH_CHECK;

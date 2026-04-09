@@ -3326,14 +3326,21 @@
         <div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" id="enable_diverter_valve_closed_check">
           <label class="form-check-label" for="enable_diverter_valve_closed_check">
-            Diverter Valve Opening / Closing
+            Diverter Valve Failure - High Brine Flowrate
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">product flow sensor</span> and <span class="badge text-bg-secondary">brine flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">Requires <span class="badge text-bg-secondary">brine flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
       </div>
 
       <div id="enable_diverter_valve_closed_check_form" class="row mb-3">
+        <div class="col-12 col-md-6">
+          <div class="input-group has-validation mb-3">
+            <input type="text" class="form-control text-end" id="diverter_valve_closed_flowrate_high_threshold">
+            <span class="input-group-text flowrateUnits">LPH</span>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
         <div class="col-12 col-md-6">
           <div class="input-group has-validation mb-3">
             <input type="text" class="form-control text-end" id="diverter_valve_closed_delay">
@@ -3710,6 +3717,7 @@
     $("#pickle_total_flowrate_low_delay").val(data.pickle_total_flowrate_low_delay);
 
     $("#enable_diverter_valve_closed_check").prop('checked', data.enable_diverter_valve_closed_check);
+    $("#diverter_valve_closed_flowrate_high_threshold").val(data.diverter_valve_closed_flowrate_high_threshold);
     $("#diverter_valve_closed_delay").val(data.diverter_valve_closed_delay);
 
     $("#enable_product_salinity_high_check").prop('checked', data.enable_product_salinity_high_check);
@@ -4448,7 +4456,7 @@
   }
 
   Brineomatic.prototype.updateDiverterValveClosedCheckVisibility = function (has_product_flow_sensor, has_brine_flow_sensor) {
-    const hasSensor = (has_product_flow_sensor && has_brine_flow_sensor);
+    const hasSensor = (has_brine_flow_sensor);
 
     $("#enable_diverter_valve_closed_check").prop("disabled", !hasSensor);
     if (!hasSensor) {
@@ -4647,6 +4655,7 @@
     data.pickle_total_flowrate_low_delay = parseInt($("#pickle_total_flowrate_low_delay").val());
 
     data.enable_diverter_valve_closed_check = $("#enable_diverter_valve_closed_check").prop("checked");
+    data.diverter_valve_closed_flowrate_high_threshold = parseFloat($("#diverter_valve_closed_flowrate_high_threshold").val());
     data.diverter_valve_closed_delay = parseInt($("#diverter_valve_closed_delay").val());
 
     data.enable_product_salinity_high_check = $("#enable_product_salinity_high_check").prop("checked");
@@ -5193,6 +5202,7 @@
       pickle_total_flowrate_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
 
       enable_diverter_valve_closed_check: { inclusion: [true, false] },
+      diverter_valve_closed_flowrate_high_threshold: { numericality: { greaterThanOrEqualTo: 0 } },
       diverter_valve_closed_delay: { numericality: { greaterThanOrEqualTo: 0 } },
 
       enable_product_salinity_high_check: { inclusion: [true, false] },

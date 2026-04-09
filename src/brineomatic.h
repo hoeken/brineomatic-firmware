@@ -492,6 +492,7 @@ class Brineomatic
     uint32_t pickleTotalFlowrateLowDelay = YB_PICKLE_TOTAL_FLOWRATE_LOW_DELAY;
 
     bool enableDiverterValveClosedCheck = YB_ENABLE_DIVERTER_VALVE_CLOSED_CHECK;
+    float diverterValveClosedFlowrateHighThreshold = YB_DIVERTER_VALVE_CLOSED_FLOWRATE_HIGH_THRESHOLD;
     float diverterValveClosedDelay = YB_DIVERTER_VALVE_CLOSED_DELAY;
 
     bool enableProductSalinityHighCheck = YB_ENABLE_PRODUCT_SALINITY_HIGH_CHECK;
