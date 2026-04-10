@@ -13,6 +13,6 @@
 			"image": "img/brineomatic_rev_c.jpg"
 		}
 	],
-	"firmware_url_base": "https://hoeken.github.io/brineomatic-firmware/releases/",
+	"firmware_url_base": "https://firmware.brineomatic.com/releases/",
 	"signing_key_path": "~/Dropbox/misc/yarrboard/yarrboard-firmware.pem"
 }
