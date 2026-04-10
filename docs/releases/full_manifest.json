@@ -5,6 +5,12 @@
     "description": "",
     "firmware": [
       {
+        "version": "2.5.1",
+        "url": "https://hoeken.github.io/brineomatic-firmware/releases/BRINEOMATIC_REV_B/2.5.1.bin",
+        "espwebtools_manifest": "https://hoeken.github.io/brineomatic-firmware/releases/BRINEOMATIC_REV_B/2.5.1-espwebtools/manifest.json",
+        "changelog": "# Version 2.5.1\n\n## \ud83d\ude80 New Features\n\n- **Flowrate High Threshold Safeguard**\n  - Added configurable flowrate high threshold parameter\n  - Used to fix diverter valve closing safety check logic\n\n- **Improved Stats Page**\n  - Added Average Runtime to stats page\n  - Added Average Flowrate to stats page\n\n## \ud83d\udc1b Bug Fixes\n\n- Fixed bug with diverter valve closing safety check\n- Removed unused CSS\n\n## Infrastructure\n\n- Updated firmware and project URLs to new domains after repository split\n- Refactored and cleaned up included libraries\n- Fixed firmware updater\n- Post-split cleanup (two passes)\n\n---"
+      },
+      {
         "version": "2.5.0",
         "url": "https://hoeken.github.io/yarrboard-firmware/releases/BRINEOMATIC_REV_B/2.5.0.bin",
         "espwebtools_manifest": "https://hoeken.github.io/yarrboard-firmware/releases/BRINEOMATIC_REV_B/2.5.0-espwebtools/manifest.json",
@@ -35,6 +41,12 @@
     "image": "img/brineomatic_rev_c.jpg",
     "description": "",
     "firmware": [
+      {
+        "version": "2.5.1",
+        "url": "https://hoeken.github.io/brineomatic-firmware/releases/BRINEOMATIC_REV_C/2.5.1.bin",
+        "espwebtools_manifest": "https://hoeken.github.io/brineomatic-firmware/releases/BRINEOMATIC_REV_C/2.5.1-espwebtools/manifest.json",
+        "changelog": "# Version 2.5.1\n\n## \ud83d\ude80 New Features\n\n- **Flowrate High Threshold Safeguard**\n  - Added configurable flowrate high threshold parameter\n  - Used to fix diverter valve closing safety check logic\n\n- **Improved Stats Page**\n  - Added Average Runtime to stats page\n  - Added Average Flowrate to stats page\n\n## \ud83d\udc1b Bug Fixes\n\n- Fixed bug with diverter valve closing safety check\n- Removed unused CSS\n\n## Infrastructure\n\n- Updated firmware and project URLs to new domains after repository split\n- Refactored and cleaned up included libraries\n- Fixed firmware updater\n- Post-split cleanup (two passes)\n\n---"
+      },
       {
         "version": "2.5.0",
         "url": "https://hoeken.github.io/yarrboard-firmware/releases/BRINEOMATIC_REV_C/2.5.0.bin",
