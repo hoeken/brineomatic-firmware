@@ -553,7 +553,11 @@ bool Brineomatic::initializeHardware()
 
   YBP.println("Hardware Init Start");
 
+  disableHighPressurePump();
+  disableBoostPump();
   openDiverterValve();
+  closeFlushValve();
+  disableCoolingFan();
 
   // actively running, zero out our pressure
   if (currentMembranePressureTarget > 0) {
@@ -580,8 +584,6 @@ bool Brineomatic::initializeHardware()
     setMembranePressureTarget(-1);
   }
 
-  disableHighPressurePump();
-
   if (highPressureValveControl.equals("STEPPER")) {
     if (highPressureValveStepper->home(highPressureValveStepperOpenSpeed)) {
       YBP.println("Stepper homing OK");
@@ -590,10 +592,6 @@ bool Brineomatic::initializeHardware()
       YBP.println("Stepper homing failed.");
     }
   }
-
-  disableBoostPump();
-  closeFlushValve();
-  disableCoolingFan();
 
   if (isFailure)
     YBP.println("Hardware Init Failed");
