@@ -19,6 +19,7 @@ void RelayChannel::setup(byte pin)
 {
   _pin = pin;
   pinMode(_pin, OUTPUT);
+  setupDefaultState();
 }
 
 void RelayChannel::setupDefaultState()

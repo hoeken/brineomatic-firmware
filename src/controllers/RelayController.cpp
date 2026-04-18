@@ -28,7 +28,6 @@ bool RelayController::setup()
   // intitialize our channel
   for (auto& ch : _channels) {
     ch.setup(_pins[ch.id - 1]);
-    ch.setupDefaultState();
   }
 
   return true;

@@ -396,6 +396,7 @@ void Brineomatic::initChannels()
     diverterValveRelay = _relays.getChannelById(diverterValveRelayId);
     diverterValveRelay->isEnabled = true;
     diverterValveRelay->inverted = diverterValveRelayInverted;
+    diverterValveRelay->defaultState = true; // diverter valve on = overboard.
     diverterValveRelay->setName("Diverter Valve");
     diverterValveRelay->setKey("diverter_valve");
   }
