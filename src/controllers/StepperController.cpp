@@ -99,9 +99,14 @@ void StepperController::handleSetCommand(JsonVariantConst input, JsonVariant out
   }
 
   // move to an angle
-  if (input["angle"].is<JsonVariantConst>()) {
-    float angle = input["angle"];
+  if (input["target_angle"].is<JsonVariantConst>()) {
+    float angle = input["target_angle"];
     ch->gotoAngle(angle);
+  }
+
+  if (input["current_angle"].is<JsonVariantConst>()) {
+    float angle = input["current_angle"];
+    ch->setAngle(angle);
   }
 }
 

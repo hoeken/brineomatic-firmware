@@ -24,10 +24,6 @@ class StepperChannel : public BaseChannel
 {
   protected:
   public:
-    float currentAngle = 0.0;
-    float currentSpeed = 0.0;
-    uint32_t currentPosition = 0;
-    uint32_t autoDisableMillis = 10000;
     const char* lastErrorMessage = nullptr;
 
     void init(uint8_t id) override;
@@ -37,13 +33,16 @@ class StepperChannel : public BaseChannel
 
     void setup(FastAccelStepperEngine* engine, byte step_pin, byte dir_pin, byte enable_pin, byte diag_pin);
     void setSpeed(float rpm);
+    void setAngle(float angle);
     void setStepsPerDegree(float steps);
     void setRunCurrent(uint8_t current);
     void setHomeCurrent(uint8_t current);
     void setHoldCurrent(uint8_t current);
     float getSpeed();
     float getAngle();
+    float getTargetAngle();
     int32_t getPosition();
+    int32_t getTarget();
     void gotoAngle(float angle, float rpm = -1);
     void gotoPosition(int32_t position, float rpm = -1);
     bool home();
@@ -65,6 +64,10 @@ class StepperChannel : public BaseChannel
     void printDebug();
 
   private:
+    float targetAngle = 0.0;
+    float currentSpeed = 0.0;
+    uint32_t autoDisableMillis = 10000;
+
     unsigned long lastUpdateMillis = 0;
 
     FastAccelStepperEngine* _engine;

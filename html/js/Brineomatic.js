@@ -4878,8 +4878,7 @@
       },
 
       high_pressure_stepper_inverted: {
-        required: false,
-        type: "boolean"
+        inclusion: [true, false]
       },
 
       diverter_valve_control: {

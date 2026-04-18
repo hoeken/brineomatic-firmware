@@ -40,7 +40,9 @@ void StepperChannel::generateUpdate(JsonVariant config)
   BaseChannel::generateUpdate(config);
 
   config["position"] = this->getPosition();
+  config["target_position"] = this->getTarget();
   config["angle"] = this->getAngle();
+  config["target_angle"] = this->getTargetAngle();
   config["speed"] = this->getSpeed();
 }
 
@@ -257,6 +259,16 @@ void StepperChannel::setSpeed(float rpm)
   // YBP.printf("CH%d | Set RPM: %.1f | Hz: %d\n", this->id, rpm, hz);
 }
 
+void StepperChannel::setAngle(float angle)
+{
+  waitUntilStopped();
+
+  targetAngle = angle; // setting angle should reset our target too for UI
+
+  int32_t position = angle * _steps_per_degree;
+  _stepper->setCurrentPosition(position);
+}
+
 void StepperChannel::setStepsPerDegree(float steps)
 {
   _steps_per_degree = steps;
@@ -273,7 +285,7 @@ float StepperChannel::getSpeed()
 void StepperChannel::gotoAngle(float angle, float rpm)
 {
   lastUpdateMillis = millis();
-  currentAngle = angle;
+  targetAngle = angle;
 
   if (rpm <= 0)
     rpm = currentSpeed;
@@ -309,13 +321,22 @@ void StepperChannel::disable()
 
 float StepperChannel::getAngle()
 {
-  return currentAngle;
-  // return this->getPosition() / _steps_per_degree;
+  return this->getPosition() / _steps_per_degree;
+}
+
+float StepperChannel::getTargetAngle()
+{
+  return targetAngle;
 }
 
 int32_t StepperChannel::getPosition()
 {
   return _stepper->getCurrentPosition();
+}
+
+int32_t StepperChannel::getTarget()
+{
+  return targetAngle * _steps_per_degree;
 }
 
 bool StepperChannel::isEndstopHit()
@@ -397,6 +418,8 @@ bool StepperChannel::home()
 
 bool StepperChannel::home(float rpm)
 {
+  targetAngle = 0.0;
+
   // home at a lower current so we dont jam
   _tmc2209.setRunCurrent(_home_current);
 
@@ -405,9 +428,6 @@ bool StepperChannel::home(float rpm)
   bool ret = false;
   if (homeWithSpeed(_home_speed_rpm))
     ret = homeWithSpeed(_home_speed_rpm);
-
-  currentPosition = 0;
-  currentAngle = 0;
 
   // back to our defaults
   _tmc2209.setRunCurrent(_run_current);
