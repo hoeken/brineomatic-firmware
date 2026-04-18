@@ -58,6 +58,7 @@ class StepperChannel : public BaseChannel
     bool hasError(TMC2209::Status& status);
     const char* getError(TMC2209::Status& status);
 
+    void setDirectionInverted(bool inverted);
     bool isEndstopHit();
     void disable();
 
@@ -80,6 +81,7 @@ class StepperChannel : public BaseChannel
     byte _step_pin;
     byte _dir_pin;
     byte _enable_pin;
+    bool _direction_inverted = false;
 
     float _steps_per_degree = 200 * YB_STEPPER_MICROSTEPS;
     uint32_t _acceleration = _steps_per_degree * 720; // steps/s^2

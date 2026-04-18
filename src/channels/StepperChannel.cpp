@@ -85,7 +85,7 @@ void StepperChannel::setup(FastAccelStepperEngine* engine, byte step_pin, byte d
   // setup our actual stepper controller
   _stepper = engine->stepperConnectToPin(_step_pin);
   if (_stepper) {
-    _stepper->setDirectionPin(_dir_pin);
+    _stepper->setDirectionPin(_dir_pin, !_direction_inverted);
 
     _stepper->setEnablePin(_enable_pin);
     _stepper->setAutoEnable(true);
@@ -93,6 +93,14 @@ void StepperChannel::setup(FastAccelStepperEngine* engine, byte step_pin, byte d
 
     setSpeed(_default_speed_rpm);
     _stepper->setAcceleration(_acceleration);
+  }
+}
+
+void StepperChannel::setDirectionInverted(bool inverted)
+{
+  _direction_inverted = inverted;
+  if (_stepper) {
+    _stepper->setDirectionPin(_dir_pin, !_direction_inverted);
   }
 }
 

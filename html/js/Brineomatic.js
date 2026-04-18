@@ -2732,6 +2732,12 @@
               <div class="invalid-feedback"></div>
             </div>
           </div>
+          <div class="col-12 mt-1">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="high_pressure_stepper_inverted">
+              <label class="form-check-label" for="high_pressure_stepper_inverted">Invert Stepper Direction</label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -3587,6 +3593,7 @@
     $("#high_pressure_stepper_open_speed").val(data.high_pressure_stepper_open_speed);
     $("#high_pressure_stepper_run_current").val(data.high_pressure_stepper_run_current);
     $("#high_pressure_stepper_home_current").val(data.high_pressure_stepper_home_current);
+    $("#high_pressure_stepper_inverted").prop('checked', data.high_pressure_stepper_inverted);
 
     let membrane_pressure_target = YB.bom.convertPressure(data.membrane_pressure_target, "Bar", YB.App.config.brineomatic.pressure_units);
     membrane_pressure_target = this.formatReadable(membrane_pressure_target);
@@ -4535,6 +4542,7 @@
     data.high_pressure_stepper_open_speed = parseFloat($("#high_pressure_stepper_open_speed").val());
     data.high_pressure_stepper_run_current = parseInt($("#high_pressure_stepper_run_current").val());
     data.high_pressure_stepper_home_current = parseInt($("#high_pressure_stepper_home_current").val());
+    data.high_pressure_stepper_inverted = $("#high_pressure_stepper_inverted").prop("checked");
 
     let membrane_pressure_target = parseFloat($("#membrane_pressure_target").val());
     data.membrane_pressure_target = YB.bom.convertPressure(membrane_pressure_target, YB.App.config.brineomatic.pressure_units, "Bar");
@@ -4865,6 +4873,11 @@
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 100
         }
+      },
+
+      high_pressure_stepper_inverted: {
+        required: false,
+        type: "boolean"
       },
 
       diverter_valve_control: {

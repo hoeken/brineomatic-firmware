@@ -413,6 +413,7 @@ void Brineomatic::initChannels()
       highPressureValveStepper->setStepsPerDegree(stepsPerDegree);
       highPressureValveStepper->setRunCurrent(highPressureValveStepperRunCurrent);
       highPressureValveStepper->setHomeCurrent(highPressureValveStepperHomeCurrent);
+      highPressureValveStepper->setDirectionInverted(highPressureStepperInverted);
     } else {
       YBP.printf("Error: high pressure valve stepper %d not found\n", highPressureValveStepperId);
       highPressureValveControl = "NONE";
@@ -2235,6 +2236,7 @@ void Brineomatic::generateConfigJSON(JsonVariant output)
   bom["high_pressure_stepper_open_speed"] = this->highPressureValveStepperOpenSpeed;
   bom["high_pressure_stepper_run_current"] = this->highPressureValveStepperRunCurrent;
   bom["high_pressure_stepper_home_current"] = this->highPressureValveStepperHomeCurrent;
+  bom["high_pressure_stepper_inverted"] = this->highPressureStepperInverted;
 
   bom["diverter_valve_control"] = this->diverterValveControl;
   bom["diverter_valve_servo_id"] = this->diverterValveServoId;
@@ -2663,6 +2665,13 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
     if (!checkIsInteger(config, "high_pressure_stepper_home_current", error, err_size) ||
         !checkNumRange(config, "high_pressure_stepper_home_current", 0.0f, 100.0f, error, err_size)) {
       config.remove("high_pressure_stepper_home_current");
+      ok = false;
+    }
+  }
+
+  if (config["high_pressure_stepper_inverted"]) {
+    if (!checkIsBool(config, "high_pressure_stepper_inverted", error, err_size)) {
+      config.remove("high_pressure_stepper_inverted");
       ok = false;
     }
   }
@@ -3447,6 +3456,7 @@ void Brineomatic::loadHardwareConfigJSON(JsonVariant config)
   this->highPressureValveStepperOpenSpeed = config["high_pressure_stepper_open_speed"] | YB_HIGH_PRESSURE_VALVE_STEPPER_OPEN_SPEED;
   this->highPressureValveStepperRunCurrent = config["high_pressure_stepper_run_current"] | YB_HIGH_PRESSURE_VALVE_STEPPER_RUN_CURRENT;
   this->highPressureValveStepperHomeCurrent = config["high_pressure_stepper_home_current"] | YB_HIGH_PRESSURE_VALVE_STEPPER_HOME_CURRENT;
+  this->highPressureStepperInverted = config["high_pressure_stepper_inverted"] | YB_HIGH_PRESSURE_STEPPER_INVERTED;
 
   this->diverterValveControl = config["diverter_valve_control"] | YB_DIVERTER_VALVE_CONTROL;
   this->diverterValveRelayId = config["diverter_valve_relay_id"] | YB_DIVERTER_VALVE_RELAY_ID;
