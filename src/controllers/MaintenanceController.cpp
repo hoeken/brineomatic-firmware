@@ -12,6 +12,7 @@
   #include "controllers/BrineomaticController.h"
   #include "controllers/MaintenanceController.h"
   #include <ConfigManager.h>
+  #include <LittleFS.h>
   #include <YarrboardApp.h>
   #include <YarrboardDebug.h>
   #include <controllers/ProtocolController.h>
@@ -24,6 +25,8 @@ bool MaintenanceController::setup()
 {
   _app.protocol.registerCommand(ADMIN, "config_maintenance_channel", this, &MaintenanceController::handleConfigCommand);
   _app.protocol.registerCommand(ADMIN, "record_maintenance", this, &MaintenanceController::handleRecordMaintenance);
+
+  _app.http.getServer()->serveStatic("/maintenance.json", LittleFS, "/maintenance.json");
 
   return true;
 }
@@ -44,7 +47,12 @@ void MaintenanceController::handleRecordMaintenance(JsonVariantConst input, Json
   if (!ch->isEnabled)
     return _app.protocol.generateErrorJSON(output, "Channel is not enabled.");
 
-  ch->recordMaintenance(_bom.getTotalRuntime() / 3600.0f, (uint32_t)_app.ntp.getTime());
+  String notes = input["notes"] | "";
+
+  uint32_t maintenance_time = input["time"] | 0;
+  maintenance_time = max(maintenance_time, (uint32_t)_app.ntp.getTime());
+
+  ch->recordMaintenance(_bom.getTotalRuntime() / 3600.0f, maintenance_time, notes);
 
   // write it to file
   char error[128];

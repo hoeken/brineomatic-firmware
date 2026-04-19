@@ -21,10 +21,7 @@ class MaintenanceItem : public BaseChannel
     void generateConfig(JsonVariant config) override;
     void generateUpdate(JsonVariant config) override;
 
-    void recordMaintenance(float runtime, uint32_t timestamp) {
-      lastRuntime = runtime;
-      lastTimestamp = timestamp;
-    }
+    void recordMaintenance(float runtime, uint32_t timestamp, String notes);
 
   private:
     float runtimeInterval = 0;

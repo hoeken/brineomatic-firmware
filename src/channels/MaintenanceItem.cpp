@@ -8,6 +8,7 @@
 
 #include "channels/MaintenanceItem.h"
 #include "config.h"
+#include <LittleFS.h>
 
 void MaintenanceItem::init(uint8_t id)
 {
@@ -47,4 +48,24 @@ void MaintenanceItem::generateUpdate(JsonVariant config)
 
   config["lastRuntime"] = lastRuntime;
   config["lastTimestamp"] = lastTimestamp;
+}
+
+void MaintenanceItem::recordMaintenance(float runtime, uint32_t timestamp, String notes)
+{
+  lastRuntime = runtime;
+  lastTimestamp = timestamp;
+
+  JsonDocument log;
+
+  log["name"] = name;
+  log["runtime"] = lastRuntime;
+  log["timestamp"] = lastTimestamp;
+  log["notes"] = notes;
+
+  File f = LittleFS.open("/maintenance.json", "a");
+  if (f) {
+    serializeJson(log, f);
+    f.println();
+    f.close();
+  }
 }

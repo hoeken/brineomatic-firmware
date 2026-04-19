@@ -16,6 +16,20 @@
   MaintenanceItem.prototype = Object.create(YB.BaseChannel.prototype);
   MaintenanceItem.prototype.constructor = MaintenanceItem;
 
+  MaintenanceItem.prototype.generateControlContainer = function () {
+    return `
+      <div id="${this.channelType}ControlDiv" style="display:none" class="gy-3 mb-3 col-md-12">
+          <div id="${this.channelType}Cards" class="row g-3 mb-3"></div>
+          <div id="maintenanceLog" class="row mb-3">
+            <h3>Maintenance Log</h3>
+            <div id="maintenanceLogContent">
+            Loading...
+            </div>
+          </div>
+      </div>
+    `;
+  };
+
   MaintenanceItem.prototype.generateControlUI = function () {
     return `
       <div id="maintenanceControlCard${this.id}" class="col-12">
@@ -110,6 +124,8 @@
       "cmd": "record_maintenance",
       "id": this.id,
     }, true);
+
+    setTimeout(MaintenanceItem.loadMaintenanceLog, 1000);
   };
 
   MaintenanceItem.prototype.updateControlUI = function () {
@@ -148,8 +164,6 @@
 
     //clear our badge
     let maintenancePage = YB.App.getPage("maintenance");
-    // if (maintenancePage)
-    //   maintenancePage.clearBadge();
 
     if (YB.Brineomatic.totalRuntime) {
       var totalRuntime = YB.Brineomatic.totalRuntime;
@@ -329,6 +343,48 @@
     $(`#f-maintenance-lastTimestamp-${this.id}`).change(this.onEditForm);
   };
 
+  MaintenanceItem.loadMaintenanceLog = function () {
+    $.ajax({
+      url: '/maintenance.json',
+      dataType: 'text',
+      success: function (text) {
+        var lines = text.trim().split('\n').filter(function (l) { return l.trim(); });
+        if (!lines.length) {
+          $('#maintenanceLogContent').html('<p class="text-muted">No maintenance events recorded.</p>');
+          return;
+        }
+
+        var rows = lines.map(function (line) {
+          var entry = JSON.parse(line);
+          return `
+            <tr>
+              <td>${$('<span>').text(entry.name).html()}</td>
+              <td>${entry.runtime.toFixed(1)}</td>
+              <td>${formatDate(entry.timestamp)}</td>
+              <td>${$('<span>').text(entry.notes).html()}</td>
+            </tr>`;
+        }).join('');
+
+        $('#maintenanceLogContent').html(
+          `<table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Runtime (h)</th>
+                <th>Date</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>`
+        );
+      },
+      error: function () {
+        $('#maintenanceLogContent').html('<p class="text-danger">No maintenance log found.</p>');
+      }
+    });
+  };
+
   YB.MaintenanceItem = MaintenanceItem;
   YB.ChannelRegistry.registerChannelType("maintenance", YB.MaintenanceItem)
 
@@ -348,6 +404,7 @@
     YB.App.getStatsData();
     YB.App.startUpdatePoller();
 
+    setTimeout(MaintenanceItem.loadMaintenanceLog, 1000);
   });
   maintenancePage.onClose(YB.App.stopUpdatePoller);
 
