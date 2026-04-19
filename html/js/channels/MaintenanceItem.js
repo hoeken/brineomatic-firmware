@@ -23,8 +23,13 @@
           <h4 id="maintenanceName${this.id}" class="mb-3 maintenanceName">${this.name}</h4>
           <div class="row">
             <div id="maintenance-runtimeCol${this.id}" class="col-6 col-md-4">
-              <h6 class="text-muted small">Runtime (hours)</h6>
               <table class="table table-sm table-dark mb-0">
+                <thead>
+                  <tr>
+                    <th>Runtime</th>
+                    <th>Hours</th>
+                  </tr>
+                </thead>
                 <tr>
                   <td>Last Service</td>
                   <td><span id="maintenance-lastRuntime${this.id}">—</span></td>
@@ -40,8 +45,13 @@
               </table>
             </div>
             <div id="maintenance-timestampCol${this.id}" class="col-6 col-md-4">
-              <h6 class="text-muted small">Date</h6>
               <table class="table table-sm table-dark mb-0">
+                <thead>
+                  <tr>
+                    <th>Calendar</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
                 <tr>
                   <td>Last Service</td>
                   <td><span id="maintenance-lastTimestamp${this.id}">—</span></td>
@@ -68,6 +78,22 @@
 
   MaintenanceItem.prototype.setupControlUI = function () {
     YB.BaseChannel.prototype.setupControlUI.call(this);
+
+    $(`#maintenance-markComplete${this.id}`).click(this.onMarkComplete.bind(this));
+  };
+
+  MaintenanceItem.prototype.onMarkComplete = function (e) {
+    $(e.currentTarget).blur();
+
+    //clear it... will come back if needed.
+    let maintenancePage = YB.App.getPage("maintenance");
+    if (maintenancePage)
+      maintenancePage.clearBadge();
+
+    YB.client.send({
+      "cmd": "record_maintenance",
+      "id": this.id,
+    }, true);
   };
 
   MaintenanceItem.prototype.updateControlUI = function () {
@@ -105,11 +131,14 @@
       $timestampCol.addClass('col-6');
     }
 
+    //show a badge
+    let maintenancePage = YB.App.getPage("maintenance");
+
     if (YB.Brineomatic.totalRuntime) {
       if (showRuntime) {
         var totalRuntime = YB.Brineomatic.totalRuntime;
         var lastRuntime = this.data.lastRuntime;
-        var currentRuntime = totalRuntime - lastRuntime;
+        var currentRuntime = Math.max(0, totalRuntime - lastRuntime);
         var nextRuntime = lastRuntime + this.cfg.runtimeInterval;
         var runtimeOverdue = currentRuntime >= this.cfg.runtimeInterval;
 
@@ -117,6 +146,9 @@
         $(`#maintenance-currentRuntime${this.id}`).text(currentRuntime.toFixed(1));
         $(`#maintenance-nextRuntime${this.id}`).text(nextRuntime.toFixed(1));
         $(`#maintenance-nextRuntimeRow${this.id} td`).removeClass('text-success text-danger').addClass(runtimeOverdue ? 'text-danger' : 'text-success');
+
+        if (runtimeOverdue && maintenancePage)
+          maintenancePage.setBadge("danger");
       }
 
       if (showTimestamp) {
@@ -129,6 +161,9 @@
         $(`#maintenance-currentTimestamp${this.id}`).text(formatDate(nowSeconds));
         $(`#maintenance-nextTimestamp${this.id}`).text(formatDate(nextTimestamp));
         $(`#maintenance-nextTimestampRow${this.id} td`).removeClass('text-success text-danger').addClass(timestampOverdue ? 'text-danger' : 'text-success');
+
+        if (timestampOverdue && maintenancePage)
+          maintenancePage.setBadge("danger");
       }
     }
   };

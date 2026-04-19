@@ -15,17 +15,19 @@
 #include <controllers/ProtocolController.h>
 
 class YarrboardApp;
+class BrineomaticController;
 class MaintenanceController : public ChannelController<MaintenanceItem, YB_MAINTENANCE_ITEMS_COUNT>
 {
   public:
-    MaintenanceController(YarrboardApp& app);
+    MaintenanceController(YarrboardApp& app, BrineomaticController& bom);
 
     bool setup() override;
 
     void handleConfigCommand(JsonVariantConst input, JsonVariant output, ProtocolContext context);
-    void handleSetCommand(JsonVariantConst input, JsonVariant output, ProtocolContext context);
+    void handleRecordMaintenance(JsonVariantConst input, JsonVariant output, ProtocolContext context);
 
   private:
+    BrineomaticController& _bom;
 };
 
 #endif /* !YARR_MAINTENANCE_CONTROLLER_H */

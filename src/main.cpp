@@ -25,8 +25,8 @@ NavicoController navico(yba);
 RelayController relays(yba);
 ServoController servos(yba);
 StepperController steppers(yba);
-MaintenanceController maintenance(yba);
 BrineomaticController bom(yba, relays, servos, steppers);
+MaintenanceController maintenance(yba, bom);
 
 #ifdef YB_HAS_PIEZO
   #include "controllers/BuzzerController.h"
