@@ -3,6 +3,12 @@
   // work in the global YB namespace.
   var YB = global.YB || {};
 
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function formatDate(unixSeconds) {
+    var d = new Date(unixSeconds * 1000);
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
   function MaintenanceItem() {
     YB.BaseChannel.call(this, "maintenance", "Maintenance Item");
   }
@@ -14,15 +20,46 @@
     return `
       <div id="maintenanceControlCard${this.id}" class="col-12">
         <div class="p-3 border border-secondary rounded text-white">
-          <!-- Header row -->
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 id="maintenanceName${this.id}" class="mb-0 maintenanceName">${this.name}</h6>
-            <ul>
-              <li><b>runtimeInterval</b> - <span id="maintenance-runtimeInterval${this.id}">${this.cfg.runtimeInterval}</span></li>
-              <li><b>timestampInterval</b> - <span id="maintenance-timestampInterval${this.id}">${this.cfg.timestampInterval}</span></li>
-              <li><b>lastRuntime</b> - <span id="maintenance-lastRuntime${this.id}"></span></li>
-              <li><b>lastTimestamp</b> - <span id="maintenance-lastTimestamp${this.id}"></span></li>
-            </ul>
+          <h4 id="maintenanceName${this.id}" class="mb-3 maintenanceName">${this.name}</h4>
+          <div class="row">
+            <div id="maintenance-runtimeCol${this.id}" class="col-6 col-md-4">
+              <h6 class="text-muted small">Runtime (hours)</h6>
+              <table class="table table-sm table-dark mb-0">
+                <tr>
+                  <td>Last Service</td>
+                  <td><span id="maintenance-lastRuntime${this.id}">—</span></td>
+                </tr>
+                <tr>
+                  <td>Current</td>
+                  <td><span id="maintenance-currentRuntime${this.id}">—</span></td>
+                </tr>
+                <tr id="maintenance-nextRuntimeRow${this.id}">
+                  <td>Next Due</td>
+                  <td><span id="maintenance-nextRuntime${this.id}">—</span>
+                </td></tr>
+              </table>
+            </div>
+            <div id="maintenance-timestampCol${this.id}" class="col-6 col-md-4">
+              <h6 class="text-muted small">Date</h6>
+              <table class="table table-sm table-dark mb-0">
+                <tr>
+                  <td>Last Service</td>
+                  <td><span id="maintenance-lastTimestamp${this.id}">—</span></td>
+                </tr>
+                <tr>
+                  <td>Today</td>
+                  <td><span id="maintenance-currentTimestamp${this.id}">—</span></td>
+                </tr>
+                <tr id="maintenance-nextTimestampRow${this.id}">
+                  <td>Next Due</td>
+                  <td><span id="maintenance-nextTimestamp${this.id}">—</span></td>
+                </tr>
+              </table>
+            </div>
+            <div id="maintenance-btnCol${this.id}" class="col-12 col-md-4 text-center align-self-center mt-3 mt-md-0" style="display:none;">
+              <button class="btn btn-primary" type="button" id="maintenance-markComplete${this.id}">Mark Service Complete</button>
+            </div>
+            <div id="maintenance-noInterval${this.id}" class="col-12 text-danger text-center" style="display:none;">Error: no maintenance interval set.</div>
           </div>
         </div>
       </div>
@@ -36,12 +73,71 @@
   MaintenanceItem.prototype.updateControlUI = function () {
     $(`#maintenanceControlCard${this.id}`).toggle(this.enabled);
 
-    console.log(YB.Brineomatic.totalRuntime);
+    var showRuntime = this.cfg.runtimeInterval > 0;
+    var showTimestamp = this.cfg.timestampInterval > 0;
+    var hasInterval = showRuntime || showTimestamp;
 
-    if (YB.Brineomatic.totalRuntime !== false) {
-      $(`#maintenance-lastRuntime${this.id}`).html(this.data.lastRuntime);
-      $(`#maintenance-lastTimestamp${this.id}`).html(this.data.lastTimestamp);
+    var $runtimeCol = $(`#maintenance-runtimeCol${this.id}`);
+    var $timestampCol = $(`#maintenance-timestampCol${this.id}`);
+    var $btnCol = $(`#maintenance-btnCol${this.id}`);
+
+    $runtimeCol.toggle(showRuntime);
+    $timestampCol.toggle(showTimestamp);
+    $btnCol.toggle(hasInterval && YB.App.role == 'admin');
+    $(`#maintenance-noInterval${this.id}`).toggle(!hasInterval);
+
+    $runtimeCol.removeClass('col-6 col col-md-4 col-md-8');
+    $timestampCol.removeClass('col-6 col col-md-4 col-md-8');
+    $btnCol.removeClass('col-12 col col-md-4');
+
+    if (YB.App.role == 'admin') {
+      if (showRuntime && showTimestamp) {
+        $runtimeCol.addClass('col-6 col-md-4');
+        $timestampCol.addClass('col-6 col-md-4');
+        $btnCol.addClass('col-12 col-md-4');
+      } else {
+        if (showRuntime) $runtimeCol.addClass('col col-md-8');
+        if (showTimestamp) $timestampCol.addClass('col col-md-8');
+        $btnCol.addClass('col col-md-4');
+      }
+    } else {
+      $runtimeCol.addClass('col-6');
+      $timestampCol.addClass('col-6');
     }
+
+    if (YB.Brineomatic.totalRuntime) {
+      if (showRuntime) {
+        var totalRuntime = YB.Brineomatic.totalRuntime;
+        var lastRuntime = this.data.lastRuntime;
+        var currentRuntime = totalRuntime - lastRuntime;
+        var nextRuntime = lastRuntime + this.cfg.runtimeInterval;
+        var runtimeOverdue = currentRuntime >= this.cfg.runtimeInterval;
+
+        $(`#maintenance-lastRuntime${this.id}`).text(lastRuntime.toFixed(1));
+        $(`#maintenance-currentRuntime${this.id}`).text(currentRuntime.toFixed(1));
+        $(`#maintenance-nextRuntime${this.id}`).text(nextRuntime.toFixed(1));
+        $(`#maintenance-nextRuntimeRow${this.id} td`).removeClass('text-success text-danger').addClass(runtimeOverdue ? 'text-danger' : 'text-success');
+      }
+
+      if (showTimestamp) {
+        var lastTimestamp = this.data.lastTimestamp;
+        var nextTimestamp = lastTimestamp + this.cfg.timestampInterval;
+        var nowSeconds = Math.round(Date.now() / 1000);
+        var timestampOverdue = nowSeconds >= nextTimestamp;
+
+        $(`#maintenance-lastTimestamp${this.id}`).text(formatDate(lastTimestamp));
+        $(`#maintenance-currentTimestamp${this.id}`).text(formatDate(nowSeconds));
+        $(`#maintenance-nextTimestamp${this.id}`).text(formatDate(nextTimestamp));
+        $(`#maintenance-nextTimestampRow${this.id} td`).removeClass('text-success text-danger').addClass(timestampOverdue ? 'text-danger' : 'text-success');
+      }
+    }
+  };
+
+  validate.validators.maintenanceIntervalRequired = function (value, options, key, attributes) {
+    if ((attributes.runtimeInterval > 0) || (attributes.timestampInterval > 0)) {
+      return;
+    }
+    return "at least one interval (runtime or time) must be greater than 0";
   };
 
   MaintenanceItem.prototype.getConfigSchema = function () {
@@ -78,7 +174,7 @@
       presence: true,
       numericality: {
         greaterThanOrEqualTo: 0,
-        lessThanOrEqualTo: 2 ^ 32 - 1
+        lessThanOrEqualTo: 4294967295
       }
     };
 
@@ -147,7 +243,6 @@
   MaintenanceItem.prototype.generateEditContainer = function () {
     let panel = YB.BaseChannel.prototype.generateEditContainer.call(this);
     panel.displayName = "Maintenance";
-    console.log(panel);
     return panel;
   };
 

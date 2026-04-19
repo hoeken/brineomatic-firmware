@@ -1051,16 +1051,20 @@
   }
 
   Brineomatic.prototype.handleStatsMessage = function (msg) {
+
+    //save runtime for maintenance tracker
+    let totalRuntime = (msg.total_runtime / (60 * 60)).toFixed(1);
+    YB.Brineomatic.totalRuntime = totalRuntime;
+    totalRuntime = totalRuntime.toLocaleString('en-US');
+
+    //bail if we're too early.
+    if (!YB.App.config.brineomatic)
+      return;
+
     let totalVolume = YB.bom.convertVolume(msg.total_volume, "liters", YB.App.config.brineomatic.volume_units);
     totalVolume = Math.round(totalVolume);
     totalVolume = totalVolume.toLocaleString('en-US');
     let volumeUnits = YB.App.config.brineomatic.volume_units;
-
-    let totalRuntime = (msg.total_runtime / (60 * 60)).toFixed(1);
-    totalRuntime = totalRuntime.toLocaleString('en-US');
-
-    //save it for maintenance.
-    YB.Brineomatic.totalRuntime = msg.total_runtime;
 
     let avgRuntime = msg.total_cycles > 0 ? (msg.total_runtime / msg.total_cycles / (60 * 60)).toFixed(2) : 0;
     avgRuntime = parseFloat(avgRuntime).toLocaleString('en-US');
