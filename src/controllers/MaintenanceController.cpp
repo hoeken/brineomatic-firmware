@@ -49,9 +49,14 @@ void MaintenanceController::handleRecordMaintenance(JsonVariantConst input, Json
 
   String notes = input["notes"] | "";
 
-  uint32_t maintenance_time = input["time"] | 0;
-  maintenance_time = max(maintenance_time, (uint32_t)_app.ntp.getTime());
+  // figure out our timestamp
+  uint32_t maintenance_time;
+  if (input["timestamp"] > 0)
+    maintenance_time = input["timestamp"];
+  else
+    maintenance_time = (uint32_t)_app.ntp.getTime();
 
+  // log it.
   ch->recordMaintenance(_bom.getTotalRuntime() / 3600.0f, maintenance_time, notes);
 
   // write it to file

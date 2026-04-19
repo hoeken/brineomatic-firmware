@@ -103,6 +103,28 @@
           </div>
         </div>
       </div>
+
+      <div class="modal fade" id="maintenanceConfirmModal${this.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Log Service Complete</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Mark <strong>${this.name}</strong> as service complete?</p>
+              <div class="mb-3">
+                <label for="maintenanceNotes${this.id}" class="form-label">Notes</label>
+                <textarea class="form-control" id="maintenanceNotes${this.id}" rows="3" placeholder="Optional notes..."></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="maintenanceConfirmOk${this.id}">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
     `;
   };
 
@@ -110,12 +132,19 @@
     YB.BaseChannel.prototype.setupControlUI.call(this);
 
     $(`#maintenance-markComplete${this.id}`).click(this.onMarkComplete.bind(this));
+    $(`#maintenanceConfirmOk${this.id}`).click(this.recordMaintenance.bind(this));
   };
 
   MaintenanceItem.prototype.onMarkComplete = function (e) {
     $(e.currentTarget).blur();
+    $(`#maintenanceNotes${this.id}`).val('');
+    new bootstrap.Modal($(`#maintenanceConfirmModal${this.id}`)[0]).show();
+  };
 
-    //clear it... will come back if needed.
+  MaintenanceItem.prototype.recordMaintenance = function () {
+    var notes = $(`#maintenanceNotes${this.id}`).val().trim();
+    bootstrap.Modal.getInstance($(`#maintenanceConfirmModal${this.id}`)[0]).hide();
+
     let maintenancePage = YB.App.getPage("maintenance");
     if (maintenancePage)
       maintenancePage.clearBadge();
@@ -123,6 +152,8 @@
     YB.client.send({
       "cmd": "record_maintenance",
       "id": this.id,
+      "notes": notes,
+      "timestamp": Math.floor(Date.now() / 1000),
     }, true);
 
     setTimeout(MaintenanceItem.loadMaintenanceLog, 1000);
