@@ -6,7 +6,7 @@
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   function formatDate(unixSeconds) {
     var d = new Date(unixSeconds * 1000);
-    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+    return d.getDate() + "\u00a0" + MONTHS[d.getMonth()] + "\u00a0" + String(d.getFullYear()).slice(-2);
   }
 
   function MaintenanceItem() {
@@ -19,11 +19,11 @@
   MaintenanceItem.prototype.generateControlUI = function () {
     return `
       <div id="maintenanceControlCard${this.id}" class="col-12">
-        <div class="p-3 border border-secondary rounded text-white">
+        <div class="p-3 border border-secondary rounded">
           <h4 id="maintenanceName${this.id}" class="mb-3 maintenanceName">${this.name}</h4>
           <div class="row">
             <div id="maintenance-runtimeCol${this.id}" class="col-6 col-md-4">
-              <table class="table table-sm table-dark mb-0">
+              <table class="table table-sm mb-0">
                 <thead>
                   <tr>
                     <th>Runtime</th>
@@ -31,21 +31,29 @@
                   </tr>
                 </thead>
                 <tr>
-                  <td>Last Service</td>
+                  <td>Last</td>
                   <td><span id="maintenance-lastRuntime${this.id}">—</span></td>
                 </tr>
                 <tr>
                   <td>Current</td>
                   <td><span id="maintenance-currentRuntime${this.id}">—</span></td>
                 </tr>
+                <tr id="maintenance-elapsedRuntimeRow${this.id}">
+                  <td>Elapsed</td>
+                  <td><span id="maintenance-elapsedRuntime${this.id}">—</span></td>
+                </tr>
                 <tr id="maintenance-nextRuntimeRow${this.id}">
-                  <td>Next Due</td>
-                  <td><span id="maintenance-nextRuntime${this.id}">—</span>
-                </td></tr>
+                  <td>Next</td>
+                  <td><span id="maintenance-nextRuntime${this.id}">—</span></td>
+                </tr>
+                <tr id="maintenance-remainingRuntimeRow${this.id}">
+                  <td>Remaining</td>
+                  <td><span id="maintenance-remainingRuntime${this.id}">—</span></td>
+                </tr>
               </table>
             </div>
             <div id="maintenance-timestampCol${this.id}" class="col-6 col-md-4">
-              <table class="table table-sm table-dark mb-0">
+              <table class="table table-sm mb-0">
                 <thead>
                   <tr>
                     <th>Calendar</th>
@@ -53,21 +61,29 @@
                   </tr>
                 </thead>
                 <tr>
-                  <td>Last Service</td>
+                  <td>Last</td>
                   <td><span id="maintenance-lastTimestamp${this.id}">—</span></td>
                 </tr>
                 <tr>
                   <td>Today</td>
                   <td><span id="maintenance-currentTimestamp${this.id}">—</span></td>
                 </tr>
+                <tr id="maintenance-elapsedTimestampRow${this.id}">
+                  <td>Elapsed</td>
+                  <td><span id="maintenance-elapsedTimestamp${this.id}">—</span></td>
+                </tr>
                 <tr id="maintenance-nextTimestampRow${this.id}">
-                  <td>Next Due</td>
+                  <td>Next</td>
                   <td><span id="maintenance-nextTimestamp${this.id}">—</span></td>
+                </tr>
+                <tr id="maintenance-remainingTimestampRow${this.id}">
+                  <td>Remaining</td>
+                  <td><span id="maintenance-remainingTimestamp${this.id}">—</span></td>
                 </tr>
               </table>
             </div>
             <div id="maintenance-btnCol${this.id}" class="col-12 col-md-4 text-center align-self-center mt-3 mt-md-0" style="display:none;">
-              <button class="btn btn-primary" type="button" id="maintenance-markComplete${this.id}">Mark Service Complete</button>
+              <button class="btn btn-primary" type="button" id="maintenance-markComplete${this.id}">Log Service Complete</button>
             </div>
             <div id="maintenance-noInterval${this.id}" class="col-12 text-danger text-center" style="display:none;">Error: no maintenance interval set.</div>
           </div>
@@ -107,72 +123,83 @@
     var $timestampCol = $(`#maintenance-timestampCol${this.id}`);
     var $btnCol = $(`#maintenance-btnCol${this.id}`);
 
-    $runtimeCol.toggle(showRuntime);
-    $timestampCol.toggle(showTimestamp);
-    $btnCol.toggle(hasInterval && YB.App.role == 'admin');
-    $(`#maintenance-noInterval${this.id}`).toggle(!hasInterval);
+    // $runtimeCol.toggle(showRuntime);
+    // $timestampCol.toggle(showTimestamp);
+    $btnCol.toggle(YB.App.role == 'admin');
 
     $runtimeCol.removeClass('col-6 col col-md-4 col-md-8');
     $timestampCol.removeClass('col-6 col col-md-4 col-md-8');
     $btnCol.removeClass('col-12 col col-md-4');
 
     if (YB.App.role == 'admin') {
-      if (showRuntime && showTimestamp) {
-        $runtimeCol.addClass('col-6 col-md-4');
-        $timestampCol.addClass('col-6 col-md-4');
-        $btnCol.addClass('col-12 col-md-4');
-      } else {
-        if (showRuntime) $runtimeCol.addClass('col col-md-8');
-        if (showTimestamp) $timestampCol.addClass('col col-md-8');
-        $btnCol.addClass('col col-md-4');
-      }
+      // if (showRuntime && showTimestamp) {
+      $runtimeCol.addClass('col-6 col-md-4');
+      $timestampCol.addClass('col-6 col-md-4');
+      $btnCol.addClass('col-12 col-md-4');
+      // } else {
+      //   if (showRuntime) $runtimeCol.addClass('col col-md-8');
+      //   if (showTimestamp) $timestampCol.addClass('col col-md-8');
+      //   $btnCol.addClass('col col-md-4');
+      // }
     } else {
       $runtimeCol.addClass('col-6');
       $timestampCol.addClass('col-6');
     }
 
-    //show a badge
+    //clear our badge
     let maintenancePage = YB.App.getPage("maintenance");
+    if (maintenancePage)
+      maintenancePage.clearBadge();
 
     if (YB.Brineomatic.totalRuntime) {
+      var totalRuntime = YB.Brineomatic.totalRuntime;
+      var lastRuntime = this.data.lastRuntime;
+      var currentRuntime = Math.max(0, totalRuntime - lastRuntime);
+      $(`#maintenance-lastRuntime${this.id}`).text(lastRuntime.toFixed(1));
+      $(`#maintenance-currentRuntime${this.id}`).text(currentRuntime.toFixed(1));
+      $(`#maintenance-elapsedRuntime${this.id}`).text(currentRuntime.toFixed(1));
+
+      $(`#maintenance-nextRuntimeRow${this.id}`).toggle(showRuntime);
+      $(`#maintenance-remainingRuntimeRow${this.id}`).toggle(showRuntime);
+
       if (showRuntime) {
-        var totalRuntime = YB.Brineomatic.totalRuntime;
-        var lastRuntime = this.data.lastRuntime;
-        var currentRuntime = Math.max(0, totalRuntime - lastRuntime);
         var nextRuntime = lastRuntime + this.cfg.runtimeInterval;
+        var remainingRuntime = nextRuntime - currentRuntime;
         var runtimeOverdue = currentRuntime >= this.cfg.runtimeInterval;
 
-        $(`#maintenance-lastRuntime${this.id}`).text(lastRuntime.toFixed(1));
-        $(`#maintenance-currentRuntime${this.id}`).text(currentRuntime.toFixed(1));
         $(`#maintenance-nextRuntime${this.id}`).text(nextRuntime.toFixed(1));
+        $(`#maintenance-remainingRuntime${this.id}`).text(remainingRuntime.toFixed(1));
         $(`#maintenance-nextRuntimeRow${this.id} td`).removeClass('text-success text-danger').addClass(runtimeOverdue ? 'text-danger' : 'text-success');
+        $(`#maintenance-remainingRuntimeRow${this.id} td`).removeClass('text-success text-danger').addClass(runtimeOverdue ? 'text-danger' : 'text-success');
 
         if (runtimeOverdue && maintenancePage)
           maintenancePage.setBadge("danger");
       }
 
+      var lastTimestamp = this.data.lastTimestamp;
+      var nowSeconds = Math.round(Date.now() / 1000);
+      var elapsedDays = Math.round((nowSeconds - lastTimestamp) / (60 * 60 * 24));
+      $(`#maintenance-lastTimestamp${this.id}`).text(formatDate(lastTimestamp));
+      $(`#maintenance-currentTimestamp${this.id}`).text(formatDate(nowSeconds));
+      $(`#maintenance-elapsedTimestamp${this.id}`).text(`${elapsedDays} days`);
+
+      $(`#maintenance-nextTimestampRow${this.id}`).toggle(showTimestamp);
+      $(`#maintenance-remainingTimestampRow${this.id}`).toggle(showTimestamp);
+
       if (showTimestamp) {
-        var lastTimestamp = this.data.lastTimestamp;
         var nextTimestamp = lastTimestamp + this.cfg.timestampInterval;
-        var nowSeconds = Math.round(Date.now() / 1000);
+        var remainingDays = Math.round((nextTimestamp - nowSeconds) / (60 * 60 * 24));
         var timestampOverdue = nowSeconds >= nextTimestamp;
 
-        $(`#maintenance-lastTimestamp${this.id}`).text(formatDate(lastTimestamp));
-        $(`#maintenance-currentTimestamp${this.id}`).text(formatDate(nowSeconds));
         $(`#maintenance-nextTimestamp${this.id}`).text(formatDate(nextTimestamp));
+        $(`#maintenance-remainingTimestamp${this.id}`).text(`${remainingDays} days`);
         $(`#maintenance-nextTimestampRow${this.id} td`).removeClass('text-success text-danger').addClass(timestampOverdue ? 'text-danger' : 'text-success');
+        $(`#maintenance-remainingTimestampRow${this.id} td`).removeClass('text-success text-danger').addClass(timestampOverdue ? 'text-danger' : 'text-success');
 
         if (timestampOverdue && maintenancePage)
           maintenancePage.setBadge("danger");
       }
     }
-  };
-
-  validate.validators.maintenanceIntervalRequired = function (value, options, key, attributes) {
-    if ((attributes.runtimeInterval > 0) || (attributes.timestampInterval > 0)) {
-      return;
-    }
-    return "at least one interval (runtime or time) must be greater than 0";
   };
 
   MaintenanceItem.prototype.getConfigSchema = function () {
@@ -316,12 +343,18 @@
 
   // Add our open / close handlers and the page itself
   maintenancePage.onOpen(function () {
-    YB.App.startUpdatePoller();
     YB.App.getStatsData();
+    YB.App.startUpdatePoller();
+
   });
   maintenancePage.onClose(YB.App.stopUpdatePoller);
 
   YB.App.addPage(maintenancePage);
+
+  //get totalRuntime
+  YB.App.onStart(function () {
+    setTimeout(YB.App.getStatsData, 1000);
+  });
 
   global.YB = YB; // <-- this line makes it global
 
