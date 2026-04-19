@@ -6,7 +6,9 @@
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   function formatDate(unixSeconds) {
     var d = new Date(unixSeconds * 1000);
-    return d.getDate() + "\u00a0" + MONTHS[d.getMonth()] + "\u00a0" + String(d.getFullYear()).slice(-2);
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + mm + '-' + dd;
   }
 
   function MaintenanceItem() {
@@ -387,13 +389,18 @@
 
         var rows = lines.map(function (line) {
           var entry = JSON.parse(line);
+          var safeName  = $('<span>').text(entry.name).html();
+          var safeNotes = $('<span>').text(entry.notes).html();
+          var notesRow  = safeNotes
+            ? `<tr class="d-md-none"><td colspan="3" class="pt-0 text-muted small"><strong>Notes:</strong> ${safeNotes}</td></tr>`
+            : '';
           return `
             <tr>
-              <td>${$('<span>').text(entry.name).html()}</td>
+              <td>${safeName}</td>
               <td>${entry.runtime.toFixed(1)}</td>
               <td>${formatDate(entry.timestamp)}</td>
-              <td>${$('<span>').text(entry.notes).html()}</td>
-            </tr>`;
+              <td class="d-none d-md-table-cell">${safeNotes}</td>
+            </tr>${notesRow}`;
         }).join('');
 
         $('#maintenanceLogContent').html(
@@ -403,7 +410,7 @@
                 <th>Name</th>
                 <th>Runtime (h)</th>
                 <th>Date</th>
-                <th>Notes</th>
+                <th class="d-none d-md-table-cell">Notes</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
