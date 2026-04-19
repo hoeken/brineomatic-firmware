@@ -168,7 +168,8 @@
         var runtimeOverdue = currentRuntime >= this.cfg.runtimeInterval;
 
         $(`#maintenance-nextRuntime${this.id}`).text(nextRuntime.toFixed(1));
-        $(`#maintenance-remainingRuntime${this.id}`).text(remainingRuntime.toFixed(1));
+        $(`#maintenance-remainingRuntime${this.id}`).text(Math.abs(remainingRuntime).toFixed(1));
+        $(`#maintenance-remainingRuntimeRow${this.id} td:first`).text(runtimeOverdue ? 'Overdue' : 'Remaining');
         $(`#maintenance-nextRuntimeRow${this.id} td`).removeClass('text-success text-danger').addClass(runtimeOverdue ? 'text-danger' : 'text-success');
         $(`#maintenance-remainingRuntimeRow${this.id} td`).removeClass('text-success text-danger').addClass(runtimeOverdue ? 'text-danger' : 'text-success');
 
@@ -192,7 +193,8 @@
         var timestampOverdue = nowSeconds >= nextTimestamp;
 
         $(`#maintenance-nextTimestamp${this.id}`).text(formatDate(nextTimestamp));
-        $(`#maintenance-remainingTimestamp${this.id}`).text(`${remainingDays} days`);
+        $(`#maintenance-remainingTimestamp${this.id}`).text(`${Math.abs(remainingDays)} days`);
+        $(`#maintenance-remainingTimestampRow${this.id} td:first`).text(timestampOverdue ? 'Overdue' : 'Remaining');
         $(`#maintenance-nextTimestampRow${this.id} td`).removeClass('text-success text-danger').addClass(timestampOverdue ? 'text-danger' : 'text-success');
         $(`#maintenance-remainingTimestampRow${this.id} td`).removeClass('text-success text-danger').addClass(timestampOverdue ? 'text-danger' : 'text-success');
 
