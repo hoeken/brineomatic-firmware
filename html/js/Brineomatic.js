@@ -525,131 +525,131 @@
   }
 
   Brineomatic.prototype.handleConfigMessage = function (msg) {
-    if (msg.brineomatic) {
+    //build our UI
+    YB.App.getPage("home").setContent(this.generateControlUI());
 
-      //build our UI
-      YB.App.getPage("home").setContent(this.generateControlUI());
+    //we're only using part of the channels
+    YB.ChannelRegistry.loadAllChannels(msg);
+    YB.App.removeSettingsPanel("relay");
+    YB.App.removeSettingsPanel("servo");
+    YB.App.removeSettingsPanel("stepper");
 
-      //we're only using part of the channels
-      YB.ChannelRegistry.loadAllChannels(msg);
-      YB.App.removeSettingsPanel("relay");
-      YB.App.removeSettingsPanel("servo");
-      YB.App.removeSettingsPanel("stepper");
+    //move control div to maintenance page.
+    $('#homePage #maintenanceControlDiv').appendTo('#maintenancePage');
 
-      let brineomaticPanel = YB.App.getSettingsPanel('brineomatic');
-      if (!brineomaticPanel) {
-        brineomaticPanel = new YB.SettingsPanel({
-          name: 'brineomatic',
-          displayName: 'Brineomatic',
-          position: "general",
-          content: this.generateSettingsUI()
+    let brineomaticPanel = YB.App.getSettingsPanel('brineomatic');
+    if (!brineomaticPanel) {
+      brineomaticPanel = new YB.SettingsPanel({
+        name: 'brineomatic',
+        displayName: 'Brineomatic',
+        position: "general",
+        content: this.generateSettingsUI()
+      });
+      YB.App.addSettingsPanel(brineomaticPanel);
+      brineomaticPanel.setup();
+    } else
+      brineomaticPanel.setContent(this.generateSettingsUI())
+
+    let hardwarePanel = YB.App.getSettingsPanel('hardware');
+    if (!hardwarePanel) {
+      hardwarePanel = new YB.SettingsPanel({
+        name: 'hardware',
+        displayName: 'Hardware',
+        position: "brineomatic",
+        content: this.generateHardwareSettingsUI()
+      });
+      YB.App.addSettingsPanel(hardwarePanel);
+      hardwarePanel.setup();
+    } else
+      hardwarePanel.setContent(this.generateHardwareSettingsUI())
+
+    let safeguardsPanel = YB.App.getSettingsPanel('safeguards');
+    if (!safeguardsPanel) {
+      safeguardsPanel = new YB.SettingsPanel({
+        name: 'safeguards',
+        displayName: 'Safeguards',
+        position: "hardware",
+        content: this.generateSafeguardsSettingsUI()
+      });
+      YB.App.addSettingsPanel(safeguardsPanel);
+      safeguardsPanel.setup();
+    } else
+      safeguardsPanel.setContent(this.generateSafeguardsSettingsUI())
+
+    $("#statsContainer").html(this.generateStatsUI());
+
+    //hide our channel specific divs
+    $("#relayConfig").hide();
+    $("#servoConfig").hide();
+    $("#stepperConfig").hide();
+    $('#relayControlDiv').hide();
+    $('#servoControlDiv').hide();
+    $('#stepperControlDiv').hide();
+
+    this.addEditUIHandlers();
+    this.updateEditUIData(msg.brineomatic);
+    this.updateHardwareUIConfig(msg.brineomatic);
+
+    //edit UI handlers
+    $("#bomConfig").show();
+
+    //enable the form - it was disabled when the old one was submitted
+    //this prevents multiple submission race conditons that look like settings not getting saved
+    $("#hardwareSettingsPanel")
+      .find("input, select, textarea, button")
+      .prop("disabled", false);
+
+    //our UI handlers
+    $("#brineomaticIdle").on("click", this.idle);
+    $("#brineomaticStartAutomatic").on("click", this.startAutomatic);
+    $("#brineomaticStartDuration").on("click", this.startDuration);
+    $("#brineomaticStartVolume").on("click", this.startVolume);
+    $("#brineomaticFlushAutomatic").on("click", this.flushAutomatic);
+    $("#brineomaticFlushDuration").on("click", this.flushDuration);
+    $("#brineomaticFlushVolume").on("click", this.flushVolume);
+    $("#brineomaticPickle").on("click", this.pickle);
+    $("#brineomaticDepickle").on("click", this.depickle);
+    $("#brineomaticStop").on("click", this.stop);
+    $("#brineomaticManual").on("click", this.manual);
+
+    $("#boostPumpControlButton").on("click", this.toggleBoostPump);
+    $("#highPressurePumpControlButton").on("click", this.toggleHighPressurePump);
+    $("#diverterValveControlButton").on("click", this.toggleDiverterValve);
+    $("#flushValveControlButton").on("click", this.toggleFlushValve);
+    $("#coolingFanControlButton").on("click", this.toggleCoolingFan);
+    $("#advancedModeButton").on("click", this.advanced);
+
+    //visibility
+    $('#bomInformationDiv').show();
+    $('#bomControlDiv').show();
+    $('#bomStatsDiv').show();
+    $('#brightnessUI').hide();
+
+    this.buildGaugeSetup();
+    if (!YB.App.isMFD())
+      this.createGauges();
+
+    if (msg.brineomatic.gauge_order) {
+      const savedOrder = JSON.parse(msg.brineomatic.gauge_order);
+      this.gaugeOrder = savedOrder;
+
+      // Hide gauges not in saved order
+      this.gaugeAllKeys.forEach(key => {
+        if (!savedOrder.includes(key))
+          $('[data-gauge="' + key + '"]').addClass('d-none');
+      });
+
+      // Reorder tiles in both containers to match saved order
+      ['#bomGauges', '#bomGaugesMFD'].forEach(containerId => {
+        const $container = $(containerId);
+        savedOrder.forEach(key => {
+          $container.find('[data-gauge="' + key + '"]').appendTo($container);
         });
-        YB.App.addSettingsPanel(brineomaticPanel);
-        brineomaticPanel.setup();
-      } else
-        brineomaticPanel.setContent(this.generateSettingsUI())
+      });
+    }
 
-      let hardwarePanel = YB.App.getSettingsPanel('hardware');
-      if (!hardwarePanel) {
-        hardwarePanel = new YB.SettingsPanel({
-          name: 'hardware',
-          displayName: 'Hardware',
-          position: "brineomatic",
-          content: this.generateHardwareSettingsUI()
-        });
-        YB.App.addSettingsPanel(hardwarePanel);
-        hardwarePanel.setup();
-      } else
-        hardwarePanel.setContent(this.generateHardwareSettingsUI())
-
-      let safeguardsPanel = YB.App.getSettingsPanel('safeguards');
-      if (!safeguardsPanel) {
-        safeguardsPanel = new YB.SettingsPanel({
-          name: 'safeguards',
-          displayName: 'Safeguards',
-          position: "hardware",
-          content: this.generateSafeguardsSettingsUI()
-        });
-        YB.App.addSettingsPanel(safeguardsPanel);
-        safeguardsPanel.setup();
-      } else
-        safeguardsPanel.setContent(this.generateSafeguardsSettingsUI())
-
-      $("#statsContainer").html(this.generateStatsUI());
-
-      //hide our channel specific divs
-      $("#relayConfig").hide();
-      $("#servoConfig").hide();
-      $("#stepperConfig").hide();
-      $('#relayControlDiv').hide();
-      $('#servoControlDiv').hide();
-      $('#stepperControlDiv').hide();
-
-      this.addEditUIHandlers();
-      this.updateEditUIData(msg.brineomatic);
-      this.updateHardwareUIConfig(msg.brineomatic);
-
-      //edit UI handlers
-      $("#bomConfig").show();
-
-      //enable the form - it was disabled when the old one was submitted
-      //this prevents multiple submission race conditons that look like settings not getting saved
-      $("#hardwareSettingsPanel")
-        .find("input, select, textarea, button")
-        .prop("disabled", false);
-
-      //our UI handlers
-      $("#brineomaticIdle").on("click", this.idle);
-      $("#brineomaticStartAutomatic").on("click", this.startAutomatic);
-      $("#brineomaticStartDuration").on("click", this.startDuration);
-      $("#brineomaticStartVolume").on("click", this.startVolume);
-      $("#brineomaticFlushAutomatic").on("click", this.flushAutomatic);
-      $("#brineomaticFlushDuration").on("click", this.flushDuration);
-      $("#brineomaticFlushVolume").on("click", this.flushVolume);
-      $("#brineomaticPickle").on("click", this.pickle);
-      $("#brineomaticDepickle").on("click", this.depickle);
-      $("#brineomaticStop").on("click", this.stop);
-      $("#brineomaticManual").on("click", this.manual);
-
-      $("#boostPumpControlButton").on("click", this.toggleBoostPump);
-      $("#highPressurePumpControlButton").on("click", this.toggleHighPressurePump);
-      $("#diverterValveControlButton").on("click", this.toggleDiverterValve);
-      $("#flushValveControlButton").on("click", this.toggleFlushValve);
-      $("#coolingFanControlButton").on("click", this.toggleCoolingFan);
-      $("#advancedModeButton").on("click", this.advanced);
-
-      //visibility
-      $('#bomInformationDiv').show();
-      $('#bomControlDiv').show();
-      $('#bomStatsDiv').show();
-      $('#brightnessUI').hide();
-
-      this.buildGaugeSetup();
-      if (!YB.App.isMFD())
-        this.createGauges();
-
-      if (msg.brineomatic.gauge_order) {
-        const savedOrder = JSON.parse(msg.brineomatic.gauge_order);
-        this.gaugeOrder = savedOrder;
-
-        // Hide gauges not in saved order
-        this.gaugeAllKeys.forEach(key => {
-          if (!savedOrder.includes(key))
-            $('[data-gauge="' + key + '"]').addClass('d-none');
-        });
-
-        // Reorder tiles in both containers to match saved order
-        ['#bomGauges', '#bomGaugesMFD'].forEach(containerId => {
-          const $container = $(containerId);
-          savedOrder.forEach(key => {
-            $container.find('[data-gauge="' + key + '"]').appendTo($container);
-          });
-        });
-      }
-
-      //finally, show our interface.
-      $('#bomInterface').css('visibility', 'visible');
-    };
+    //finally, show our interface.
+    $('#bomInterface').css('visibility', 'visible');
   }
 
   Brineomatic.prototype.handleUpdateMessage = function (msg) {
@@ -1051,29 +1051,30 @@
   }
 
   Brineomatic.prototype.handleStatsMessage = function (msg) {
-    if (msg.brineomatic) {
-      let totalVolume = YB.bom.convertVolume(msg.total_volume, "liters", YB.App.config.brineomatic.volume_units);
-      totalVolume = Math.round(totalVolume);
-      totalVolume = totalVolume.toLocaleString('en-US');
-      let volumeUnits = YB.App.config.brineomatic.volume_units;
+    let totalVolume = YB.bom.convertVolume(msg.total_volume, "liters", YB.App.config.brineomatic.volume_units);
+    totalVolume = Math.round(totalVolume);
+    totalVolume = totalVolume.toLocaleString('en-US');
+    let volumeUnits = YB.App.config.brineomatic.volume_units;
 
-      let totalRuntime = (msg.total_runtime / (60 * 60)).toFixed(1);
-      totalRuntime = totalRuntime.toLocaleString('en-US');
+    let totalRuntime = (msg.total_runtime / (60 * 60)).toFixed(1);
+    totalRuntime = totalRuntime.toLocaleString('en-US');
 
-      let avgRuntime = msg.total_cycles > 0 ? (msg.total_runtime / msg.total_cycles / (60 * 60)).toFixed(2) : 0;
-      avgRuntime = parseFloat(avgRuntime).toLocaleString('en-US');
+    //save it for maintenance.
+    YB.Brineomatic.totalRuntime = msg.total_runtime;
 
-      let flowrateUnits = YB.App.config.brineomatic.flowrate_units;
-      let avgFlowrate = msg.total_runtime > 0 ? YB.bom.convertFlowrate(msg.total_volume / (msg.total_runtime / 3600), "lph", flowrateUnits) : 0;
-      avgFlowrate = parseFloat(avgFlowrate.toFixed(1)).toLocaleString('en-US');
-      let shortFlowrateUnits = YB.bom.getShortFlowrateUnits(flowrateUnits);
+    let avgRuntime = msg.total_cycles > 0 ? (msg.total_runtime / msg.total_cycles / (60 * 60)).toFixed(2) : 0;
+    avgRuntime = parseFloat(avgRuntime).toLocaleString('en-US');
 
-      $("#bomTotalCycles").html(msg.total_cycles.toLocaleString('en-US'));
-      $("#bomTotalVolume").html(`${totalVolume} ${volumeUnits}`);
-      $("#bomTotalRuntime").html(`${totalRuntime} hours`);
-      $("#bomAverageRuntime").html(`${avgRuntime} hours`);
-      $("#bomAverageFlowrate").html(`${avgFlowrate} ${shortFlowrateUnits}`);
-    }
+    let flowrateUnits = YB.App.config.brineomatic.flowrate_units;
+    let avgFlowrate = msg.total_runtime > 0 ? YB.bom.convertFlowrate(msg.total_volume / (msg.total_runtime / 3600), "lph", flowrateUnits) : 0;
+    avgFlowrate = parseFloat(avgFlowrate.toFixed(1)).toLocaleString('en-US');
+    let shortFlowrateUnits = YB.bom.getShortFlowrateUnits(flowrateUnits);
+
+    $("#bomTotalCycles").html(msg.total_cycles.toLocaleString('en-US'));
+    $("#bomTotalVolume").html(`${totalVolume} ${volumeUnits}`);
+    $("#bomTotalRuntime").html(`${totalRuntime} hours`);
+    $("#bomAverageRuntime").html(`${avgRuntime} hours`);
+    $("#bomAverageFlowrate").html(`${avgFlowrate} ${shortFlowrateUnits}`);
   }
 
   Brineomatic.prototype.setDataColor = function (name, value, ele) {

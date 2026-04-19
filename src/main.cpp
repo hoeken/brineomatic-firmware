@@ -10,6 +10,7 @@
 
 #include "brineomatic.h"
 #include "controllers/BrineomaticController.h"
+#include "controllers/MaintenanceController.h"
 #include "controllers/RelayController.h"
 #include "controllers/ServoController.h"
 #include "controllers/StepperController.h"
@@ -24,6 +25,7 @@ NavicoController navico(yba);
 RelayController relays(yba);
 ServoController servos(yba);
 StepperController steppers(yba);
+MaintenanceController maintenance(yba);
 BrineomaticController bom(yba, relays, servos, steppers);
 
 #ifdef YB_HAS_PIEZO
@@ -59,6 +61,7 @@ void setup()
   yba.registerController(relays);
   yba.registerController(servos);
   yba.registerController(steppers);
+  yba.registerController(maintenance);
   yba.registerController(bom);
 
   yba.http.registerGulpedFiles(gulpedFiles, gulpedFilesCount);

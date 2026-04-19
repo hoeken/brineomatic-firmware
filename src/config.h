@@ -189,4 +189,6 @@
   #define YB_USB_SERIAL 1
 #endif
 
+#define YB_MAINTENANCE_ITEMS_COUNT 10
+
 #endif // YARR_CONFIG_H
