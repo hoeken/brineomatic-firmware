@@ -148,8 +148,8 @@
 
     //clear our badge
     let maintenancePage = YB.App.getPage("maintenance");
-    if (maintenancePage)
-      maintenancePage.clearBadge();
+    // if (maintenancePage)
+    //   maintenancePage.clearBadge();
 
     if (YB.Brineomatic.totalRuntime) {
       var totalRuntime = YB.Brineomatic.totalRuntime;
