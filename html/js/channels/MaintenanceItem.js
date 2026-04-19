@@ -389,33 +389,49 @@
 
         var rows = lines.map(function (line) {
           var entry = JSON.parse(line);
-          var safeName  = $('<span>').text(entry.name).html();
-          var safeNotes = $('<span>').text(entry.notes).html();
-          var notesRow  = safeNotes
-            ? `<tr class="d-md-none"><td colspan="3" class="pt-0 text-muted small"><strong>Notes:</strong> ${safeNotes}</td></tr>`
+          var safeName = $('<span>').text(entry.name).html();
+          var safeNotes = $('<span>').text(entry.notes || '').html();
+          var notesRow = safeNotes
+            ? `<tr class="d-md-none maintenance-notes-row" data-sort-method="none" data-entry-id="${entry.timestamp}"><td colspan="4" class="pt-0 text-muted small"><strong>Notes:</strong> ${safeNotes}</td></tr>`
             : '';
           return `
-            <tr>
-              <td>${safeName}</td>
-              <td>${entry.runtime.toFixed(1)}</td>
-              <td>${formatDate(entry.timestamp)}</td>
+            <tr data-entry-id="${entry.timestamp}">
+              <td style="white-space:nowrap">${safeName}</td>
+              <td style="white-space:nowrap">${entry.runtime.toFixed(1)} hrs</td>
+              <td style="white-space:nowrap">${formatDate(entry.timestamp)}</td>
               <td class="d-none d-md-table-cell">${safeNotes}</td>
-            </tr>${notesRow}`;
+            </tr>
+            ${notesRow}
+          `;
         }).join('');
 
         $('#maintenanceLogContent').html(
-          `<table class="table table-sm">
+          `<table id="maintenanceLogTable" class="table table-sm">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Runtime (h)</th>
-                <th>Date</th>
+                <th style="white-space:nowrap">Name</th>
+                <th style="white-space:nowrap">Runtime</th>
+                <th style="white-space:nowrap">Date</th>
                 <th class="d-none d-md-table-cell">Notes</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
-          </table>`
+          </table>
+          <a href="/maintenance.json" class="btn btn-small btn-primary">Download maintenance log as JSON</a>
+          `
         );
+
+        if (!YB.App.isMFD()) {
+          var tableEl = document.getElementById('maintenanceLogTable');
+          new Tablesort(tableEl);
+          tableEl.addEventListener('afterSort', function () {
+            var tbody = tableEl.tBodies[0];
+            Array.from(tbody.querySelectorAll('tr:not(.maintenance-notes-row)')).forEach(function (row) {
+              var notesRow = tbody.querySelector('.maintenance-notes-row[data-entry-id="' + row.dataset.entryId + '"]');
+              if (notesRow) tbody.insertBefore(notesRow, row.nextSibling);
+            });
+          });
+        }
       },
       error: function () {
         $('#maintenanceLogContent').html('<p class="text-danger">No maintenance log found.</p>');

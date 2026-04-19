@@ -35,6 +35,10 @@
 }
 
 /* When Bootstrap dark theme is active */
+html[data-bs-theme="dark"] th[role=columnheader]:not([data-sort-method='none']):after {
+    border-color: #b0b0b0 transparent;
+}
+
 html[data-bs-theme="dark"] .c3 .c3-gauge-value,
 html[data-bs-theme="dark"] .c3 .c3-gauge-units,
 html[data-bs-theme="dark"] .c3 .c3-axis text {
