@@ -448,7 +448,7 @@
     displayName: 'Maintenance',
     permissionLevel: 'guest',
     showInNavbar: true,
-    position: "stats",
+    position: "logs",
     ready: true,
     content: ""
   });

@@ -228,6 +228,7 @@ class Brineomatic
     bool hasBrineTDS();
 
     const char* getStatus();
+    const char* getStatus(Status status);
     const char* resultToString(Result result);
     Result getRunResult();
     Result getFlushResult();
@@ -291,6 +292,8 @@ class Brineomatic
     void loadSafeguardsConfigJSON(JsonVariant config);
 
     void updateMQTT();
+
+    void logResult(Status status, Result result);
 
   private:
     YarrboardApp& _app;

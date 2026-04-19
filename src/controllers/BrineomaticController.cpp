@@ -25,6 +25,8 @@ bool BrineomaticController::setup()
 {
   _instance = this; // Capture the instance for callbacks
 
+  _app.http.getServer()->serveStatic("/run_log.json", LittleFS, "/run_log.json");
+
   _app.protocol.registerCommand(GUEST, "start_watermaker", this, &BrineomaticController::handleStartWatermaker);
   _app.protocol.registerCommand(GUEST, "flush_watermaker", this, &BrineomaticController::handleFlushWatermaker);
   _app.protocol.registerCommand(GUEST, "pickle_watermaker", this, &BrineomaticController::handlePickleWatermaker);

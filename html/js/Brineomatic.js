@@ -783,32 +783,15 @@
     $("#bomStatus").removeClass();
     $("#bomStatus").addClass("badge");
 
-    if (msg.status == "STARTUP")
-      $("#bomStatus").addClass("text-bg-info");
-    else if (msg.status == "IDLE") {
+    if (msg.status == "IDLE") {
       if (this.gaugeEditMode)
         this.endGaugeEditMode();
-      $("#bomStatus").addClass("text-bg-secondary");
     }
     else if (msg.status == "MANUAL") {
       if (!this.gaugeEditMode)
         this.startGaugeEditMode();
-      $("#bomStatus").addClass("text-bg-secondary");
     }
-    else if (msg.status == "RUNNING")
-      $("#bomStatus").addClass("text-bg-success");
-    else if (msg.status == "FLUSHING")
-      $("#bomStatus").addClass("text-bg-primary");
-    else if (msg.status == "PICKLING")
-      $("#bomStatus").addClass("text-bg-warning");
-    else if (msg.status == "DEPICKLING")
-      $("#bomStatus").addClass("text-bg-warning");
-    else if (msg.status == "PICKLED")
-      $("#bomStatus").addClass("text-bg-warning");
-    else if (msg.status == "STOPPING")
-      $("#bomStatus").addClass("text-bg-info");
-    else
-      $("#bomStatus").addClass("text-bg-danger");
+    $("#bomStatus").addClass(this.modeClass(msg.status));
 
     // hide all BOM states except the one we want
     $(`.bomSTARTUP, .bomIDLE, .bomMANUAL, .bomRUNNING, .bomFLUSHING, .bomPICKLING, .bomPICKLED, .bomDEPICKLING, .bomSTOPPING`)
@@ -1109,23 +1092,41 @@
     ele.css("color", colors[colors.length - 1]);
   }
 
+  Brineomatic.prototype.modeClass = function (mode) {
+    switch (mode) {
+      case "STARTUP": return "text-bg-info";
+      case "IDLE": return "text-bg-secondary";
+      case "MANUAL": return "text-bg-secondary";
+      case "RUNNING": return "text-bg-success";
+      case "FLUSHING": return "text-bg-primary";
+      case "PICKLING": return "text-bg-warning";
+      case "DEPICKLING": return "text-bg-warning";
+      case "PICKLED": return "text-bg-warning";
+      case "STOPPING": return "text-bg-info";
+      default: return "text-bg-danger";
+    }
+  };
+
+  Brineomatic.prototype.modeBadgeHtml = function (mode) {
+    return `<span class="badge ${this.modeClass(mode)}">${mode}</span>`;
+  };
+
+  Brineomatic.prototype.resultClass = function (result) {
+    if (result.startsWith("SUCCESS")) return "text-bg-success";
+    if (result === "USER_STOP") return "text-bg-primary";
+    if (result.startsWith("ERR")) return "text-bg-danger";
+    return "text-bg-warning";
+  };
+
+  Brineomatic.prototype.resultBadgeHtml = function (result) {
+    var text = this.resultText[result] || result;
+    return `<span class="badge ${this.resultClass(result)}">${text}</span>`;
+  };
+
   Brineomatic.prototype.showResult = function (result_div, result) {
     if (result != "STARTUP") {
-      if (this.resultText[result])
-        $(result_div).html(this.resultText[result]);
-      else
-        $(result_div).html(result);
-
-      $(result_div).removeClass();
-      $(result_div).addClass("badge");
-      if (result.startsWith("SUCCESS"))
-        $(result_div).addClass("text-bg-success");
-      else if (result == "USER_STOP")
-        $(result_div).addClass("text-bg-primary");
-      else if (result.startsWith("ERR"))
-        $(result_div).addClass("text-bg-danger");
-      else
-        $(result_div).addClass("text-bg-warning");
+      $(result_div).html(this.resultText[result] || result);
+      $(result_div).removeClass().addClass("badge").addClass(this.resultClass(result));
     }
     else
       $(`${result_div}Row`).hide();
@@ -5578,8 +5579,92 @@
     }).format(value);
   };
 
+  Brineomatic.loadRunLog = function () {
+    $.ajax({
+      url: '/run_log.json',
+      dataType: 'text',
+      success: function (text) {
+        var lines = text.trim().split('\n').filter(function (l) { return l.trim(); });
+        if (!lines.length) {
+          $('#brineomaticRunLogContent').html('<p class="text-muted">No run log entries recorded.</p>');
+          return;
+        }
+
+        var bom = YB.bom;
+        var volumeUnits = YB.App.config.brineomatic.volume_units;
+        var shortUnits = bom.getShortVolumeUnits(volumeUnits);
+
+        var entries = lines.map(function (l) { return JSON.parse(l); }).reverse();
+
+        var rows = entries.map(function (entry) {
+          var dt = new Date(entry.timestamp * 1000);
+          var dateStr = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0') + ' ' + String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+          var runtimeStr = YB.Util.secondsToDhms(entry.total_runtime, 2);
+
+          var elapsedCell = `<td class="d-none d-md-table-cell" style="white-space:nowrap">${entry.elapsed !== undefined ? YB.Util.secondsToDhms(Math.round(entry.elapsed / 1000), 2) || '0 secs' : '-'}</td>`;
+          var volumeCell = `<td class="d-none d-md-table-cell">${entry.volume !== undefined ? bom.formatReadable(bom.convertVolume(entry.volume, 'liters', volumeUnits)) + ' ' + shortUnits : '-'}</td>`;
+
+          return `<tr>
+            <td style="white-space:nowrap">${dateStr}</td>
+            <td>${bom.modeBadgeHtml(entry.mode)}</td>
+            <td>${bom.resultBadgeHtml(entry.result)}</td>
+            ${elapsedCell}
+            ${volumeCell}
+          </tr>`;
+        }).join('');
+
+        $('#brineomaticRunLogContent').html(`
+          <table id="brineomaticRunLogTable" class="table table-sm">
+            <thead>
+              <tr>
+                <th style="white-space:nowrap">Timestamp</th>
+                <th style="white-space:nowrap">Mode</th>
+                <th style="white-space:nowrap">Result</th>
+                <th class="d-none d-md-table-cell" style="white-space:nowrap">Elapsed</th>
+                <th class="d-none d-md-table-cell" style="white-space:nowrap">Volume</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <a href="/run_log.json" class="btn btn-small btn-primary">Download run log as JSON</a>
+        `);
+
+        if (!YB.App.isMFD()) {
+          var tableEl = document.getElementById('brineomaticRunLogTable');
+          new Tablesort(tableEl);
+        }
+      },
+      error: function () {
+        $('#brineomaticRunLogContent').html('<p class="text-danger">No run log found.</p>');
+      }
+    });
+  };
+
   YB.Brineomatic = Brineomatic;
   YB.bom = new Brineomatic();
+
+  // Create a custom page
+  let logsPage = new YB.Page({
+    name: 'logs',
+    displayName: 'Logs',
+    permissionLevel: 'guest',
+    showInNavbar: true,
+    position: "stats",
+    ready: true,
+    content: `
+      <div id="brineomaticRunLog" class="row mb-3">
+        <h3>Run Log</h3>
+        <div id="brineomaticRunLogContent">
+        Loading...
+        </div>
+      </div>
+    `
+  });
+
+  // load our logs
+  logsPage.onOpen(Brineomatic.loadRunLog);
+
+  YB.App.addPage(logsPage);
 
   validate.validators.relayUnique = function (value, options, key, attributes) {
     const map = {

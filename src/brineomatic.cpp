@@ -961,23 +961,28 @@ const char* Brineomatic::getFlowrateUnits()
 
 const char* Brineomatic::getStatus()
 {
-  if (currentStatus == Status::STARTUP)
+  return getStatus(currentStatus);
+}
+
+const char* Brineomatic::getStatus(Status status)
+{
+  if (status == Status::STARTUP)
     return "STARTUP";
-  else if (currentStatus == Status::MANUAL)
+  else if (status == Status::MANUAL)
     return "MANUAL";
-  else if (currentStatus == Status::IDLE)
+  else if (status == Status::IDLE)
     return "IDLE";
-  else if (currentStatus == Status::RUNNING)
+  else if (status == Status::RUNNING)
     return "RUNNING";
-  else if (currentStatus == Status::STOPPING)
+  else if (status == Status::STOPPING)
     return "STOPPING";
-  else if (currentStatus == Status::FLUSHING)
+  else if (status == Status::FLUSHING)
     return "FLUSHING";
-  else if (currentStatus == Status::PICKLING)
+  else if (status == Status::PICKLING)
     return "PICKLING";
-  else if (currentStatus == Status::DEPICKLING)
+  else if (status == Status::DEPICKLING)
     return "DEPICKLING";
-  else if (currentStatus == Status::PICKLED)
+  else if (status == Status::PICKLED)
     return "PICKLED";
   else
     return "UNKNOWN";
@@ -1033,10 +1038,7 @@ uint32_t Brineomatic::getNextFlushCountdown()
 
 uint32_t Brineomatic::getRuntimeElapsed()
 {
-  if (currentStatus == Status::RUNNING)
-    runtimeElapsed = millis() - runtimeStart;
-
-  return runtimeElapsed;
+  return millis() - runtimeStart;
 }
 
 uint32_t Brineomatic::getFinishCountdown()
@@ -1071,10 +1073,7 @@ uint32_t Brineomatic::getFinishCountdown()
 
 uint32_t Brineomatic::getFlushElapsed()
 {
-  if (currentStatus == Status::FLUSHING)
-    return millis() - flushStart;
-
-  return 0;
+  return millis() - flushStart;
 }
 
 uint32_t Brineomatic::getFlushCountdown()
@@ -1104,10 +1103,7 @@ uint32_t Brineomatic::getFlushCountdown()
 
 uint32_t Brineomatic::getPickleElapsed()
 {
-  if (currentStatus == Status::PICKLING)
-    return millis() - pickleStart;
-
-  return 0;
+  return millis() - pickleStart;
 }
 
 uint32_t Brineomatic::getPickleCountdown()
@@ -1123,10 +1119,7 @@ uint32_t Brineomatic::getPickleCountdown()
 
 uint32_t Brineomatic::getDepickleElapsed()
 {
-  if (currentStatus == Status::DEPICKLING)
-    return millis() - depickleStart;
-
-  return 0;
+  return millis() - depickleStart;
 }
 
 uint32_t Brineomatic::getDepickleCountdown()
@@ -1287,11 +1280,11 @@ void Brineomatic::runStateMachine()
 
       // error out early for low battery
       if (checkBatteryLevel(runResult))
-        return;
+        return logResult(Status::RUNNING, runResult);
 
       if (initializeHardware()) {
         currentStatus = Status::IDLE;
-        return;
+        return logResult(Status::RUNNING, runResult);
       }
 
       uint32_t boostPumpStart = millis();
@@ -1303,13 +1296,13 @@ void Brineomatic::runStateMachine()
         if (hasFilterPressureSensor && enableFilterPressureLowCheck) {
           while (getFilterPressure() < getFilterPressureMinimum()) {
             if (checkStopFlag(runResult))
-              return;
+              return logResult(Status::RUNNING, runResult);
 
             if (checkBatteryLevel(runResult))
-              return;
+              return logResult(Status::RUNNING, runResult);
 
             if (checkFilterPressureLow())
-              return;
+              return logResult(Status::RUNNING, runResult);
 
             vTaskDelay(pdMS_TO_TICKS(100));
           }
@@ -1324,17 +1317,17 @@ void Brineomatic::runStateMachine()
 
       if (waitForMembranePressure()) {
         YBP.println("Membrane Pressure Error");
-        return;
+        return logResult(Status::RUNNING, runResult);
       }
 
       if (waitForProductFlowrate()) {
         YBP.println("Product Flowrate Error");
-        return;
+        return logResult(Status::RUNNING, runResult);
       }
 
       if (waitForProductSalinity()) {
         YBP.println("Product Salinity Error");
-        return;
+        return logResult(Status::RUNNING, runResult);
       }
 
       closeDiverterValve();
@@ -1342,45 +1335,45 @@ void Brineomatic::runStateMachine()
       uint32_t productionStart = millis();
       while (true) {
         if (checkBatteryLevel(runResult))
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkDiverterValveClosed())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkFilterPressureLow())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkFilterPressureHigh())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkMembranePressureLow())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkMembranePressureHigh())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkRunTotalFlowrateLow())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkProductFlowrateLow())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkProductFlowrateHigh())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkProductSalinityHigh())
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkMotorTemperature(runResult))
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (checkStopFlag(runResult))
-          return;
+          return logResult(Status::RUNNING, runResult);
 
         if (millis() - productionStart > productionRuntimeTimeout) {
           currentStatus = Status::STOPPING;
           runResult = Result::ERR_PRODUCTION_TIMEOUT;
-          return;
+          return logResult(Status::RUNNING, runResult);
         }
 
         // are we going for time?
@@ -1421,6 +1414,9 @@ void Brineomatic::runStateMachine()
       // save our total number of cycles
       totalCycles++;
       _app.config.preferences.putUInt("bomTotCycles", totalCycles);
+
+      // save it!
+      logResult(Status::RUNNING, runResult);
 
       // next step... turn it off!
       currentStatus = Status::STOPPING;
@@ -1482,7 +1478,7 @@ void Brineomatic::runStateMachine()
 
       if (initializeHardware()) {
         currentStatus = Status::IDLE;
-        return;
+        return logResult(Status::FLUSHING, flushResult);
       }
 
       // start up our hardware
@@ -1555,6 +1551,9 @@ void Brineomatic::runStateMachine()
       pickledOnTimestamp = 0;
       _app.config.preferences.putLong64("bomPickledOn", pickledOnTimestamp);
 
+      // save to our log.
+      logResult(Status::FLUSHING, flushResult);
+
       initializeHardware();
       waitForFlushValveOff();
 
@@ -1573,11 +1572,11 @@ void Brineomatic::runStateMachine()
 
       // error out early for low battery
       if (checkBatteryLevel(pickleResult))
-        return;
+        return logResult(Status::PICKLING, pickleResult);
 
       if (initializeHardware()) {
         currentStatus = Status::IDLE;
-        return;
+        return logResult(Status::PICKLING, pickleResult);
       }
 
       enableHighPressurePump();
@@ -1590,7 +1589,7 @@ void Brineomatic::runStateMachine()
         if (checkPickleTotalFlowrateLow(pickleResult)) {
           currentStatus = Status::IDLE;
           initializeHardware();
-          return;
+          return logResult(Status::PICKLING, pickleResult);
         }
 
         vTaskDelay(pdMS_TO_TICKS(100));
@@ -1598,7 +1597,7 @@ void Brineomatic::runStateMachine()
 
       if (initializeHardware()) {
         currentStatus = Status::IDLE;
-        return;
+        return logResult(Status::PICKLING, pickleResult);
       }
 
       currentStatus = Status::PICKLED;
@@ -1616,6 +1615,8 @@ void Brineomatic::runStateMachine()
         _app.config.preferences.putLong64("bomPickledOn", pickledOnTimestamp);
       }
 
+      logResult(Status::PICKLING, pickleResult);
+
       break;
 
     //
@@ -1628,11 +1629,11 @@ void Brineomatic::runStateMachine()
 
       // error out early for low battery
       if (checkBatteryLevel(depickleResult))
-        return;
+        return logResult(Status::DEPICKLING, depickleResult);
 
       if (initializeHardware()) {
         currentStatus = Status::IDLE;
-        return;
+        return logResult(Status::DEPICKLING, depickleResult);
       }
 
       enableHighPressurePump();
@@ -1645,7 +1646,7 @@ void Brineomatic::runStateMachine()
         if (checkPickleTotalFlowrateLow(depickleResult)) {
           currentStatus = Status::IDLE;
           initializeHardware();
-          return;
+          return logResult(Status::DEPICKLING, depickleResult);
         }
 
         vTaskDelay(pdMS_TO_TICKS(100));
@@ -1653,7 +1654,7 @@ void Brineomatic::runStateMachine()
 
       if (initializeHardware()) {
         currentStatus = Status::IDLE;
-        return;
+        return logResult(Status::DEPICKLING, depickleResult);
       }
 
       currentStatus = Status::IDLE;
@@ -1667,6 +1668,8 @@ void Brineomatic::runStateMachine()
       _app.config.preferences.putBool("bomPickled", false);
       pickledOnTimestamp = 0;
       _app.config.preferences.putLong64("bomPickledOn", pickledOnTimestamp);
+
+      logResult(Status::DEPICKLING, depickleResult);
 
       break;
   }
@@ -3604,4 +3607,35 @@ void Brineomatic::updateMQTT()
   output.remove("brineomatic");
 
   _app.mqtt.traverseJSON(output, "watermaker");
+}
+
+void Brineomatic::logResult(Status status, Result result)
+{
+  JsonDocument log;
+
+  log["timestamp"] = (uint32_t)_app.ntp.getTime();
+  log["mode"] = getStatus(status);
+  log["result"] = resultToString(result);
+  log["total_runtime"] = totalRuntime;
+
+  if (status == Status::RUNNING) {
+    log["elapsed"] = getRuntimeElapsed();
+    log["volume"] = getVolume();
+  } else if (status == Status::FLUSHING) {
+    log["elapsed"] = getFlushElapsed();
+    log["volume"] = getFlushVolume();
+  } else if (status == Status::PICKLING) {
+    log["elapsed"] = getPickleElapsed();
+    log["volume"] = getTotalVolume();
+  } else if (status == Status::DEPICKLING) {
+    log["elapsed"] = getDepickleElapsed();
+    log["volume"] = getTotalVolume();
+  }
+
+  File f = LittleFS.open("/run_log.json", "a");
+  if (f) {
+    serializeJson(log, f);
+    f.println();
+    f.close();
+  }
 }
