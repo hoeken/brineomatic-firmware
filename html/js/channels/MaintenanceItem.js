@@ -377,6 +377,12 @@
   };
 
   MaintenanceItem.loadMaintenanceLog = function () {
+
+    if (YB.Brineomatic.totalRuntime === undefined) {
+      setTimeout(MaintenanceItem.loadMaintenanceLog, 100);
+      return;
+    }
+
     $.ajax({
       url: '/maintenance.json',
       dataType: 'text',
@@ -432,9 +438,14 @@
             });
           });
         }
+
+        let maintenance = YB.App.getPage("maintenance");
+        maintenance.ready = true;
       },
       error: function () {
         $('#maintenanceLogContent').html('<p class="text-danger">No maintenance log found.</p>');
+        let maintenance = YB.App.getPage("maintenance");
+        maintenance.ready = true;
       }
     });
   };
@@ -449,7 +460,7 @@
     permissionLevel: 'guest',
     showInNavbar: true,
     position: "logs",
-    ready: true,
+    ready: false,
     content: ""
   });
 
@@ -457,8 +468,7 @@
   maintenancePage.onOpen(function () {
     YB.App.getStatsData();
     YB.App.startUpdatePoller();
-
-    setTimeout(MaintenanceItem.loadMaintenanceLog, 1000);
+    MaintenanceItem.loadMaintenanceLog();
   });
   maintenancePage.onClose(YB.App.stopUpdatePoller);
 

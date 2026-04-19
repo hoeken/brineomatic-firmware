@@ -5598,7 +5598,7 @@
 
         var rows = entries.map(function (entry) {
           var dt = new Date(entry.timestamp * 1000);
-          var dateStr = dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0') + ' ' + String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+          var dateStr = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0') + ' ' + String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0');
           var runtimeStr = YB.Util.secondsToDhms(entry.total_runtime, 2);
 
           var elapsedCell = `<td class="d-none d-md-table-cell" style="white-space:nowrap">${entry.elapsed !== undefined ? YB.Util.secondsToDhms(Math.round(entry.elapsed / 1000), 2) || '0 secs' : '-'}</td>`;
@@ -5633,9 +5633,14 @@
           var tableEl = document.getElementById('brineomaticRunLogTable');
           new Tablesort(tableEl);
         }
+
+        let page = YB.App.getPage("logs");
+        page.ready = true;
       },
       error: function () {
         $('#brineomaticRunLogContent').html('<p class="text-danger">No run log found.</p>');
+        let page = YB.App.getPage("logs");
+        page.ready = true;
       }
     });
   };
@@ -5650,7 +5655,7 @@
     permissionLevel: 'guest',
     showInNavbar: true,
     position: "stats",
-    ready: true,
+    ready: false,
     content: `
       <div id="brineomaticRunLog" class="row mb-3">
         <h3>Run Log</h3>
