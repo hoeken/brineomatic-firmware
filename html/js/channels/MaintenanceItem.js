@@ -110,7 +110,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Log Service Complete</h5>
+              <h5 class="modal-title">Log Service As Complete</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -199,20 +199,20 @@
     let maintenancePage = YB.App.getPage("maintenance");
 
     if (YB.Brineomatic.totalRuntime) {
-      var totalRuntime = YB.Brineomatic.totalRuntime;
-      var lastRuntime = this.data.lastRuntime;
-      var currentRuntime = Math.max(0, totalRuntime - lastRuntime);
+      let totalRuntime = parseFloat(YB.Brineomatic.totalRuntime);
+      let lastRuntime = this.data.lastRuntime;
+      let elapsedRuntime = Math.max(0, totalRuntime - lastRuntime);
       $(`#maintenance-lastRuntime${this.id}`).text(lastRuntime.toFixed(1));
-      $(`#maintenance-currentRuntime${this.id}`).text(currentRuntime.toFixed(1));
-      $(`#maintenance-elapsedRuntime${this.id}`).text(currentRuntime.toFixed(1));
+      $(`#maintenance-currentRuntime${this.id}`).text(totalRuntime.toFixed(1));
+      $(`#maintenance-elapsedRuntime${this.id}`).text(elapsedRuntime.toFixed(1));
 
       $(`#maintenance-nextRuntimeRow${this.id}`).toggle(showRuntime);
       $(`#maintenance-remainingRuntimeRow${this.id}`).toggle(showRuntime);
 
       if (showRuntime) {
-        var nextRuntime = lastRuntime + this.cfg.runtimeInterval;
-        var remainingRuntime = nextRuntime - currentRuntime;
-        var runtimeOverdue = currentRuntime >= this.cfg.runtimeInterval;
+        let nextRuntime = lastRuntime + this.cfg.runtimeInterval;
+        let remainingRuntime = nextRuntime - totalRuntime;
+        let runtimeOverdue = totalRuntime >= nextRuntime;
 
         $(`#maintenance-nextRuntime${this.id}`).text(nextRuntime.toFixed(1));
         $(`#maintenance-remainingRuntime${this.id}`).text(Math.abs(remainingRuntime).toFixed(1));
@@ -224,9 +224,9 @@
           maintenancePage.setBadge("danger");
       }
 
-      var lastTimestamp = this.data.lastTimestamp;
-      var nowSeconds = Math.round(Date.now() / 1000);
-      var elapsedDays = Math.round((nowSeconds - lastTimestamp) / (60 * 60 * 24));
+      let lastTimestamp = this.data.lastTimestamp;
+      let nowSeconds = Math.round(Date.now() / 1000);
+      let elapsedDays = Math.round((nowSeconds - lastTimestamp) / (60 * 60 * 24));
       $(`#maintenance-lastTimestamp${this.id}`).text(formatDate(lastTimestamp));
       $(`#maintenance-currentTimestamp${this.id}`).text(formatDate(nowSeconds));
       $(`#maintenance-elapsedTimestamp${this.id}`).text(`${elapsedDays} days`);
@@ -235,9 +235,9 @@
       $(`#maintenance-remainingTimestampRow${this.id}`).toggle(showTimestamp);
 
       if (showTimestamp) {
-        var nextTimestamp = lastTimestamp + this.cfg.timestampInterval;
-        var remainingDays = Math.round((nextTimestamp - nowSeconds) / (60 * 60 * 24));
-        var timestampOverdue = nowSeconds >= nextTimestamp;
+        let nextTimestamp = lastTimestamp + this.cfg.timestampInterval;
+        let remainingDays = Math.round((nextTimestamp - nowSeconds) / (60 * 60 * 24));
+        let timestampOverdue = nowSeconds >= nextTimestamp;
 
         $(`#maintenance-nextTimestamp${this.id}`).text(formatDate(nextTimestamp));
         $(`#maintenance-remainingTimestamp${this.id}`).text(`${Math.abs(remainingDays)} days`);
@@ -450,6 +450,15 @@
     });
   };
 
+  MaintenanceItem.deleteLogs = function () {
+    if (confirm("Are you sure you want to delete your maintenance logs?  This cannot be reversed.")) {
+      YB.App.showAlert("Maintenance logs have been deleted.", "primary");
+      YB.client.send({
+        "cmd": "maintenance_delete_logs"
+      }, true);
+    }
+  };
+
   YB.MaintenanceItem = MaintenanceItem;
   YB.ChannelRegistry.registerChannelType("maintenance", YB.MaintenanceItem)
 
@@ -477,6 +486,14 @@
   //get totalRuntime
   YB.App.onStart(function () {
     setTimeout(YB.App.getStatsData, 1000);
+
+    let deleteButton = `
+      <button id="deleteMaintenanceLogsButton" class="btn btn-primary" type="button">
+        Delete Maintenance Logs
+      </button>
+    `;
+    $("#dangerZone").prepend(deleteButton);
+    $("#deleteMaintenanceLogsButton").on("click", YB.MaintenanceItem.deleteLogs);
   });
 
   global.YB = YB; // <-- this line makes it global

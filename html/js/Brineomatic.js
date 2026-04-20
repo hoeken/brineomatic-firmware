@@ -5645,6 +5645,15 @@
     });
   };
 
+  Brineomatic.deleteLogs = function () {
+    if (confirm("Are you sure you want to delete your run logs?  This cannot be reversed.")) {
+      YB.App.showAlert("Run logs have been deleted.", "primary");
+      YB.client.send({
+        "cmd": "brineomatic_delete_logs"
+      }, true);
+    }
+  };
+
   YB.Brineomatic = Brineomatic;
   YB.bom = new Brineomatic();
 
@@ -5670,6 +5679,18 @@
   logsPage.onOpen(Brineomatic.loadRunLog);
 
   YB.App.addPage(logsPage);
+
+  //get totalRuntime
+  YB.App.onStart(function () {
+    let deleteButton = `
+      <button id="deleteBrineomaticLogsButton" class="btn btn-primary" type="button">
+        Delete Run Logs
+      </button>
+    `;
+    $("#dangerZone").prepend(deleteButton);
+    $("#deleteBrineomaticLogsButton").on("click", YB.Brineomatic.deleteLogs);
+  });
+
 
   validate.validators.relayUnique = function (value, options, key, attributes) {
     const map = {

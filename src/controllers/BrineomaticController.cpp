@@ -40,6 +40,8 @@ bool BrineomaticController::setup()
   _app.protocol.registerCommand(GUEST, "brineomatic_save_hardware_config", this, &BrineomaticController::handleSaveHardwareConfig);
   _app.protocol.registerCommand(GUEST, "brineomatic_save_safeguards_config", this, &BrineomaticController::handleSaveSafeguardsConfig);
 
+  _app.protocol.registerCommand(ADMIN, "brineomatic_delete_logs", this, &BrineomaticController::handleDeleteLogs);
+
   wm.init();
 
   // Create a FreeRTOS task for the state machine
@@ -1144,4 +1146,10 @@ void BrineomaticController::handleSaveSafeguardsConfig(JsonVariantConst input, J
 
   if (!_cfg.saveConfig(error, sizeof(error)))
     return _app.protocol.generateErrorJSON(output, error);
+}
+
+void BrineomaticController::handleDeleteLogs(JsonVariantConst input, JsonVariant output, ProtocolContext context)
+{
+  if (!LittleFS.remove("/run_log.json"))
+    return _app.protocol.generateErrorJSON(output, "Error deleting logs.");
 }

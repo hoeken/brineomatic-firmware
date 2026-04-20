@@ -101,6 +101,7 @@ class BrineomaticController : public BaseController
     void handleSaveGeneralConfig(JsonVariantConst input, JsonVariant output, ProtocolContext context);
     void handleSaveHardwareConfig(JsonVariantConst input, JsonVariant output, ProtocolContext context);
     void handleSaveSafeguardsConfig(JsonVariantConst input, JsonVariant output, ProtocolContext context);
+    void handleDeleteLogs(JsonVariantConst input, JsonVariant output, ProtocolContext context);
 
   private:
     Brineomatic wm;

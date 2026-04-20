@@ -25,6 +25,7 @@ class MaintenanceController : public ChannelController<MaintenanceItem, YB_MAINT
 
     void handleConfigCommand(JsonVariantConst input, JsonVariant output, ProtocolContext context);
     void handleRecordMaintenance(JsonVariantConst input, JsonVariant output, ProtocolContext context);
+    void handleDeleteLogs(JsonVariantConst input, JsonVariant output, ProtocolContext context);
 
   private:
     BrineomaticController& _bom;

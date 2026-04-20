@@ -25,6 +25,7 @@ bool MaintenanceController::setup()
 {
   _app.protocol.registerCommand(ADMIN, "config_maintenance_channel", this, &MaintenanceController::handleConfigCommand);
   _app.protocol.registerCommand(ADMIN, "record_maintenance", this, &MaintenanceController::handleRecordMaintenance);
+  _app.protocol.registerCommand(ADMIN, "maintenance_delete_logs", this, &MaintenanceController::handleDeleteLogs);
 
   _app.http.getServer()->serveStatic("/maintenance.json", LittleFS, "/maintenance.json");
 
@@ -63,6 +64,12 @@ void MaintenanceController::handleRecordMaintenance(JsonVariantConst input, Json
   char error[128];
   if (!_app.config.saveConfig(error, sizeof(error)))
     return _app.protocol.generateErrorJSON(output, error);
+}
+
+void MaintenanceController::handleDeleteLogs(JsonVariantConst input, JsonVariant output, ProtocolContext context)
+{
+  if (!LittleFS.remove("/maintenance.json"))
+    return _app.protocol.generateErrorJSON(output, "Error deleting logs.");
 }
 
 #endif
