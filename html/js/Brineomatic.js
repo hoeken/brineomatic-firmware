@@ -1423,7 +1423,7 @@
 
           <div id="bomControlDiv" style="display:none" class="col-md-6">
               <div id="bomControlButtons" class="row g-2 justify-content-center">
-                  <div id="runBrineomatic" class="col-6 bomIDLE">
+                  <div id="runBrineomatic" class="col-6 bomIDLE" style="display:none">
                       <button class="btn btn-success brineomaticControlButton" type="button"
                           data-bs-toggle="modal" data-bs-target="#startBrineomaticModal">
                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -1436,7 +1436,7 @@
                           <span class="align-middle mx-2">START</span>
                       </button>
                   </div>
-                  <div id="flushBrineomatic" class="col-6 bomIDLE bomPICKLED">
+                  <div id="flushBrineomatic" class="col-6 bomIDLE bomPICKLED" style="display:none">
                       <button class="btn btn-primary brineomaticControlButton" type="button"
                           data-bs-toggle="modal" data-bs-target="#flushBrineomaticModal">
                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -1449,7 +1449,7 @@
                           <span class="align-middle mx-2">FLUSH</span>
                       </button>
                   </div>
-                  <div id="pickleBrineomatic" class="col-6 bomIDLE">
+                  <div id="pickleBrineomatic" class="col-6 bomIDLE" style="display:none">
                       <button class="btn btn-warning brineomaticControlButton" type="button"
                           data-bs-toggle="modal" data-bs-target="#pickleBrineomaticModal">
                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -1462,7 +1462,7 @@
                           <span class="align-middle mx-2">PICKLE</span>
                       </button>
                   </div>
-                  <div id="depickleBrineomatic" class="col-6 bomPICKLED">
+                  <div id="depickleBrineomatic" class="col-6 bomPICKLED" style="display:none">
                       <button class="btn btn-warning brineomaticControlButton" type="button"
                           data-bs-toggle="modal" data-bs-target="#depickleBrineomaticModal">
                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -1474,7 +1474,7 @@
                       </button>
                   </div>
                   <div id="stopBrineomatic"
-                      class="col-6 bomRUNNING bomFLUSHING bomPICKLING bomDEPICKLING">
+                      class="col-6 bomRUNNING bomFLUSHING bomPICKLING bomDEPICKLING" style="display:none">
                       <button class="btn btn-danger brineomaticControlButton" type="button"
                           data-bs-toggle="modal" data-bs-target="#stopBrineomaticModal">
                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -1487,7 +1487,7 @@
                           <span class="align-middle mx-2">STOP</span>
                       </button>
                   </div>
-                  <div id="manualBrineomatic" class="col-6 bomIDLE">
+                  <div id="manualBrineomatic" class="col-6 bomIDLE" style="display:none">
                       <button class="btn btn-secondary brineomaticControlButton" type="button"
                           data-bs-toggle="modal" data-bs-target="#manualBrineomaticModal">
                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -1501,7 +1501,7 @@
                           <span class="align-middle mx-2">MANUAL</span>
                       </button>
                   </div>
-                  <div id="idleBrineomatic" class="col-6 bomMANUAL">
+                  <div id="idleBrineomatic" class="col-6 bomMANUAL" style="display:none">
                       <button id="brineomaticIdle" class="btn btn-primary brineomaticControlButton"
                           type="button">
                           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -1516,7 +1516,7 @@
                       </button>
                   </div>
                   <div id="statusBrineomatic"
-                      class="col-12 bomRUNNING bomFLUSHING bomPICKLING bomDEPICKLING bomSTOPPING">
+                      class="col-12 bomRUNNING bomFLUSHING bomPICKLING bomDEPICKLING bomSTOPPING" style="display:none">
                       <table id="bomStatusTable" class="table table-hover">
                           <tbody id="bomStatusTableBody">
                               <tr id="bomBoostPumpStatus">
