@@ -1,3 +1,9 @@
+# v2.6
+
+* dual relay diverter valve - issue #11
+* Better high PPM handling - issue #4
+* configurable thresholds for gauges - issue #3
+
 # LONG TERM:
 
 * custom gauge layout for each state?  idle, running, stopping, pickling, etc?
@@ -10,12 +16,7 @@
     * should we move this to the firmware instead?
     * frothfet plugin - use key for paths instead of id
     * signalk sendit plugin - use key for paths instead of id
-* remove all onclick calls from the html.
 * global cleanup of strcpy, sprintf, etc.
-* refactor yarrboard-firmware into:
-    * frothfet-firmware
-    * brineomatic-firmware
-    * sendit-firmware
 * other MFD integrations:
     * garmin?
     * raymarine?

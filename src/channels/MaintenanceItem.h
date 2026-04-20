@@ -24,7 +24,7 @@ class MaintenanceItem : public BaseChannel
     void recordMaintenance(float runtime, uint32_t timestamp, String notes);
 
   private:
-    float runtimeInterval = 0;
+    float runtimeInterval = 0.0;
     uint32_t timestampInterval = 0;
 
     float lastRuntime = 0;

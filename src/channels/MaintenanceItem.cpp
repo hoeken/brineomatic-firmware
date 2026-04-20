@@ -24,9 +24,9 @@ bool MaintenanceItem::loadConfig(JsonVariantConst config, char* error, size_t le
   if (!BaseChannel::loadConfig(config, error, len))
     return false;
 
-  this->runtimeInterval = config["runtimeInterval"] | 0;
+  this->runtimeInterval = config["runtimeInterval"] | 0.0f;
   this->timestampInterval = config["timestampInterval"] | 0;
-  this->lastRuntime = config["lastRuntime"] | 0;
+  this->lastRuntime = config["lastRuntime"] | 0.0f;
   this->lastTimestamp = config["lastTimestamp"] | 0;
 
   return true;
@@ -52,14 +52,18 @@ void MaintenanceItem::generateUpdate(JsonVariant config)
 
 void MaintenanceItem::recordMaintenance(float runtime, uint32_t timestamp, String notes)
 {
-  lastRuntime = runtime;
-  lastTimestamp = timestamp;
+  TRACE();
+
+  this->lastRuntime = runtime;
+  this->lastTimestamp = timestamp;
+
+  DUMP(runtime);
+  DUMP(timestamp);
 
   JsonDocument log;
-
   log["name"] = name;
-  log["runtime"] = lastRuntime;
-  log["timestamp"] = lastTimestamp;
+  log["runtime"] = runtime;
+  log["timestamp"] = timestamp;
   log["notes"] = notes;
 
   File f = LittleFS.open("/maintenance.json", "a");

@@ -99,7 +99,7 @@
               </table>
             </div>
             <div id="maintenance-btnCol${this.id}" class="col-12 col-md-4 text-center align-self-center mt-3 mt-md-0" style="display:none;">
-              <button class="btn btn-primary" type="button" id="maintenance-markComplete${this.id}">Log Service Complete</button>
+              <button class="btn btn-primary" type="button" id="maintenance-markComplete${this.id}">Log Maintenance Complete</button>
             </div>
             <div id="maintenance-noInterval${this.id}" class="col-12 text-danger text-center" style="display:none;">Error: no maintenance interval set.</div>
           </div>
@@ -110,11 +110,11 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Log Service As Complete</h5>
+              <h5 class="modal-title">Log Maintenance As Complete</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <p>Mark <strong>${this.name}</strong> as service complete?</p>
+              <p>Mark <strong>${this.name}</strong> as maintenance complete?</p>
               <div class="mb-3">
                 <label for="maintenanceNotes${this.id}" class="form-label">Notes</label>
                 <textarea class="form-control" id="maintenanceNotes${this.id}" rows="3" placeholder="Optional notes..."></textarea>

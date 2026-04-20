@@ -58,7 +58,7 @@ void MaintenanceController::handleRecordMaintenance(JsonVariantConst input, Json
     maintenance_time = (uint32_t)_app.ntp.getTime();
 
   // log it.
-  ch->recordMaintenance(_bom.getTotalRuntime() / 3600.0f, maintenance_time, notes);
+  ch->recordMaintenance((float)_bom.getTotalRuntime() / 3600.0f, maintenance_time, notes);
 
   // write it to file
   char error[128];
