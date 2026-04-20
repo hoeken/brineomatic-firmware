@@ -399,6 +399,17 @@ void Brineomatic::initChannels()
     diverterValveRelay->defaultState = true; // diverter valve on = overboard.
     diverterValveRelay->setName("Diverter Valve");
     diverterValveRelay->setKey("diverter_valve");
+  } else if (diverterValveControl.equals("DUAL_RELAYS")) {
+    diverterValveTankRelay = _relays.getChannelById(diverterValveTankRelayId);
+    diverterValveTankRelay->isEnabled = true;
+    diverterValveTankRelay->inverted = diverterValveTankRelayInverted;
+    diverterValveTankRelay->setName("Diverter Valve Tank");
+    diverterValveTankRelay->setKey("diverter_valve_tank");
+    diverterValveOverboardRelay = _relays.getChannelById(diverterValveOverboardRelayId);
+    diverterValveOverboardRelay->isEnabled = true;
+    diverterValveOverboardRelay->inverted = diverterValveOverboardRelayInverted;
+    diverterValveOverboardRelay->setName("Diverter Valve Overboard");
+    diverterValveOverboardRelay->setKey("diverter_valve_overboard");
   }
 
   if (highPressureValveControl.equals("STEPPER")) {
@@ -714,6 +725,11 @@ void Brineomatic::openDiverterValve()
       diverterValveServo->write(diverterValveOpenAngle);
     else if (diverterValveControl.equals("RELAY"))
       diverterValveRelay->setState(true);
+    else if (diverterValveControl.equals("DUAL_RELAYS")) {
+      diverterValveOverboardRelay->setState(true);
+      delay(diverterValveRelayChangeInterval);
+      diverterValveTankRelay->setState(false);
+    }
   }
   diverterValveOpenState = true;
 }
@@ -726,6 +742,11 @@ void Brineomatic::closeDiverterValve()
       diverterValveServo->write(diverterValveCloseAngle);
     else if (diverterValveControl.equals("RELAY"))
       diverterValveRelay->setState(false);
+    else if (diverterValveControl.equals("DUAL_RELAYS")) {
+      diverterValveTankRelay->setState(true);
+      delay(diverterValveRelayChangeInterval);
+      diverterValveOverboardRelay->setState(false);
+    }
   }
   diverterValveOpenState = false;
 }
@@ -2248,6 +2269,11 @@ void Brineomatic::generateConfigJSON(JsonVariant output)
   bom["diverter_valve_relay_inverted"] = this->diverterValveRelayInverted;
   bom["diverter_valve_open_angle"] = this->diverterValveOpenAngle;
   bom["diverter_valve_close_angle"] = this->diverterValveCloseAngle;
+  bom["diverter_valve_tank_relay_id"] = this->diverterValveTankRelayId;
+  bom["diverter_valve_tank_relay_inverted"] = this->diverterValveTankRelayInverted;
+  bom["diverter_valve_overboard_relay_id"] = this->diverterValveOverboardRelayId;
+  bom["diverter_valve_overboard_relay_inverted"] = this->diverterValveOverboardRelayInverted;
+  bom["diverter_valve_relay_change_interval"] = this->diverterValveRelayChangeInterval;
 
   bom["flush_valve_control"] = this->flushValveControl;
   bom["flush_valve_relay_id"] = this->flushValveRelayId;
@@ -2723,6 +2749,43 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
         config.remove("diverter_valve_relay_id");
         ok = false;
       }
+    } else if (control.equals("DUAL_RELAYS")) {
+      auto* tankCh = _relays.getChannelById(config["diverter_valve_tank_relay_id"]);
+      if (!tankCh) {
+        YBP.printf("Diverter Valve tank relay id %d not found\n", config["diverter_valve_tank_relay_id"].as<int>());
+        config.remove("diverter_valve_tank_relay_id");
+        ok = false;
+      }
+      auto* overboardCh = _relays.getChannelById(config["diverter_valve_overboard_relay_id"]);
+      if (!overboardCh) {
+        YBP.printf("Diverter Valve overboard relay id %d not found\n", config["diverter_valve_overboard_relay_id"].as<int>());
+        config.remove("diverter_valve_overboard_relay_id");
+        ok = false;
+      }
+    }
+  }
+
+  if (config["diverter_valve_tank_relay_id"]) {
+    if (!checkIsInteger(config, "diverter_valve_tank_relay_id", error, err_size) ||
+        !checkIntGE(config, "diverter_valve_tank_relay_id", 0, error, err_size)) {
+      config.remove("diverter_valve_tank_relay_id");
+      ok = false;
+    }
+  }
+
+  if (config["diverter_valve_overboard_relay_id"]) {
+    if (!checkIsInteger(config, "diverter_valve_overboard_relay_id", error, err_size) ||
+        !checkIntGE(config, "diverter_valve_overboard_relay_id", 0, error, err_size)) {
+      config.remove("diverter_valve_overboard_relay_id");
+      ok = false;
+    }
+  }
+
+  if (config["diverter_valve_relay_change_interval"]) {
+    if (!checkIsInteger(config, "diverter_valve_relay_change_interval", error, err_size) ||
+        !checkIntGE(config, "diverter_valve_relay_change_interval", 0, error, err_size)) {
+      config.remove("diverter_valve_relay_change_interval");
+      ok = false;
     }
   }
 
@@ -3468,6 +3531,11 @@ void Brineomatic::loadHardwareConfigJSON(JsonVariant config)
   this->diverterValveServoId = config["diverter_valve_servo_id"] | YB_DIVERTER_VALVE_SERVO_ID;
   this->diverterValveOpenAngle = config["diverter_valve_open_angle"] | YB_DIVERTER_VALVE_OPEN_ANGLE;
   this->diverterValveCloseAngle = config["diverter_valve_close_angle"] | YB_DIVERTER_VALVE_CLOSE_ANGLE;
+  this->diverterValveTankRelayId = config["diverter_valve_tank_relay_id"] | YB_DIVERTER_VALVE_TANK_RELAY_ID;
+  this->diverterValveTankRelayInverted = config["diverter_valve_tank_relay_inverted"] | YB_DIVERTER_VALVE_TANK_RELAY_INVERTED;
+  this->diverterValveOverboardRelayId = config["diverter_valve_overboard_relay_id"] | YB_DIVERTER_VALVE_OVERBOARD_RELAY_ID;
+  this->diverterValveOverboardRelayInverted = config["diverter_valve_overboard_relay_inverted"] | YB_DIVERTER_VALVE_OVERBOARD_RELAY_INVERTED;
+  this->diverterValveRelayChangeInterval = config["diverter_valve_relay_change_interval"] | YB_DIVERTER_VALVE_RELAY_CHANGE_INTERVAL;
 
   this->flushValveControl = config["flush_valve_control"] | YB_FLUSH_VALVE_CONTROL;
   this->flushValveRelayId = config["flush_valve_relay_id"] | YB_FLUSH_VALVE_RELAY_ID;

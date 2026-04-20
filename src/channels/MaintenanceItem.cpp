@@ -52,13 +52,8 @@ void MaintenanceItem::generateUpdate(JsonVariant config)
 
 void MaintenanceItem::recordMaintenance(float runtime, uint32_t timestamp, String notes)
 {
-  TRACE();
-
   this->lastRuntime = runtime;
   this->lastTimestamp = timestamp;
-
-  DUMP(runtime);
-  DUMP(timestamp);
 
   JsonDocument log;
   log["name"] = name;

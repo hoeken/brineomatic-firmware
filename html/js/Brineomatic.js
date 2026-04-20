@@ -2757,6 +2757,7 @@
               <option value="MANUAL">Manual</option>
               <option value="RELAY">Relay</option>
               <option value="SERVO">Servo</option>
+              <option value="DUAL_RELAYS">Dual Relays</option>
           </select>
           <label for="diverter_valve_control">Diverter Valve Control</label>
           <div class="invalid-feedback"></div>
@@ -2776,6 +2777,47 @@
               Is Diverter Valve Relay Inverted?
           </label>
           <div class="invalid-feedback"></div>
+      </div>
+
+      <div class="form-floating mb-3">
+          <select id="diverter_valve_tank_relay_id" class="form-select" aria-label="Diverter Valve Tank Relay Channel">
+            ${relayOptions}
+          </select>
+          <label for="diverter_valve_tank_relay_id">Tank Relay Channel</label>
+          <div class="invalid-feedback"></div>
+      </div>
+
+      <div class="form-check form-switch mb-3">
+          <input class="form-check-input" type="checkbox" id="diverter_valve_tank_relay_inverted">
+          <label class="form-check-label" for="diverter_valve_tank_relay_inverted">
+              Is Tank Relay Inverted?
+          </label>
+          <div class="invalid-feedback"></div>
+      </div>
+
+      <div class="form-floating mb-3">
+          <select id="diverter_valve_overboard_relay_id" class="form-select" aria-label="Diverter Valve Overboard Relay Channel">
+            ${relayOptions}
+          </select>
+          <label for="diverter_valve_overboard_relay_id">Overboard Relay Channel</label>
+          <div class="invalid-feedback"></div>
+      </div>
+
+      <div class="form-check form-switch mb-3">
+          <input class="form-check-input" type="checkbox" id="diverter_valve_overboard_relay_inverted">
+          <label class="form-check-label" for="diverter_valve_overboard_relay_inverted">
+              Is Overboard Relay Inverted?
+          </label>
+          <div class="invalid-feedback"></div>
+      </div>
+
+      <div class="mb-3">
+        <div class="input-group has-validation">
+          <span class="input-group-text">Relay Change Interval</span>
+          <input type="text" class="form-control text-end" id="diverter_valve_relay_change_interval">
+          <span class="input-group-text">ms</span>
+          <div class="invalid-feedback"></div>
+        </div>
       </div>
 
       <div class="form-floating mb-3">
@@ -3615,6 +3657,12 @@
     $("#diverter_valve_open_angle").val(data.diverter_valve_open_angle);
     $("#diverter_valve_close_angle").val(data.diverter_valve_close_angle);
 
+    $("#diverter_valve_tank_relay_id").val(data.diverter_valve_tank_relay_id);
+    $("#diverter_valve_tank_relay_inverted").prop('checked', data.diverter_valve_tank_relay_inverted);
+    $("#diverter_valve_overboard_relay_id").val(data.diverter_valve_overboard_relay_id);
+    $("#diverter_valve_overboard_relay_inverted").prop('checked', data.diverter_valve_overboard_relay_inverted);
+    $("#diverter_valve_relay_change_interval").val(data.diverter_valve_relay_change_interval);
+
     $("#flush_valve_control").val(data.flush_valve_control);
     $("#flush_valve_relay_id").val(data.flush_valve_relay_id);
     $("#flush_valve_relay_inverted").prop('checked', data.flush_valve_relay_inverted);
@@ -4254,12 +4302,22 @@
     const invertedDiv = $("#diverter_valve_relay_inverted").closest(".form-check");
     const servoDiv = $("#diverter_valve_servo_id").closest(".form-floating");
     const angleDiv = $("#diverter_valve_open_angle").closest(".row");
+    const tankRelayDiv = $("#diverter_valve_tank_relay_id").closest(".form-floating");
+    const tankInvertedDiv = $("#diverter_valve_tank_relay_inverted").closest(".form-check");
+    const overboardRelayDiv = $("#diverter_valve_overboard_relay_id").closest(".form-floating");
+    const overboardInvertedDiv = $("#diverter_valve_overboard_relay_inverted").closest(".form-check");
+    const changeIntervalDiv = $("#diverter_valve_relay_change_interval").closest(".mb-3");
 
     // Hide everything first
     relayDiv.hide();
     invertedDiv.hide();
     servoDiv.hide();
     angleDiv.hide();
+    tankRelayDiv.hide();
+    tankInvertedDiv.hide();
+    overboardRelayDiv.hide();
+    overboardInvertedDiv.hide();
+    changeIntervalDiv.hide();
 
     switch (mode) {
       case "RELAY":
@@ -4270,6 +4328,14 @@
       case "SERVO":
         servoDiv.show();
         angleDiv.show();
+        break;
+
+      case "DUAL_RELAYS":
+        tankRelayDiv.show();
+        tankInvertedDiv.show();
+        overboardRelayDiv.show();
+        overboardInvertedDiv.show();
+        changeIntervalDiv.show();
         break;
 
       case "MANUAL":
@@ -4561,6 +4627,11 @@
     data.diverter_valve_servo_id = parseInt($("#diverter_valve_servo_id").val());
     data.diverter_valve_open_angle = parseFloat($("#diverter_valve_open_angle").val());
     data.diverter_valve_close_angle = parseFloat($("#diverter_valve_close_angle").val());
+    data.diverter_valve_tank_relay_id = parseInt($("#diverter_valve_tank_relay_id").val());
+    data.diverter_valve_tank_relay_inverted = $("#diverter_valve_tank_relay_inverted").prop("checked");
+    data.diverter_valve_overboard_relay_id = parseInt($("#diverter_valve_overboard_relay_id").val());
+    data.diverter_valve_overboard_relay_inverted = $("#diverter_valve_overboard_relay_inverted").prop("checked");
+    data.diverter_valve_relay_change_interval = parseInt($("#diverter_valve_relay_change_interval").val());
 
     data.flush_valve_control = $("#flush_valve_control").val();
     data.flush_valve_relay_id = parseInt($("#flush_valve_relay_id").val());
@@ -4889,7 +4960,7 @@
 
       diverter_valve_control: {
         presence: true,
-        inclusion: ["NONE", "MANUAL", "RELAY", "SERVO"]
+        inclusion: ["NONE", "MANUAL", "RELAY", "SERVO", "DUAL_RELAYS"]
       },
 
       diverter_valve_relay_id: {
@@ -4923,6 +4994,37 @@
         numericality: {
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 180
+        }
+      },
+
+      diverter_valve_tank_relay_id: {
+        numericality: {
+          onlyInteger: true,
+          greaterThanOrEqualTo: 0
+        },
+        relayUnique: {}
+      },
+
+      diverter_valve_tank_relay_inverted: {
+        inclusion: [true, false]
+      },
+
+      diverter_valve_overboard_relay_id: {
+        numericality: {
+          onlyInteger: true,
+          greaterThanOrEqualTo: 0
+        },
+        relayUnique: {}
+      },
+
+      diverter_valve_overboard_relay_inverted: {
+        inclusion: [true, false]
+      },
+
+      diverter_valve_relay_change_interval: {
+        numericality: {
+          onlyInteger: true,
+          greaterThanOrEqualTo: 0
         }
       },
 
@@ -5694,18 +5796,20 @@
 
   validate.validators.relayUnique = function (value, options, key, attributes) {
     const map = {
-      boost_pump_relay_id: "boost_pump_control",
-      flush_valve_relay_id: "flush_valve_control",
-      cooling_fan_relay_id: "cooling_fan_control",
-      high_pressure_relay_id: "high_pressure_pump_control",
-      diverter_valve_relay_id: "diverter_valve_control",
+      boost_pump_relay_id: { control: "boost_pump_control", mode: "RELAY" },
+      flush_valve_relay_id: { control: "flush_valve_control", mode: "RELAY" },
+      cooling_fan_relay_id: { control: "cooling_fan_control", mode: "RELAY" },
+      high_pressure_relay_id: { control: "high_pressure_pump_control", mode: "RELAY" },
+      diverter_valve_relay_id: { control: "diverter_valve_control", mode: "RELAY" },
+      diverter_valve_tank_relay_id: { control: "diverter_valve_control", mode: "DUAL_RELAYS" },
+      diverter_valve_overboard_relay_id: { control: "diverter_valve_control", mode: "DUAL_RELAYS" },
     };
 
-    const controlField = map[key];
-    if (!controlField) return; // not a monitored field
+    const entry = map[key];
+    if (!entry) return; // not a monitored field
 
-    // Only enforce uniqueness if this control is set to RELAY
-    if (attributes[controlField] !== "RELAY") {
+    // Only enforce uniqueness if this control is set to the expected mode
+    if (attributes[entry.control] !== entry.mode) {
       return;
     }
 
@@ -5714,10 +5818,10 @@
       return;
     }
 
-    // Check other fields that are also RELAY
-    for (const [relayKey, ctrlKey] of Object.entries(map)) {
+    // Check other fields that are also active
+    for (const [relayKey, relayEntry] of Object.entries(map)) {
       if (relayKey === key) continue; // skip self
-      if (attributes[ctrlKey] !== "RELAY") continue;
+      if (attributes[relayEntry.control] !== relayEntry.mode) continue;
 
       if (attributes[relayKey] === value) {
         // Duplicate found

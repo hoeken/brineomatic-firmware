@@ -1,6 +1,5 @@
 # v2.6
 
-* dual relay diverter valve - issue #11
 * Better high PPM handling - issue #4
 * configurable thresholds for gauges - issue #3
 

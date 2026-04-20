@@ -95,7 +95,7 @@ class Brineomatic
     static constexpr const char* HIGH_PRESSURE_PUMP_CONTROLS[] = {"NONE", "MANUAL", "RELAY", "MODBUS"};
     static constexpr const char* HIGH_PRESSURE_PUMP_MODBUS_DEVICES[] = {"GD20"};
     static constexpr const char* HIGH_PRESSURE_VALVE_CONTROLS[] = {"NONE", "MANUAL", "STEPPER"};
-    static constexpr const char* DIVERTER_VALVE_CONTROLS[] = {"NONE", "MANUAL", "RELAY", "SERVO"};
+    static constexpr const char* DIVERTER_VALVE_CONTROLS[] = {"NONE", "MANUAL", "RELAY", "SERVO", "DUAL_RELAYS"};
     static constexpr const char* FLUSH_VALVE_CONTROLS[] = {"NONE", "MANUAL", "RELAY", "SERVO"};
     static constexpr const char* COOLING_FAN_CONTROLS[] = {"NONE", "MANUAL", "RELAY"};
     static constexpr const char* MOTOR_TEMPERATURE_TYPES[] = {"NONE", "EXTERNAL", "DS18B20", "MQTT"};
@@ -113,6 +113,8 @@ class Brineomatic
     RelayChannel* coolingFan = NULL;
     RelayChannel* diverterValveRelay = NULL;
     ServoChannel* diverterValveServo = NULL;
+    RelayChannel* diverterValveTankRelay = NULL;
+    RelayChannel* diverterValveOverboardRelay = NULL;
     StepperChannel* highPressureValveStepper = NULL;
 
     OneWire motorTemperatureOneWire;
@@ -414,6 +416,11 @@ class Brineomatic
     uint8_t diverterValveServoId = YB_DIVERTER_VALVE_SERVO_ID;
     float diverterValveOpenAngle = YB_DIVERTER_VALVE_OPEN_ANGLE;
     float diverterValveCloseAngle = YB_DIVERTER_VALVE_CLOSE_ANGLE;
+    uint8_t diverterValveTankRelayId = YB_DIVERTER_VALVE_TANK_RELAY_ID;
+    bool diverterValveTankRelayInverted = YB_DIVERTER_VALVE_TANK_RELAY_INVERTED;
+    uint8_t diverterValveOverboardRelayId = YB_DIVERTER_VALVE_OVERBOARD_RELAY_ID;
+    bool diverterValveOverboardRelayInverted = YB_DIVERTER_VALVE_OVERBOARD_RELAY_INVERTED;
+    uint32_t diverterValveRelayChangeInterval = YB_DIVERTER_VALVE_RELAY_CHANGE_INTERVAL;
 
     String flushValveControl = YB_FLUSH_VALVE_CONTROL;
     uint8_t flushValveRelayId = YB_FLUSH_VALVE_RELAY_ID;
