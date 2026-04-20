@@ -2533,7 +2533,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="boost_pump_relay_id_div" class="form-floating mb-3">
           <select id="boost_pump_relay_id" class="form-select" aria-label="Boost Pump Relay Channel">
             ${relayOptions}
           </select>
@@ -2541,7 +2541,7 @@
             <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-check form-switch mb-3">
+      <div id="boost_pump_relay_inverted_div" class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="boost_pump_relay_inverted">
           <label class="form-check-label" for="boost_pump_relay_inverted">
               Is Boost Pump Relay Inverted?
@@ -2571,7 +2571,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="high_pressure_relay_id_div" class="form-floating mb-3">
           <select id="high_pressure_relay_id" class="form-select" aria-label="High Pressure Pump Relay Channel">
             ${relayOptions}
           </select>
@@ -2579,7 +2579,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-check form-switch mb-3">
+      <div id="high_pressure_relay_inverted_div" class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="high_pressure_relay_inverted">
           <label class="form-check-label" for="high_pressure_relay_inverted">
               Is High Pressure Pump Relay Inverted?
@@ -2635,7 +2635,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="mb-3" style="display: none">
+      <div id="membrane_pressure_target_div" class="mb-3" style="display: none">
         <div class="input-group has-validation">
           <span class="input-group-text">Pressure Target</span>
           <input id="membrane_pressure_target" type="text" class="form-control text-end">
@@ -2763,7 +2763,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="diverter_valve_relay_id_div" class="form-floating mb-3">
           <select id="diverter_valve_relay_id" class="form-select" aria-label="Diverter Valve Relay Channel">
             ${relayOptions}
           </select>
@@ -2771,7 +2771,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-check form-switch mb-3">
+      <div id="diverter_valve_relay_inverted_div" class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="diverter_valve_relay_inverted">
           <label class="form-check-label" for="diverter_valve_relay_inverted">
               Is Diverter Valve Relay Inverted?
@@ -2779,7 +2779,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="diverter_valve_tank_relay_id_div" class="form-floating mb-3">
           <select id="diverter_valve_tank_relay_id" class="form-select" aria-label="Diverter Valve Tank Relay Channel">
             ${relayOptions}
           </select>
@@ -2787,7 +2787,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-check form-switch mb-3">
+      <div id="diverter_valve_tank_relay_inverted_div" class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="diverter_valve_tank_relay_inverted">
           <label class="form-check-label" for="diverter_valve_tank_relay_inverted">
               Is Tank Relay Inverted?
@@ -2795,7 +2795,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="diverter_valve_overboard_relay_id_div" class="form-floating mb-3">
           <select id="diverter_valve_overboard_relay_id" class="form-select" aria-label="Diverter Valve Overboard Relay Channel">
             ${relayOptions}
           </select>
@@ -2803,7 +2803,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-check form-switch mb-3">
+      <div id="diverter_valve_overboard_relay_inverted_div" class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="diverter_valve_overboard_relay_inverted">
           <label class="form-check-label" for="diverter_valve_overboard_relay_inverted">
               Is Overboard Relay Inverted?
@@ -2811,7 +2811,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="mb-3">
+      <div id="diverter_valve_relay_change_interval_div" class="mb-3">
         <div class="input-group has-validation">
           <span class="input-group-text">Relay Change Interval</span>
           <input type="text" class="form-control text-end" id="diverter_valve_relay_change_interval">
@@ -2820,7 +2820,7 @@
         </div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="diverter_valve_servo_id_div" class="form-floating mb-3">
           <select id="diverter_valve_servo_id" class="form-select" aria-label="Diverter Valve Servo Channel">
             ${servoOptions}
           </select>
@@ -2828,7 +2828,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="row g-3 mb-3">
+      <div id="diverter_valve_angle_div" class="row g-3 mb-3">
         <h6>Diverter Valve Settings (Open = Overboard)</h6>
 
         <div class="col-12 col-md-6 mt-1">
@@ -2863,7 +2863,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="flush_valve_relay_id_div" class="form-floating mb-3">
           <select id="flush_valve_relay_id" class="form-select" aria-label="Flush Valve Relay Channel">
             ${relayOptions}
           </select>
@@ -2871,7 +2871,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-check form-switch mb-3">
+      <div id="flush_valve_relay_inverted_div" class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="flush_valve_relay_inverted">
           <label class="form-check-label" for="flush_valve_relay_inverted">
               Is Flush Valve Relay Inverted?
@@ -2879,7 +2879,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="flush_valve_servo_id_div" class="form-floating mb-3">
           <select id="flush_valve_servo_id" class="form-select" aria-label="Flush Valve Servo Channel">
             ${servoOptions}
           </select>
@@ -2887,7 +2887,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="row g-3 mb-3">
+      <div id="flush_valve_angle_div" class="row g-3 mb-3">
         <h6>Flush Valve Settings</h6>
 
         <div class="col-12 col-md-6 mt-1">
@@ -2921,7 +2921,7 @@
             <div class="invalid-feedback"></div>
         </div>
 
-        <div class="mb-3">
+        <div id="autoflush_salinity_div" class="mb-3">
           <div class="input-group has-validation">
             <span class="input-group-text">Autoflush Salinity</span>
             <input id="autoflush_salinity" type="text" class="form-control text-end">
@@ -2930,7 +2930,7 @@
           </div>
         </div>
 
-        <div class="mb-3">
+        <div id="autoflush_duration_div" class="mb-3">
           <div class="input-group has-validation">
             <span class="input-group-text">Autoflush Duration</span>
             <input id="autoflush_duration" type="text" class="form-control text-end">
@@ -2939,7 +2939,7 @@
           </div>
         </div>
 
-        <div class="mb-3">
+        <div id="autoflush_volume_div" class="mb-3">
           <div class="input-group has-validation">
             <span class="input-group-text">Autoflush Volume</span>
             <input id="autoflush_volume" type="text" class="form-control text-end">
@@ -2948,7 +2948,7 @@
           </div>
         </div>
 
-        <div class="mb-3">
+        <div id="autoflush_interval_div" class="mb-3">
           <div class="input-group has-validation">
             <span class="input-group-text">Autoflush Interval</span>
             <input id="autoflush_interval" type="text" class="form-control text-end">
@@ -2957,7 +2957,7 @@
           </div>
         </div>
 
-        <div class="form-check form-switch mb-3">
+        <div id="autoflush_use_high_pressure_motor_div" class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="autoflush_use_high_pressure_motor">
           <label class="form-check-label" for="autoflush_use_high_pressure_motor">
             Use high pressure motor during autoflush
@@ -2978,7 +2978,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-floating mb-3">
+      <div id="cooling_fan_relay_id_div" class="form-floating mb-3">
           <select id="cooling_fan_relay_id" class="form-select" aria-label="Cooling Fan Relay Channel">
             ${relayOptions}
           </select>
@@ -2986,7 +2986,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="form-check form-switch mb-3">
+      <div id="cooling_fan_relay_inverted_div" class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="cooling_fan_relay_inverted">
           <label class="form-check-label" for="cooling_fan_relay_inverted">
               Is Cooling Fan Relay Inverted?
@@ -2994,7 +2994,7 @@
           <div class="invalid-feedback"></div>
       </div>
 
-      <div class="row g-3 mb-3">
+      <div id="cooling_fan_temperature_div" class="row g-3 mb-3">
         <div class="col-12 col-md-6 mt-1">
           <div class="input-group has-validation">
             <span class="input-group-text">On Temp</span>
@@ -4198,30 +4198,30 @@
 
   Brineomatic.prototype.updateAutoflushVisibility = function (mode) {
     // Hide all autoflush fields first
-    $("#autoflush_salinity").closest(".mb-3").hide();
-    $("#autoflush_duration").closest(".mb-3").hide();
-    $("#autoflush_volume").closest(".mb-3").hide();
-    $("#autoflush_interval").closest(".mb-3").hide();
-    $("#autoflush_use_high_pressure_motor").closest(".mb-3").hide();
+    $("#autoflush_salinity_div").hide();
+    $("#autoflush_duration_div").hide();
+    $("#autoflush_volume_div").hide();
+    $("#autoflush_interval_div").hide();
+    $("#autoflush_use_high_pressure_motor_div").hide();
 
     // Show based on mode
     switch (mode) {
       case "SALINITY":
-        $("#autoflush_salinity").closest(".mb-3").show();
-        $("#autoflush_interval").closest(".mb-3").show();
-        $("#autoflush_use_high_pressure_motor").closest(".mb-3").show();
+        $("#autoflush_salinity_div").show();
+        $("#autoflush_interval_div").show();
+        $("#autoflush_use_high_pressure_motor_div").show();
         break;
 
       case "TIME":
-        $("#autoflush_duration").closest(".mb-3").show();
-        $("#autoflush_interval").closest(".mb-3").show();
-        $("#autoflush_use_high_pressure_motor").closest(".mb-3").show();
+        $("#autoflush_duration_div").show();
+        $("#autoflush_interval_div").show();
+        $("#autoflush_use_high_pressure_motor_div").show();
         break;
 
       case "VOLUME":
-        $("#autoflush_volume").closest(".mb-3").show();
-        $("#autoflush_interval").closest(".mb-3").show();
-        $("#autoflush_use_high_pressure_motor").closest(".mb-3").show();
+        $("#autoflush_volume_div").show();
+        $("#autoflush_interval_div").show();
+        $("#autoflush_use_high_pressure_motor_div").show();
         break;
 
       case "NONE":
@@ -4232,8 +4232,8 @@
   }
 
   Brineomatic.prototype.updateBoostPumpVisibility = function (mode) {
-    const relayDiv = $("#boost_pump_relay_id").closest(".form-floating");
-    const invertedDiv = $("#boost_pump_relay_inverted").closest(".form-check");
+    const relayDiv = $("#boost_pump_relay_id_div");
+    const invertedDiv = $("#boost_pump_relay_inverted_div");
 
     relayDiv.hide();
     invertedDiv.hide();
@@ -4248,8 +4248,8 @@
   }
 
   Brineomatic.prototype.updateHighPressurePumpVisibility = function (mode) {
-    const relayDiv = $("#high_pressure_relay_id").closest(".form-floating");
-    const invertedDiv = $("#high_pressure_relay_inverted").closest(".form-check");
+    const relayDiv = $("#high_pressure_relay_id_div");
+    const invertedDiv = $("#high_pressure_relay_inverted_div");
     const modbusOptions = $(".high_pressure_modbus_options");
 
     relayDiv.hide();
@@ -4275,7 +4275,7 @@
   };
 
   Brineomatic.prototype.updateHighPressureValveVisibility = function (mode) {
-    const pressureTargetDiv = $("#membrane_pressure_target").closest(".mb-3");
+    const pressureTargetDiv = $("#membrane_pressure_target_div");
     const stepperDiv = $("#high_pressure_valve_stepper_options");
 
     // Hide everything first
@@ -4298,15 +4298,15 @@
   };
 
   Brineomatic.prototype.updateDiverterValveVisibility = function (mode) {
-    const relayDiv = $("#diverter_valve_relay_id").closest(".form-floating");
-    const invertedDiv = $("#diverter_valve_relay_inverted").closest(".form-check");
-    const servoDiv = $("#diverter_valve_servo_id").closest(".form-floating");
-    const angleDiv = $("#diverter_valve_open_angle").closest(".row");
-    const tankRelayDiv = $("#diverter_valve_tank_relay_id").closest(".form-floating");
-    const tankInvertedDiv = $("#diverter_valve_tank_relay_inverted").closest(".form-check");
-    const overboardRelayDiv = $("#diverter_valve_overboard_relay_id").closest(".form-floating");
-    const overboardInvertedDiv = $("#diverter_valve_overboard_relay_inverted").closest(".form-check");
-    const changeIntervalDiv = $("#diverter_valve_relay_change_interval").closest(".mb-3");
+    const relayDiv = $("#diverter_valve_relay_id_div");
+    const invertedDiv = $("#diverter_valve_relay_inverted_div");
+    const servoDiv = $("#diverter_valve_servo_id_div");
+    const angleDiv = $("#diverter_valve_angle_div");
+    const tankRelayDiv = $("#diverter_valve_tank_relay_id_div");
+    const tankInvertedDiv = $("#diverter_valve_tank_relay_inverted_div");
+    const overboardRelayDiv = $("#diverter_valve_overboard_relay_id_div");
+    const overboardInvertedDiv = $("#diverter_valve_overboard_relay_inverted_div");
+    const changeIntervalDiv = $("#diverter_valve_relay_change_interval_div");
 
     // Hide everything first
     relayDiv.hide();
@@ -4387,10 +4387,10 @@
   }
 
   Brineomatic.prototype.updateFlushValveVisibility = function (mode) {
-    const relayDiv = $("#flush_valve_relay_id").closest(".form-floating");
-    const invertedDiv = $("#flush_valve_relay_inverted").closest(".form-check");
-    const servoDiv = $("#flush_valve_servo_id").closest(".form-floating");
-    const angleDiv = $("#flush_valve_open_angle").closest(".row");
+    const relayDiv = $("#flush_valve_relay_id_div");
+    const invertedDiv = $("#flush_valve_relay_inverted_div");
+    const servoDiv = $("#flush_valve_servo_id_div");
+    const angleDiv = $("#flush_valve_angle_div");
 
     relayDiv.hide();
     invertedDiv.hide();
@@ -4425,9 +4425,9 @@
   };
 
   Brineomatic.prototype.updateCoolingFanVisibility = function (mode) {
-    const relayDiv = $("#cooling_fan_relay_id").closest(".form-floating");
-    const tempDiv = $("#cooling_fan_on_temperature").closest(".row");
-    const invertedDiv = $("#cooling_fan_relay_inverted").closest(".form-check");
+    const relayDiv = $("#cooling_fan_relay_id_div");
+    const tempDiv = $("#cooling_fan_temperature_div");
+    const invertedDiv = $("#cooling_fan_relay_inverted_div");
 
     // Hide everything first
     relayDiv.hide();
