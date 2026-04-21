@@ -98,7 +98,7 @@ bool BrineomaticController::loadConfigHook(JsonVariant config, char* error, size
 
     wm.loadConfigJSON(bom);
 
-    if (_cfg.app_enable_mqtt) {
+    if (_app.mqtt.isEnabled()) {
       MQTTController* mqtt = (MQTTController*)_app.getController("mqtt");
       String type;
 
@@ -213,7 +213,7 @@ void BrineomaticController::haUpdateHook(MQTTController* mqtt)
 
 void BrineomaticController::haGenerateDiscoveryHook(JsonVariant components, const char* uuid, MQTTController* mqtt)
 {
-  sprintf(ha_uuid, "yarrboard/%s", _cfg.local_hostname);
+  sprintf(ha_uuid, "yarrboard/%s", _app.network.getLocalHostname());
   sprintf(ha_topic_avail, "%s/ha/availability", ha_uuid);
   sprintf(ha_topic_cmd_state, "%s/ha/set", ha_uuid);
   sprintf(ha_topic_state_state, "%s/ha/state", ha_uuid);

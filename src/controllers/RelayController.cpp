@@ -64,7 +64,7 @@ void RelayController::handleSetCommand(JsonVariantConst input, JsonVariant outpu
     }
 
     // get our data
-    strlcpy(ch->source, input["source"] | _cfg.local_hostname, sizeof(ch->source));
+    strlcpy(ch->source, input["source"] | _app.network.getLocalHostname(), sizeof(ch->source));
 
     // okay, set our state
     char state[10];
@@ -74,7 +74,7 @@ void RelayController::handleSetCommand(JsonVariantConst input, JsonVariant outpu
     ch->setState(state);
 
     //  get that update out ASAP... if its our own update
-    if (!strcmp(ch->source, _cfg.local_hostname))
+    if (!strcmp(ch->source, _app.network.getLocalHostname()))
       ch->sendFastUpdate = true;
   }
 }
@@ -98,7 +98,7 @@ void RelayController::handleToggleCommand(JsonVariantConst input, JsonVariant ou
   }
 
   // save our source
-  strlcpy(ch->source, input["source"] | _cfg.local_hostname, sizeof(ch->source));
+  strlcpy(ch->source, input["source"] | _app.network.getLocalHostname(), sizeof(ch->source));
 
   // relays are simple on/off.
   if (!strcmp(ch->getStatus(), "ON"))
