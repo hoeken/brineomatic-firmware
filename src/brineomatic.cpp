@@ -2181,8 +2181,11 @@ void Brineomatic::generateUpdateJSON(JsonVariant output)
     output["cooling_fan_on"] = isCoolingFanOn();
 
   output["next_flush_countdown"] = getNextFlushCountdown();
-  output["runtime_elapsed"] = getRuntimeElapsed();
-  output["finish_countdown"] = getFinishCountdown();
+
+  if (!strcmp(getStatus(), "RUNNING")) {
+    output["runtime_elapsed"] = getRuntimeElapsed();
+    output["finish_countdown"] = getFinishCountdown();
+  }
 
   if (!strcmp(getStatus(), "FLUSHING")) {
     output["flush_elapsed"] = getFlushElapsed();

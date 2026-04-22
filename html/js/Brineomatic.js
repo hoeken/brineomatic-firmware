@@ -94,28 +94,28 @@
       "motor_temperature": {
         get thresholds() {
           const celsiusThresholds = [60, 70, 100];
-          return celsiusThresholds.map(temp => YB.bom.convertTemperature(temp, "C", YB.App.config.brineomatic.temperature_units));
+          return celsiusThresholds.map(temp => YB.bom.convertTemperature(temp, "C", YB.config.brineomatic.temperature_units));
         },
         "colors": [bootstrapColors.success, bootstrapColors.warning, bootstrapColors.danger]
       },
       "water_temperature": {
         get thresholds() {
           const celsiusThresholds = [10, 30, 40, 50];
-          return celsiusThresholds.map(temp => YB.bom.convertTemperature(temp, "C", YB.App.config.brineomatic.temperature_units));
+          return celsiusThresholds.map(temp => YB.bom.convertTemperature(temp, "C", YB.config.brineomatic.temperature_units));
         },
         "colors": [bootstrapColors.primary, bootstrapColors.success, bootstrapColors.warning, bootstrapColors.danger]
       },
       "filter_pressure": {
         get thresholds() {
           const barThresholds = [0, 0.34, 0.69, 2.76, 3.10, 3.45];
-          return barThresholds.map(pressure => YB.bom.convertPressure(pressure, "Bar", YB.App.config.brineomatic.pressure_units));
+          return barThresholds.map(pressure => YB.bom.convertPressure(pressure, "Bar", YB.config.brineomatic.pressure_units));
         },
         "colors": [bootstrapColors.secondary, bootstrapColors.danger, bootstrapColors.warning, bootstrapColors.success, bootstrapColors.warning, bootstrapColors.danger]
       },
       "membrane_pressure": {
         get thresholds() {
           const barThresholds = [0, 41.4, 48.3, 62.1, 69.0];
-          return barThresholds.map(pressure => YB.bom.convertPressure(pressure, "Bar", YB.App.config.brineomatic.pressure_units));
+          return barThresholds.map(pressure => YB.bom.convertPressure(pressure, "Bar", YB.config.brineomatic.pressure_units));
         },
         "colors": [bootstrapColors.secondary, bootstrapColors.warning, bootstrapColors.primary, bootstrapColors.success, bootstrapColors.danger]
       },
@@ -130,21 +130,21 @@
       "product_flowrate": {
         get thresholds() {
           const lphThresholds = [20, 100, 180, 200, 250];
-          return lphThresholds.map(flowrate => YB.bom.convertFlowrate(flowrate, "lph", YB.App.config.brineomatic.flowrate_units));
+          return lphThresholds.map(flowrate => YB.bom.convertFlowrate(flowrate, "lph", YB.config.brineomatic.flowrate_units));
         },
         "colors": [bootstrapColors.secondary, bootstrapColors.warning, bootstrapColors.success, bootstrapColors.warning, bootstrapColors.danger]
       },
       "brine_flowrate": {
         get thresholds() {
           const lphThresholds = [100, 300];
-          return lphThresholds.map(flowrate => YB.bom.convertFlowrate(flowrate, "lph", YB.App.config.brineomatic.flowrate_units));
+          return lphThresholds.map(flowrate => YB.bom.convertFlowrate(flowrate, "lph", YB.config.brineomatic.flowrate_units));
         },
         "colors": [bootstrapColors.secondary, bootstrapColors.success]
       },
       "total_flowrate": {
         get thresholds() {
           const lphThresholds = [100, 600];
-          return lphThresholds.map(flowrate => YB.bom.convertFlowrate(flowrate, "lph", YB.App.config.brineomatic.flowrate_units));
+          return lphThresholds.map(flowrate => YB.bom.convertFlowrate(flowrate, "lph", YB.config.brineomatic.flowrate_units));
         },
         "colors": [bootstrapColors.secondary, bootstrapColors.success]
       },
@@ -175,13 +175,13 @@
       gauge: {
         label: {
           format: function (value, ratio) {
-            let short = YB.bom.getShortTemperatureUnits(YB.App.config.brineomatic.temperature_units);
+            let short = YB.bom.getShortTemperatureUnits(YB.config.brineomatic.temperature_units);
             return `${value}°${short}`;
           },
           show: true
         },
-        min: Math.round(YB.bom.convertTemperature(0, "C", YB.App.config.brineomatic.temperature_units)),
-        max: Math.round(YB.bom.convertTemperature(80, "C", YB.App.config.brineomatic.temperature_units))
+        min: Math.round(YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units)),
+        max: Math.round(YB.bom.convertTemperature(80, "C", YB.config.brineomatic.temperature_units))
       },
       color: {
         pattern: this.gaugeSetup.motor_temperature.colors,
@@ -207,13 +207,13 @@
       gauge: {
         label: {
           format: function (value, ratio) {
-            let short = YB.bom.getShortTemperatureUnits(YB.App.config.brineomatic.temperature_units);
+            let short = YB.bom.getShortTemperatureUnits(YB.config.brineomatic.temperature_units);
             return `${value}°${short}`;
           },
           show: true
         },
-        min: Math.round(YB.bom.convertTemperature(0, "C", YB.App.config.brineomatic.temperature_units)),
-        max: Math.round(YB.bom.convertTemperature(50, "C", YB.App.config.brineomatic.temperature_units))
+        min: Math.round(YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units)),
+        max: Math.round(YB.bom.convertTemperature(50, "C", YB.config.brineomatic.temperature_units))
       },
       color: {
         pattern: this.gaugeSetup.water_temperature.colors,
@@ -239,13 +239,13 @@
       gauge: {
         label: {
           format: function (value, ratio) {
-            let short = YB.bom.getShortPressureUnits(YB.App.config.brineomatic.pressure_units);
+            let short = YB.bom.getShortPressureUnits(YB.config.brineomatic.pressure_units);
             return `${value} ${short}`;
           },
           show: true
         },
-        min: Math.round(YB.bom.convertPressure(0, "Bar", YB.App.config.brineomatic.pressure_units)),
-        max: Math.round(YB.bom.convertPressure(3.45, "Bar", YB.App.config.brineomatic.pressure_units)),
+        min: Math.round(YB.bom.convertPressure(0, "Bar", YB.config.brineomatic.pressure_units)),
+        max: Math.round(YB.bom.convertPressure(3.45, "Bar", YB.config.brineomatic.pressure_units)),
       },
       color: {
         pattern: this.gaugeSetup.filter_pressure.colors,
@@ -271,13 +271,13 @@
       gauge: {
         label: {
           format: function (value, ratio) {
-            let short = YB.bom.getShortPressureUnits(YB.App.config.brineomatic.pressure_units);
+            let short = YB.bom.getShortPressureUnits(YB.config.brineomatic.pressure_units);
             return `${value} ${short}`;
           },
           show: true
         },
-        min: Math.round(YB.bom.convertPressure(0, "Bar", YB.App.config.brineomatic.pressure_units)),
-        max: Math.round(YB.bom.convertPressure(69.0, "Bar", YB.App.config.brineomatic.pressure_units)),
+        min: Math.round(YB.bom.convertPressure(0, "Bar", YB.config.brineomatic.pressure_units)),
+        max: Math.round(YB.bom.convertPressure(69.0, "Bar", YB.config.brineomatic.pressure_units)),
       },
       color: {
         pattern: this.gaugeSetup.membrane_pressure.colors,
@@ -365,7 +365,7 @@
       gauge: {
         label: {
           format: function (value, ratio) {
-            let short = YB.bom.getShortFlowrateUnits(YB.App.config.brineomatic.flowrate_units);
+            let short = YB.bom.getShortFlowrateUnits(YB.config.brineomatic.flowrate_units);
             return `${value} ${short}`;
           },
           show: true
@@ -397,7 +397,7 @@
       gauge: {
         label: {
           format: function (value, ratio) {
-            let short = YB.bom.getShortFlowrateUnits(YB.App.config.brineomatic.flowrate_units);
+            let short = YB.bom.getShortFlowrateUnits(YB.config.brineomatic.flowrate_units);
             return `${value} ${short}`;
           },
           show: true
@@ -429,7 +429,7 @@
       gauge: {
         label: {
           format: function (value, ratio) {
-            let short = YB.bom.getShortFlowrateUnits(YB.App.config.brineomatic.flowrate_units);
+            let short = YB.bom.getShortFlowrateUnits(YB.config.brineomatic.flowrate_units);
             return `${value} ${short}`;
           },
           show: true
@@ -529,7 +529,7 @@
     YB.App.getPage("home").setContent(this.generateControlUI());
 
     //we're only using part of the channels
-    YB.ChannelRegistry.loadAllChannels(msg);
+    YB.ChannelRegistry.loadAllChannels(msg.config);
     YB.App.removeSettingsPanel("relay");
     YB.App.removeSettingsPanel("servo");
     YB.App.removeSettingsPanel("stepper");
@@ -587,8 +587,8 @@
     $('#stepperControlDiv').hide();
 
     this.addEditUIHandlers();
-    this.updateEditUIData(msg.brineomatic);
-    this.updateHardwareUIConfig(msg.brineomatic);
+    this.updateEditUIData(msg.config.brineomatic);
+    this.updateHardwareUIConfig(msg.config.brineomatic);
 
     //edit UI handlers
     $("#bomConfig").show();
@@ -629,8 +629,8 @@
     if (!YB.App.isMFD())
       this.createGauges();
 
-    if (msg.brineomatic.gauge_order) {
-      const savedOrder = JSON.parse(msg.brineomatic.gauge_order);
+    if (msg.config.brineomatic.gauge_order) {
+      const savedOrder = JSON.parse(msg.config.brineomatic.gauge_order);
       this.gaugeOrder = savedOrder;
 
       // Hide gauges not in saved order
@@ -653,28 +653,28 @@
   }
 
   Brineomatic.prototype.handleUpdateMessage = function (msg) {
-    if (!YB.App.config.brineomatic)
+    if (!YB.config.brineomatic)
       return;
 
-    let motor_temperature = YB.bom.convertTemperature(msg.motor_temperature, "C", YB.App.config.brineomatic.temperature_units);
+    let motor_temperature = YB.bom.convertTemperature(msg.motor_temperature, "C", YB.config.brineomatic.temperature_units);
     motor_temperature = this.formatReadable(motor_temperature);
 
-    let water_temperature = YB.bom.convertTemperature(msg.water_temperature, "C", YB.App.config.brineomatic.temperature_units);
+    let water_temperature = YB.bom.convertTemperature(msg.water_temperature, "C", YB.config.brineomatic.temperature_units);
     water_temperature = this.formatReadable(water_temperature);
 
-    let product_flowrate = YB.bom.convertFlowrate(msg.product_flowrate, "lph", YB.App.config.brineomatic.flowrate_units);
+    let product_flowrate = YB.bom.convertFlowrate(msg.product_flowrate, "lph", YB.config.brineomatic.flowrate_units);
     product_flowrate = this.formatReadable(product_flowrate);
 
-    let brine_flowrate = YB.bom.convertFlowrate(msg.brine_flowrate, "lph", YB.App.config.brineomatic.flowrate_units);
+    let brine_flowrate = YB.bom.convertFlowrate(msg.brine_flowrate, "lph", YB.config.brineomatic.flowrate_units);
     brine_flowrate = this.formatReadable(brine_flowrate);
 
-    let total_flowrate = YB.bom.convertFlowrate(msg.total_flowrate, "lph", YB.App.config.brineomatic.flowrate_units);
+    let total_flowrate = YB.bom.convertFlowrate(msg.total_flowrate, "lph", YB.config.brineomatic.flowrate_units);
     total_flowrate = this.formatReadable(total_flowrate);
 
-    let volume = YB.bom.convertVolume(msg.volume, "liters", YB.App.config.brineomatic.volume_units);
+    let volume = YB.bom.convertVolume(msg.volume, "liters", YB.config.brineomatic.volume_units);
     volume = this.formatReadable(volume);
 
-    let flush_volume = YB.bom.convertVolume(msg.flush_volume, "liters", YB.App.config.brineomatic.volume_units);
+    let flush_volume = YB.bom.convertVolume(msg.flush_volume, "liters", YB.config.brineomatic.volume_units);
     flush_volume = this.formatReadable(flush_volume);
 
     let product_salinity = this.formatReadable(msg.product_salinity);
@@ -685,9 +685,9 @@
     if (filter_pressure < 0 && filter_pressure > -10)
       filter_pressure = 0;
     //ignore low readings - measurement error
-    if (filter_pressure > 0 && filter_pressure < parseFloat(YB.App.config.brineomatic.filter_pressure_sensor_max) * 0.01)
+    if (filter_pressure > 0 && filter_pressure < parseFloat(YB.config.brineomatic.filter_pressure_sensor_max) * 0.01)
       filter_pressure = 0;
-    filter_pressure = YB.bom.convertPressure(filter_pressure, "Bar", YB.App.config.brineomatic.pressure_units);
+    filter_pressure = YB.bom.convertPressure(filter_pressure, "Bar", YB.config.brineomatic.pressure_units);
     filter_pressure = this.formatReadable(filter_pressure);
 
     let membrane_pressure = parseFloat(msg.membrane_pressure);
@@ -695,9 +695,9 @@
     if (membrane_pressure < 0 && membrane_pressure > -10)
       membrane_pressure = 0;
     //ignore low readings - measurement error
-    if (membrane_pressure > 0 && membrane_pressure < parseFloat(YB.App.config.brineomatic.membrane_pressure_sensor_max) * 0.01)
+    if (membrane_pressure > 0 && membrane_pressure < parseFloat(YB.config.brineomatic.membrane_pressure_sensor_max) * 0.01)
       membrane_pressure = 0;
-    membrane_pressure = YB.bom.convertPressure(membrane_pressure, "Bar", YB.App.config.brineomatic.pressure_units);
+    membrane_pressure = YB.bom.convertPressure(membrane_pressure, "Bar", YB.config.brineomatic.pressure_units);
     membrane_pressure = this.formatReadable(membrane_pressure);
 
     let tank_level = this.formatReadable(msg.tank_level * 100);
@@ -905,7 +905,7 @@
       $('#bomDepickleProgressRow').hide();
     }
 
-    if (YB.App.config.brineomatic.has_boost_pump) {
+    if (YB.config.brineomatic.has_boost_pump) {
       $('#bomBoostPumpStatus span').removeClass();
       $('#bomBoostPumpStatus span').addClass("badge");
       $('#boostPumpControlUI').show();
@@ -927,7 +927,7 @@
       $('#boostPumpControlUI').hide();
     }
 
-    if (YB.App.config.brineomatic.has_high_pressure_pump) {
+    if (YB.config.brineomatic.has_high_pressure_pump) {
       $('#bomHighPressurePumpStatus span').removeClass();
       $('#bomHighPressurePumpStatus span').addClass("badge");
       $('#highPressurePumpControlUI').show();
@@ -949,7 +949,7 @@
       $('#bomHighPressurePumpStatus').hide();
     }
 
-    if (YB.App.config.brineomatic.has_diverter_valve) {
+    if (YB.config.brineomatic.has_diverter_valve) {
       $('#bomDiverterValveStatus span').removeClass();
       $('#bomDiverterValveStatus span').addClass("badge");
       $('#diverterValveControlUI').show();
@@ -973,7 +973,7 @@
 
     }
 
-    if (YB.App.config.brineomatic.has_flush_valve) {
+    if (YB.config.brineomatic.has_flush_valve) {
       $('#bomFlushValveStatus span').removeClass();
       $('#bomFlushValveStatus span').addClass("badge");
       $('#flushValveControlUI').show();
@@ -996,7 +996,7 @@
       $('#bomFlushValveStatus').hide();
     }
 
-    if (YB.App.config.brineomatic.has_cooling_fan) {
+    if (YB.config.brineomatic.has_cooling_fan) {
       $('#bomFanStatus span').removeClass();
       $('#bomFanStatus span').addClass("badge");
       $('#coolingFanControlUI').show();
@@ -1041,18 +1041,18 @@
     totalRuntime = totalRuntime.toLocaleString('en-US');
 
     //bail if we're too early.
-    if (!YB.App.config.brineomatic)
+    if (!YB.config.brineomatic)
       return;
 
-    let totalVolume = YB.bom.convertVolume(msg.total_volume, "liters", YB.App.config.brineomatic.volume_units);
+    let totalVolume = YB.bom.convertVolume(msg.total_volume, "liters", YB.config.brineomatic.volume_units);
     totalVolume = Math.round(totalVolume);
     totalVolume = totalVolume.toLocaleString('en-US');
-    let volumeUnits = YB.App.config.brineomatic.volume_units;
+    let volumeUnits = YB.config.brineomatic.volume_units;
 
     let avgRuntime = msg.total_cycles > 0 ? (msg.total_runtime / msg.total_cycles / (60 * 60)).toFixed(2) : 0;
     avgRuntime = parseFloat(avgRuntime).toLocaleString('en-US');
 
-    let flowrateUnits = YB.App.config.brineomatic.flowrate_units;
+    let flowrateUnits = YB.config.brineomatic.flowrate_units;
     let avgFlowrate = msg.total_runtime > 0 ? YB.bom.convertFlowrate(msg.total_volume / (msg.total_runtime / 3600), "lph", flowrateUnits) : 0;
     avgFlowrate = parseFloat(avgFlowrate.toFixed(1)).toLocaleString('en-US');
     let shortFlowrateUnits = YB.bom.getShortFlowrateUnits(flowrateUnits);
@@ -1159,7 +1159,7 @@
     let volume = $("#bomRunVolumeInput").val();
 
     // Convert from user's units to liters (firmware base unit)
-    volume = YB.bom.convertVolume(volume, YB.App.config.brineomatic.volume_units, "liters");
+    volume = YB.bom.convertVolume(volume, YB.config.brineomatic.volume_units, "liters");
 
     if (volume > 0) {
       YB.client.send({
@@ -1196,7 +1196,7 @@
     let volume = $("#bomFlushVolumeInput").val();
 
     // Convert from user's units to liters (firmware base unit)
-    volume = YB.bom.convertVolume(volume, YB.App.config.brineomatic.volume_units, "liters");
+    volume = YB.bom.convertVolume(volume, YB.config.brineomatic.volume_units, "liters");
 
     if (volume > 0) {
       YB.client.send({
@@ -2326,7 +2326,7 @@
     };
 
     let membranePressure = "";
-    if (YB.App.config.capabilities.brineomatic.hp_sensor)
+    if (YB.capabilities.brineomatic.hp_sensor)
       membranePressure = /*html*/ `
       <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="has_membrane_pressure_sensor">
@@ -2358,7 +2358,7 @@
     `;
 
     let filterPressure = "";
-    if (YB.App.config.capabilities.brineomatic.lp_sensor)
+    if (YB.capabilities.brineomatic.lp_sensor)
       filterPressure = /*html*/ `
       <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="has_filter_pressure_sensor">
@@ -2390,7 +2390,7 @@
     `;
 
     let productFlow = "";
-    if (YB.App.config.capabilities.brineomatic.product_flowmeter)
+    if (YB.capabilities.brineomatic.product_flowmeter)
       productFlow = /*html*/ `
       <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="has_product_flow_sensor">
@@ -2410,7 +2410,7 @@
     `;
 
     let brineFlow = "";
-    if (YB.App.config.capabilities.brineomatic.brine_flowmeter)
+    if (YB.capabilities.brineomatic.brine_flowmeter)
       brineFlow = /*html*/ `
       <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="has_brine_flow_sensor">
@@ -2430,7 +2430,7 @@
     `;
 
     let productTDS = "";
-    if (YB.App.config.capabilities.brineomatic.product_tds)
+    if (YB.capabilities.brineomatic.product_tds)
       productTDS = /*html*/ `
       <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="has_product_tds_sensor">
@@ -2451,7 +2451,7 @@
     `;
 
     let brineTDS = "";
-    if (YB.App.config.capabilities.brineomatic.brine_tds)
+    if (YB.capabilities.brineomatic.brine_tds)
       brineTDS = /*html*/ `
       <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="has_brine_tds_sensor">
@@ -2472,7 +2472,7 @@
     `;
 
     let motorTemperature = "";
-    if (YB.App.config.capabilities.brineomatic.motor_temperature)
+    if (YB.capabilities.brineomatic.motor_temperature)
       motorTemperature = /*html*/ `
       <div class="form-floating mb-3">
           <select id="motor_temperature_sensor_type" class="form-select" aria-label="Motor Temperature Sensor">
@@ -2495,7 +2495,7 @@
     `;
 
     let waterTemperature = "";
-    if (YB.App.config.capabilities.brineomatic.water_temperature)
+    if (YB.capabilities.brineomatic.water_temperature)
       waterTemperature = /*html*/ `
       <div class="form-floating mb-3">
           <select id="water_temperature_sensor_type" class="form-select" aria-label="Water Temperature Sensor">
@@ -3645,7 +3645,7 @@
     $("#high_pressure_stepper_home_current").val(data.high_pressure_stepper_home_current);
     $("#high_pressure_stepper_inverted").prop('checked', data.high_pressure_stepper_inverted);
 
-    let membrane_pressure_target = YB.bom.convertPressure(data.membrane_pressure_target, "Bar", YB.App.config.brineomatic.pressure_units);
+    let membrane_pressure_target = YB.bom.convertPressure(data.membrane_pressure_target, "Bar", YB.config.brineomatic.pressure_units);
     membrane_pressure_target = this.formatReadable(membrane_pressure_target);
     $("#membrane_pressure_target").val(membrane_pressure_target);
 
@@ -3673,7 +3673,7 @@
     $("#autoflush_mode").val(data.autoflush_mode);
     $("#autoflush_salinity").val(data.autoflush_salinity);
     $("#autoflush_duration").val(data.autoflush_duration / (60 * 1000));
-    $("#autoflush_volume").val(YB.bom.convertVolume(data.autoflush_volume, "liters", YB.App.config.brineomatic.volume_units));
+    $("#autoflush_volume").val(YB.bom.convertVolume(data.autoflush_volume, "liters", YB.config.brineomatic.volume_units));
     $("#autoflush_interval").val(data.autoflush_interval / (60 * 60 * 1000));
     $("#autoflush_use_high_pressure_motor").prop('checked', data.autoflush_use_high_pressure_motor);
 
@@ -3681,31 +3681,31 @@
     $("#cooling_fan_relay_id").val(data.cooling_fan_relay_id);
     $("#cooling_fan_relay_inverted").prop('checked', data.cooling_fan_relay_inverted);
 
-    let cooling_fan_on_temp = YB.bom.convertTemperature(data.cooling_fan_on_temperature, "C", YB.App.config.brineomatic.temperature_units);
+    let cooling_fan_on_temp = YB.bom.convertTemperature(data.cooling_fan_on_temperature, "C", YB.config.brineomatic.temperature_units);
     cooling_fan_on_temp = Math.round(cooling_fan_on_temp);
     $("#cooling_fan_on_temperature").val(cooling_fan_on_temp);
 
-    let cooling_fan_off_temp = YB.bom.convertTemperature(data.cooling_fan_off_temperature, "C", YB.App.config.brineomatic.temperature_units);
+    let cooling_fan_off_temp = YB.bom.convertTemperature(data.cooling_fan_off_temperature, "C", YB.config.brineomatic.temperature_units);
     cooling_fan_off_temp = Math.round(cooling_fan_off_temp);
     $("#cooling_fan_off_temperature").val(cooling_fan_off_temp);
 
     $("#has_membrane_pressure_sensor").prop('checked', data.has_membrane_pressure_sensor);
 
-    let membrane_pressure_sensor_min = YB.bom.convertPressure(data.membrane_pressure_sensor_min, "Bar", YB.App.config.brineomatic.pressure_units);
+    let membrane_pressure_sensor_min = YB.bom.convertPressure(data.membrane_pressure_sensor_min, "Bar", YB.config.brineomatic.pressure_units);
     membrane_pressure_sensor_min = this.formatReadable(membrane_pressure_sensor_min);
     $("#membrane_pressure_sensor_min").val(membrane_pressure_sensor_min);
 
-    let membrane_pressure_sensor_max = YB.bom.convertPressure(data.membrane_pressure_sensor_max, "Bar", YB.App.config.brineomatic.pressure_units);
+    let membrane_pressure_sensor_max = YB.bom.convertPressure(data.membrane_pressure_sensor_max, "Bar", YB.config.brineomatic.pressure_units);
     membrane_pressure_sensor_max = this.formatReadable(membrane_pressure_sensor_max);
     $("#membrane_pressure_sensor_max").val(membrane_pressure_sensor_max);
 
     $("#has_filter_pressure_sensor").prop('checked', data.has_filter_pressure_sensor);
 
-    let filter_pressure_sensor_min = YB.bom.convertPressure(data.filter_pressure_sensor_min, "Bar", YB.App.config.brineomatic.pressure_units);
+    let filter_pressure_sensor_min = YB.bom.convertPressure(data.filter_pressure_sensor_min, "Bar", YB.config.brineomatic.pressure_units);
     filter_pressure_sensor_min = this.formatReadable(filter_pressure_sensor_min);
     $("#filter_pressure_sensor_min").val(filter_pressure_sensor_min);
 
-    let filter_pressure_sensor_max = YB.bom.convertPressure(data.filter_pressure_sensor_max, "Bar", YB.App.config.brineomatic.pressure_units);
+    let filter_pressure_sensor_max = YB.bom.convertPressure(data.filter_pressure_sensor_max, "Bar", YB.config.brineomatic.pressure_units);
     filter_pressure_sensor_max = this.formatReadable(filter_pressure_sensor_max);
     $("#filter_pressure_sensor_max").val(filter_pressure_sensor_max);
 
@@ -3716,10 +3716,10 @@
     $("#brine_tds_sensor_offset").val(data.brine_tds_sensor_offset);
 
     $("#has_product_flow_sensor").prop('checked', data.has_product_flow_sensor);
-    $("#product_flowmeter_ppl").val(this.formatReadable(YB.bom.convertPulsesPerVolume(data.product_flowmeter_ppl, "lph", YB.App.config.brineomatic.flowrate_units)));
+    $("#product_flowmeter_ppl").val(this.formatReadable(YB.bom.convertPulsesPerVolume(data.product_flowmeter_ppl, "lph", YB.config.brineomatic.flowrate_units)));
 
     $("#has_brine_flow_sensor").prop('checked', data.has_brine_flow_sensor);
-    $("#brine_flowmeter_ppl").val(this.formatReadable(YB.bom.convertPulsesPerVolume(data.brine_flowmeter_ppl, "lph", YB.App.config.brineomatic.flowrate_units)));
+    $("#brine_flowmeter_ppl").val(this.formatReadable(YB.bom.convertPulsesPerVolume(data.brine_flowmeter_ppl, "lph", YB.config.brineomatic.flowrate_units)));
 
     $("#motor_temperature_sensor_type").val(data.motor_temperature_sensor_type);
     $("#motor_temperature_mqtt_path").val(data.motor_temperature_mqtt_path);
@@ -3728,7 +3728,7 @@
 
     $("#tank_level_sensor_type").val(data.tank_level_sensor_type);
     $("#tank_level_mqtt_path").val(data.tank_level_mqtt_path);
-    $("#tank_capacity").val(this.formatReadable(YB.bom.convertVolume(data.tank_capacity, "liters", YB.App.config.brineomatic.volume_units)));
+    $("#tank_capacity").val(this.formatReadable(YB.bom.convertVolume(data.tank_capacity, "liters", YB.config.brineomatic.volume_units)));
 
     $("#battery_level_sensor_type").val(data.battery_level_sensor_type);
     $("#battery_level_mqtt_path").val(data.battery_level_mqtt_path);
@@ -3741,42 +3741,42 @@
 
     $("#enable_membrane_pressure_high_check").prop('checked', data.enable_membrane_pressure_high_check);
     $("#membrane_pressure_high_delay").val(data.membrane_pressure_high_delay);
-    let membrane_pressure_high_threshold = YB.bom.convertPressure(data.membrane_pressure_high_threshold, "Bar", YB.App.config.brineomatic.pressure_units);
+    let membrane_pressure_high_threshold = YB.bom.convertPressure(data.membrane_pressure_high_threshold, "Bar", YB.config.brineomatic.pressure_units);
     membrane_pressure_high_threshold = this.formatReadable(membrane_pressure_high_threshold);
     $("#membrane_pressure_high_threshold").val(membrane_pressure_high_threshold);
 
     $("#enable_membrane_pressure_low_check").prop('checked', data.enable_membrane_pressure_low_check);
     $("#membrane_pressure_low_delay").val(data.membrane_pressure_low_delay);
-    let membrane_pressure_low_threshold = YB.bom.convertPressure(data.membrane_pressure_low_threshold, "Bar", YB.App.config.brineomatic.pressure_units);
+    let membrane_pressure_low_threshold = YB.bom.convertPressure(data.membrane_pressure_low_threshold, "Bar", YB.config.brineomatic.pressure_units);
     membrane_pressure_low_threshold = this.formatReadable(membrane_pressure_low_threshold);
     $("#membrane_pressure_low_threshold").val(membrane_pressure_low_threshold);
 
     $("#enable_filter_pressure_high_check").prop('checked', data.enable_filter_pressure_high_check);
     $("#filter_pressure_high_delay").val(data.filter_pressure_high_delay);
-    let filter_pressure_high_threshold = YB.bom.convertPressure(data.filter_pressure_high_threshold, "Bar", YB.App.config.brineomatic.pressure_units);
+    let filter_pressure_high_threshold = YB.bom.convertPressure(data.filter_pressure_high_threshold, "Bar", YB.config.brineomatic.pressure_units);
     filter_pressure_high_threshold = this.formatReadable(filter_pressure_high_threshold);
     $("#filter_pressure_high_threshold").val(filter_pressure_high_threshold);
 
     $("#enable_filter_pressure_low_check").prop('checked', data.enable_filter_pressure_low_check);
     $("#filter_pressure_low_delay").val(data.filter_pressure_low_delay);
-    let filter_pressure_low_threshold = YB.bom.convertPressure(data.filter_pressure_low_threshold, "Bar", YB.App.config.brineomatic.pressure_units);
+    let filter_pressure_low_threshold = YB.bom.convertPressure(data.filter_pressure_low_threshold, "Bar", YB.config.brineomatic.pressure_units);
     filter_pressure_low_threshold = this.formatReadable(filter_pressure_low_threshold);
     $("#filter_pressure_low_threshold").val(filter_pressure_low_threshold);
 
     $("#enable_product_flowrate_high_check").prop('checked', data.enable_product_flowrate_high_check);
-    $("#product_flowrate_high_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.product_flowrate_high_threshold, "lph", YB.App.config.brineomatic.flowrate_units)));
+    $("#product_flowrate_high_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.product_flowrate_high_threshold, "lph", YB.config.brineomatic.flowrate_units)));
     $("#product_flowrate_high_delay").val(data.product_flowrate_high_delay);
 
     $("#enable_product_flowrate_low_check").prop('checked', data.enable_product_flowrate_low_check);
-    $("#product_flowrate_low_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.product_flowrate_low_threshold, "lph", YB.App.config.brineomatic.flowrate_units)));
+    $("#product_flowrate_low_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.product_flowrate_low_threshold, "lph", YB.config.brineomatic.flowrate_units)));
     $("#product_flowrate_low_delay").val(data.product_flowrate_low_delay);
 
     $("#enable_run_total_flowrate_low_check").prop('checked', data.enable_run_total_flowrate_low_check);
-    $("#run_total_flowrate_low_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.run_total_flowrate_low_threshold, "lph", YB.App.config.brineomatic.flowrate_units)));
+    $("#run_total_flowrate_low_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.run_total_flowrate_low_threshold, "lph", YB.config.brineomatic.flowrate_units)));
     $("#run_total_flowrate_low_delay").val(data.run_total_flowrate_low_delay);
 
     $("#enable_pickle_total_flowrate_low_check").prop('checked', data.enable_pickle_total_flowrate_low_check);
-    $("#pickle_total_flowrate_low_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.pickle_total_flowrate_low_threshold, "lph", YB.App.config.brineomatic.flowrate_units)));
+    $("#pickle_total_flowrate_low_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.pickle_total_flowrate_low_threshold, "lph", YB.config.brineomatic.flowrate_units)));
     $("#pickle_total_flowrate_low_delay").val(data.pickle_total_flowrate_low_delay);
 
     $("#enable_diverter_valve_closed_check").prop('checked', data.enable_diverter_valve_closed_check);
@@ -3790,17 +3790,17 @@
     $("#enable_motor_temperature_check").prop('checked', data.enable_motor_temperature_check);
     $("#motor_temperature_high_delay").val(data.motor_temperature_high_delay);
 
-    let motor_temp_threshold = YB.bom.convertTemperature(data.motor_temperature_high_threshold, "C", YB.App.config.brineomatic.temperature_units);
+    let motor_temp_threshold = YB.bom.convertTemperature(data.motor_temperature_high_threshold, "C", YB.config.brineomatic.temperature_units);
     motor_temp_threshold = Math.round(motor_temp_threshold);
     $("#motor_temperature_high_threshold").val(motor_temp_threshold);
 
     $("#enable_flush_flowrate_low_check").prop('checked', data.enable_flush_flowrate_low_check);
-    $("#flush_flowrate_low_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.flush_flowrate_low_threshold, "lph", YB.App.config.brineomatic.flowrate_units)));
+    $("#flush_flowrate_low_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.flush_flowrate_low_threshold, "lph", YB.config.brineomatic.flowrate_units)));
     $("#flush_flowrate_low_delay").val(data.flush_flowrate_low_delay);
 
     $("#enable_flush_filter_pressure_low_check").prop('checked', data.enable_flush_filter_pressure_low_check);
     $("#flush_filter_pressure_low_delay").val(data.flush_filter_pressure_low_delay);
-    let flush_filter_pressure_low_threshold = YB.bom.convertPressure(data.flush_filter_pressure_low_threshold, "Bar", YB.App.config.brineomatic.pressure_units);
+    let flush_filter_pressure_low_threshold = YB.bom.convertPressure(data.flush_filter_pressure_low_threshold, "Bar", YB.config.brineomatic.pressure_units);
     flush_filter_pressure_low_threshold = this.formatReadable(flush_filter_pressure_low_threshold);
     $("#flush_filter_pressure_low_threshold").val(flush_filter_pressure_low_threshold);
 
@@ -3874,7 +3874,7 @@
       // helper function
       const convertTemperatureField = (fieldId) => {
         let value = parseFloat($(fieldId).val());
-        value = YB.bom.convertTemperature(value, YB.App.config.brineomatic.temperature_units, e.target.value);
+        value = YB.bom.convertTemperature(value, YB.config.brineomatic.temperature_units, e.target.value);
         value = Math.round(value);
         $(fieldId).val(value);
       };
@@ -3891,7 +3891,7 @@
       // helper function
       const convertPressureField = (fieldId) => {
         let value = parseFloat($(fieldId).val());
-        value = YB.bom.convertPressure(value, YB.App.config.brineomatic.pressure_units, e.target.value);
+        value = YB.bom.convertPressure(value, YB.config.brineomatic.pressure_units, e.target.value);
         value = this.formatReadable(value);
         $(fieldId).val(value);
       };
@@ -3918,7 +3918,7 @@
       // helper function
       const convertVolumeField = (fieldId) => {
         let value = parseFloat($(fieldId).val());
-        value = YB.bom.convertVolume(value, YB.App.config.brineomatic.volume_units, e.target.value);
+        value = YB.bom.convertVolume(value, YB.config.brineomatic.volume_units, e.target.value);
         value = this.formatReadable(value);
         $(fieldId).val(value);
       };
@@ -3935,7 +3935,7 @@
       // helper function
       const convertFlowrateField = (fieldId) => {
         let value = parseFloat($(fieldId).val());
-        value = YB.bom.convertFlowrate(value, YB.App.config.brineomatic.flowrate_units, e.target.value);
+        value = YB.bom.convertFlowrate(value, YB.config.brineomatic.flowrate_units, e.target.value);
         value = this.formatReadable(value);
         $(fieldId).val(value);
       };
@@ -3950,7 +3950,7 @@
       // helper function for pulses per volume
       const convertPulsesField = (fieldId) => {
         let value = parseFloat($(fieldId).val());
-        value = YB.bom.convertPulsesPerVolume(value, YB.App.config.brineomatic.flowrate_units, e.target.value);
+        value = YB.bom.convertPulsesPerVolume(value, YB.config.brineomatic.flowrate_units, e.target.value);
         value = this.formatReadable(value);
         $(fieldId).val(value);
       };
@@ -4065,7 +4065,7 @@
 
   Brineomatic.prototype.updateTemperatureUnits = function (units) {
     //we need this as its pulled dynamically in other places
-    YB.App.config.brineomatic.temperature_units = units;
+    YB.config.brineomatic.temperature_units = units;
 
     //update static units
     let short = YB.bom.getShortTemperatureUnits(units);
@@ -4074,8 +4074,8 @@
     //update temperature gauge thresholds
     if (this.motorTemperatureGauge) {
       //update our min/max
-      let tempMin = Math.round(YB.bom.convertTemperature(0, "C", YB.App.config.brineomatic.temperature_units));
-      let tempMax = Math.round(YB.bom.convertTemperature(80, "C", YB.App.config.brineomatic.temperature_units));
+      let tempMin = Math.round(YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units));
+      let tempMax = Math.round(YB.bom.convertTemperature(80, "C", YB.config.brineomatic.temperature_units));
       this.motorTemperatureGauge.internal.config.gauge_min = tempMin;
       this.motorTemperatureGauge.internal.config.gauge_max = tempMax;
 
@@ -4086,8 +4086,8 @@
 
     if (this.waterTemperatureGauge) {
       //update our min/max
-      let tempMin = Math.round(YB.bom.convertTemperature(0, "C", YB.App.config.brineomatic.temperature_units));
-      let tempMax = Math.round(YB.bom.convertTemperature(50, "C", YB.App.config.brineomatic.temperature_units));
+      let tempMin = Math.round(YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units));
+      let tempMax = Math.round(YB.bom.convertTemperature(50, "C", YB.config.brineomatic.temperature_units));
       this.waterTemperatureGauge.internal.config.gauge_min = tempMin;
       this.waterTemperatureGauge.internal.config.gauge_max = tempMax;
 
@@ -4099,7 +4099,7 @@
 
   Brineomatic.prototype.updatePressureUnits = function (units) {
     //we need this as its pulled dynamically in other places
-    YB.App.config.brineomatic.pressure_units = units;
+    YB.config.brineomatic.pressure_units = units;
 
     //update static units
     let short = YB.bom.getShortPressureUnits(units);
@@ -4108,8 +4108,8 @@
     //update gauge thresholds
     if (this.membranePressureGauge) {
       //update our min/max
-      let tempMin = Math.round(YB.bom.convertPressure(0, "Bar", YB.App.config.brineomatic.pressure_units));
-      let tempMax = Math.round(YB.bom.convertPressure(69.0, "Bar", YB.App.config.brineomatic.pressure_units));
+      let tempMin = Math.round(YB.bom.convertPressure(0, "Bar", YB.config.brineomatic.pressure_units));
+      let tempMax = Math.round(YB.bom.convertPressure(69.0, "Bar", YB.config.brineomatic.pressure_units));
       this.membranePressureGauge.internal.config.gauge_min = tempMin;
       this.membranePressureGauge.internal.config.gauge_max = tempMax;
 
@@ -4120,8 +4120,8 @@
 
     if (this.filterPressureGauge) {
       //update our min/max
-      let tempMin = Math.round(YB.bom.convertPressure(0, "Bar", YB.App.config.brineomatic.pressure_units));
-      let tempMax = Math.round(YB.bom.convertPressure(3.45, "Bar", YB.App.config.brineomatic.pressure_units));
+      let tempMin = Math.round(YB.bom.convertPressure(0, "Bar", YB.config.brineomatic.pressure_units));
+      let tempMax = Math.round(YB.bom.convertPressure(3.45, "Bar", YB.config.brineomatic.pressure_units));
       this.filterPressureGauge.internal.config.gauge_min = tempMin;
       this.filterPressureGauge.internal.config.gauge_max = tempMax;
 
@@ -4133,7 +4133,7 @@
 
   Brineomatic.prototype.updateVolumeUnits = function (units) {
     //we need this as its pulled dynamically in other places
-    YB.App.config.brineomatic.volume_units = units;
+    YB.config.brineomatic.volume_units = units;
 
     //update static units
     let short = YB.bom.getShortVolumeUnits(units);
@@ -4143,7 +4143,7 @@
 
   Brineomatic.prototype.updateFlowrateUnits = function (units) {
     //we need this as its pulled dynamically in other places
-    YB.App.config.brineomatic.flowrate_units = units;
+    YB.config.brineomatic.flowrate_units = units;
 
     //update static units
     let short = YB.bom.getShortFlowrateUnits(units);
@@ -4161,8 +4161,8 @@
     //update gauge thresholds
     if (this.productFlowrateGauge) {
       //update our min/max
-      let tempMin = Math.round(YB.bom.convertFlowrate(0, "lph", YB.App.config.brineomatic.flowrate_units));
-      let tempMax = Math.round(YB.bom.convertFlowrate(250, "lph", YB.App.config.brineomatic.flowrate_units));
+      let tempMin = Math.round(YB.bom.convertFlowrate(0, "lph", YB.config.brineomatic.flowrate_units));
+      let tempMax = Math.round(YB.bom.convertFlowrate(250, "lph", YB.config.brineomatic.flowrate_units));
       this.productFlowrateGauge.internal.config.gauge_min = tempMin;
       this.productFlowrateGauge.internal.config.gauge_max = tempMax;
 
@@ -4173,8 +4173,8 @@
 
     if (this.brineFlowrateGauge) {
       //update our min/max
-      let tempMin = Math.round(YB.bom.convertFlowrate(0, "lph", YB.App.config.brineomatic.flowrate_units));
-      let tempMax = Math.round(YB.bom.convertFlowrate(600, "lph", YB.App.config.brineomatic.flowrate_units));
+      let tempMin = Math.round(YB.bom.convertFlowrate(0, "lph", YB.config.brineomatic.flowrate_units));
+      let tempMax = Math.round(YB.bom.convertFlowrate(600, "lph", YB.config.brineomatic.flowrate_units));
       this.brineFlowrateGauge.internal.config.gauge_min = tempMin;
       this.brineFlowrateGauge.internal.config.gauge_max = tempMax;
 
@@ -4185,8 +4185,8 @@
 
     if (this.totalFlowrateGauge) {
       //update our min/max
-      let tempMin = Math.round(YB.bom.convertFlowrate(0, "lph", YB.App.config.brineomatic.flowrate_units));
-      let tempMax = Math.round(YB.bom.convertFlowrate(600, "lph", YB.App.config.brineomatic.flowrate_units));
+      let tempMin = Math.round(YB.bom.convertFlowrate(0, "lph", YB.config.brineomatic.flowrate_units));
+      let tempMax = Math.round(YB.bom.convertFlowrate(600, "lph", YB.config.brineomatic.flowrate_units));
       this.totalFlowrateGauge.internal.config.gauge_min = tempMin;
       this.totalFlowrateGauge.internal.config.gauge_max = tempMax;
 
@@ -4619,7 +4619,7 @@
     data.high_pressure_stepper_inverted = $("#high_pressure_stepper_inverted").prop("checked");
 
     let membrane_pressure_target = parseFloat($("#membrane_pressure_target").val());
-    data.membrane_pressure_target = YB.bom.convertPressure(membrane_pressure_target, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.membrane_pressure_target = YB.bom.convertPressure(membrane_pressure_target, YB.config.brineomatic.pressure_units, "Bar");
 
     data.diverter_valve_control = $("#diverter_valve_control").val();
     data.diverter_valve_relay_id = parseInt($("#diverter_valve_relay_id").val());
@@ -4643,7 +4643,7 @@
     data.autoflush_mode = $("#autoflush_mode").val();
     data.autoflush_salinity = parseFloat($("#autoflush_salinity").val());
     data.autoflush_duration = Math.round(parseFloat($("#autoflush_duration").val()) * 60 * 1000);
-    data.autoflush_volume = YB.bom.convertVolume(parseFloat($("#autoflush_volume").val()), YB.App.config.brineomatic.volume_units, "liters");
+    data.autoflush_volume = YB.bom.convertVolume(parseFloat($("#autoflush_volume").val()), YB.config.brineomatic.volume_units, "liters");
     data.autoflush_interval = Math.round(parseFloat($("#autoflush_interval").val()) * 60 * 60 * 1000);
     data.autoflush_use_high_pressure_motor = $("#autoflush_use_high_pressure_motor").prop("checked");
 
@@ -4652,22 +4652,22 @@
     data.cooling_fan_relay_inverted = $("#cooling_fan_relay_inverted").prop("checked");
 
     let cooling_fan_on_temp = parseFloat($("#cooling_fan_on_temperature").val());
-    data.cooling_fan_on_temperature = YB.bom.convertTemperature(cooling_fan_on_temp, YB.App.config.brineomatic.temperature_units, "C");
+    data.cooling_fan_on_temperature = YB.bom.convertTemperature(cooling_fan_on_temp, YB.config.brineomatic.temperature_units, "C");
 
     let cooling_fan_off_temp = parseFloat($("#cooling_fan_off_temperature").val());
-    data.cooling_fan_off_temperature = YB.bom.convertTemperature(cooling_fan_off_temp, YB.App.config.brineomatic.temperature_units, "C");
+    data.cooling_fan_off_temperature = YB.bom.convertTemperature(cooling_fan_off_temp, YB.config.brineomatic.temperature_units, "C");
 
     data.has_membrane_pressure_sensor = $("#has_membrane_pressure_sensor").prop("checked");
     let membrane_pressure_sensor_min = parseFloat($("#membrane_pressure_sensor_min").val());
-    data.membrane_pressure_sensor_min = YB.bom.convertPressure(membrane_pressure_sensor_min, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.membrane_pressure_sensor_min = YB.bom.convertPressure(membrane_pressure_sensor_min, YB.config.brineomatic.pressure_units, "Bar");
     let membrane_pressure_sensor_max = parseFloat($("#membrane_pressure_sensor_max").val());
-    data.membrane_pressure_sensor_max = YB.bom.convertPressure(membrane_pressure_sensor_max, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.membrane_pressure_sensor_max = YB.bom.convertPressure(membrane_pressure_sensor_max, YB.config.brineomatic.pressure_units, "Bar");
 
     data.has_filter_pressure_sensor = $("#has_filter_pressure_sensor").prop("checked");
     let filter_pressure_sensor_min = parseFloat($("#filter_pressure_sensor_min").val());
-    data.filter_pressure_sensor_min = YB.bom.convertPressure(filter_pressure_sensor_min, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.filter_pressure_sensor_min = YB.bom.convertPressure(filter_pressure_sensor_min, YB.config.brineomatic.pressure_units, "Bar");
     let filter_pressure_sensor_max = parseFloat($("#filter_pressure_sensor_max").val());
-    data.filter_pressure_sensor_max = YB.bom.convertPressure(filter_pressure_sensor_max, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.filter_pressure_sensor_max = YB.bom.convertPressure(filter_pressure_sensor_max, YB.config.brineomatic.pressure_units, "Bar");
 
     data.has_product_tds_sensor = $("#has_product_tds_sensor").prop("checked");
     data.product_tds_sensor_offset = parseFloat($("#product_tds_sensor_offset").val());
@@ -4676,10 +4676,10 @@
     data.brine_tds_sensor_offset = parseFloat($("#brine_tds_sensor_offset").val());
 
     data.has_product_flow_sensor = $("#has_product_flow_sensor").prop("checked");
-    data.product_flowmeter_ppl = Math.round(YB.bom.convertPulsesPerVolume(parseInt($("#product_flowmeter_ppl").val()), YB.App.config.brineomatic.flowrate_units, "lph"));
+    data.product_flowmeter_ppl = Math.round(YB.bom.convertPulsesPerVolume(parseInt($("#product_flowmeter_ppl").val()), YB.config.brineomatic.flowrate_units, "lph"));
 
     data.has_brine_flow_sensor = $("#has_brine_flow_sensor").prop("checked");
-    data.brine_flowmeter_ppl = Math.round(YB.bom.convertPulsesPerVolume(parseInt($("#brine_flowmeter_ppl").val()), YB.App.config.brineomatic.flowrate_units, "lph"));
+    data.brine_flowmeter_ppl = Math.round(YB.bom.convertPulsesPerVolume(parseInt($("#brine_flowmeter_ppl").val()), YB.config.brineomatic.flowrate_units, "lph"));
 
     data.motor_temperature_sensor_type = $("#motor_temperature_sensor_type").val();
     data.motor_temperature_mqtt_path = $("#motor_temperature_mqtt_path").val();
@@ -4688,7 +4688,7 @@
 
     data.tank_level_sensor_type = $("#tank_level_sensor_type").val();
     data.tank_level_mqtt_path = $("#tank_level_mqtt_path").val();
-    data.tank_capacity = YB.bom.convertVolume(parseFloat($("#tank_capacity").val()), YB.App.config.brineomatic.volume_units, "liters");
+    data.tank_capacity = YB.bom.convertVolume(parseFloat($("#tank_capacity").val()), YB.config.brineomatic.volume_units, "liters");
 
     data.battery_level_sensor_type = $("#battery_level_sensor_type").val();
     data.battery_level_mqtt_path = $("#battery_level_mqtt_path").val();
@@ -4707,38 +4707,38 @@
 
     data.enable_membrane_pressure_high_check = $("#enable_membrane_pressure_high_check").prop("checked");
     let membrane_pressure_high_threshold = parseFloat($("#membrane_pressure_high_threshold").val());
-    data.membrane_pressure_high_threshold = YB.bom.convertPressure(membrane_pressure_high_threshold, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.membrane_pressure_high_threshold = YB.bom.convertPressure(membrane_pressure_high_threshold, YB.config.brineomatic.pressure_units, "Bar");
     data.membrane_pressure_high_delay = parseInt($("#membrane_pressure_high_delay").val());
 
     data.enable_membrane_pressure_low_check = $("#enable_membrane_pressure_low_check").prop("checked");
     let membrane_pressure_low_threshold = parseFloat($("#membrane_pressure_low_threshold").val());
-    data.membrane_pressure_low_threshold = YB.bom.convertPressure(membrane_pressure_low_threshold, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.membrane_pressure_low_threshold = YB.bom.convertPressure(membrane_pressure_low_threshold, YB.config.brineomatic.pressure_units, "Bar");
     data.membrane_pressure_low_delay = parseInt($("#membrane_pressure_low_delay").val());
 
     data.enable_filter_pressure_high_check = $("#enable_filter_pressure_high_check").prop("checked");
     let filter_pressure_high_threshold = parseFloat($("#filter_pressure_high_threshold").val());
-    data.filter_pressure_high_threshold = YB.bom.convertPressure(filter_pressure_high_threshold, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.filter_pressure_high_threshold = YB.bom.convertPressure(filter_pressure_high_threshold, YB.config.brineomatic.pressure_units, "Bar");
     data.filter_pressure_high_delay = parseInt($("#filter_pressure_high_delay").val());
 
     data.enable_filter_pressure_low_check = $("#enable_filter_pressure_low_check").prop("checked");
     let filter_pressure_low_threshold = parseFloat($("#filter_pressure_low_threshold").val());
-    data.filter_pressure_low_threshold = YB.bom.convertPressure(filter_pressure_low_threshold, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.filter_pressure_low_threshold = YB.bom.convertPressure(filter_pressure_low_threshold, YB.config.brineomatic.pressure_units, "Bar");
     data.filter_pressure_low_delay = parseInt($("#filter_pressure_low_delay").val());
 
     data.enable_product_flowrate_high_check = $("#enable_product_flowrate_high_check").prop("checked");
-    data.product_flowrate_high_threshold = YB.bom.convertFlowrate(parseFloat($("#product_flowrate_high_threshold").val()), YB.App.config.brineomatic.flowrate_units, "lph");
+    data.product_flowrate_high_threshold = YB.bom.convertFlowrate(parseFloat($("#product_flowrate_high_threshold").val()), YB.config.brineomatic.flowrate_units, "lph");
     data.product_flowrate_high_delay = parseInt($("#product_flowrate_high_delay").val());
 
     data.enable_product_flowrate_low_check = $("#enable_product_flowrate_low_check").prop("checked");
-    data.product_flowrate_low_threshold = YB.bom.convertFlowrate(parseFloat($("#product_flowrate_low_threshold").val()), YB.App.config.brineomatic.flowrate_units, "lph");
+    data.product_flowrate_low_threshold = YB.bom.convertFlowrate(parseFloat($("#product_flowrate_low_threshold").val()), YB.config.brineomatic.flowrate_units, "lph");
     data.product_flowrate_low_delay = parseInt($("#product_flowrate_low_delay").val());
 
     data.enable_run_total_flowrate_low_check = $("#enable_run_total_flowrate_low_check").prop("checked");
-    data.run_total_flowrate_low_threshold = YB.bom.convertFlowrate(parseFloat($("#run_total_flowrate_low_threshold").val()), YB.App.config.brineomatic.flowrate_units, "lph");
+    data.run_total_flowrate_low_threshold = YB.bom.convertFlowrate(parseFloat($("#run_total_flowrate_low_threshold").val()), YB.config.brineomatic.flowrate_units, "lph");
     data.run_total_flowrate_low_delay = parseInt($("#run_total_flowrate_low_delay").val());
 
     data.enable_pickle_total_flowrate_low_check = $("#enable_pickle_total_flowrate_low_check").prop("checked");
-    data.pickle_total_flowrate_low_threshold = YB.bom.convertFlowrate(parseFloat($("#pickle_total_flowrate_low_threshold").val()), YB.App.config.brineomatic.flowrate_units, "lph");
+    data.pickle_total_flowrate_low_threshold = YB.bom.convertFlowrate(parseFloat($("#pickle_total_flowrate_low_threshold").val()), YB.config.brineomatic.flowrate_units, "lph");
     data.pickle_total_flowrate_low_delay = parseInt($("#pickle_total_flowrate_low_delay").val());
 
     data.enable_diverter_valve_closed_check = $("#enable_diverter_valve_closed_check").prop("checked");
@@ -4753,15 +4753,15 @@
     data.motor_temperature_high_delay = parseInt($("#motor_temperature_high_delay").val());
 
     let motor_temp_threshold = parseFloat($("#motor_temperature_high_threshold").val());
-    data.motor_temperature_high_threshold = YB.bom.convertTemperature(motor_temp_threshold, YB.App.config.brineomatic.temperature_units, "C");
+    data.motor_temperature_high_threshold = YB.bom.convertTemperature(motor_temp_threshold, YB.config.brineomatic.temperature_units, "C");
 
     data.enable_flush_flowrate_low_check = $("#enable_flush_flowrate_low_check").prop("checked");
-    data.flush_flowrate_low_threshold = YB.bom.convertFlowrate(parseFloat($("#flush_flowrate_low_threshold").val()), YB.App.config.brineomatic.flowrate_units, "lph");
+    data.flush_flowrate_low_threshold = YB.bom.convertFlowrate(parseFloat($("#flush_flowrate_low_threshold").val()), YB.config.brineomatic.flowrate_units, "lph");
     data.flush_flowrate_low_delay = parseInt($("#flush_flowrate_low_delay").val());
 
     data.enable_flush_filter_pressure_low_check = $("#enable_flush_filter_pressure_low_check").prop("checked");
     let flush_filter_pressure_low_threshold = parseFloat($("#flush_filter_pressure_low_threshold").val());
-    data.flush_filter_pressure_low_threshold = YB.bom.convertPressure(flush_filter_pressure_low_threshold, YB.App.config.brineomatic.pressure_units, "Bar");
+    data.flush_filter_pressure_low_threshold = YB.bom.convertPressure(flush_filter_pressure_low_threshold, YB.config.brineomatic.pressure_units, "Bar");
     data.flush_filter_pressure_low_delay = parseInt($("#flush_filter_pressure_low_delay").val());
 
     data.enable_flush_valve_off_check = $("#enable_flush_valve_off_check").prop("checked");
@@ -5121,12 +5121,12 @@
       cooling_fan_on_temperature: {
         numericality: {
           get greaterThanOrEqualTo() {
-            let temp = YB.bom.convertTemperature(0, "C", YB.App.config.brineomatic.temperature_units);
+            let temp = YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units);
             temp = Math.round(temp);
             return temp;
           },
           get lessThanOrEqualTo() {
-            let temp = YB.bom.convertTemperature(100, "C", YB.App.config.brineomatic.temperature_units);
+            let temp = YB.bom.convertTemperature(100, "C", YB.config.brineomatic.temperature_units);
             temp = Math.round(temp);
             return temp;
           }
@@ -5136,12 +5136,12 @@
       cooling_fan_off_temperature: {
         numericality: {
           get greaterThanOrEqualTo() {
-            let temp = YB.bom.convertTemperature(0, "C", YB.App.config.brineomatic.temperature_units);
+            let temp = YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units);
             temp = Math.round(temp);
             return temp;
           },
           get lessThanOrEqualTo() {
-            let temp = YB.bom.convertTemperature(100, "C", YB.App.config.brineomatic.temperature_units);
+            let temp = YB.bom.convertTemperature(100, "C", YB.config.brineomatic.temperature_units);
             temp = Math.round(temp);
             return temp;
           }
@@ -5336,7 +5336,7 @@
       motor_temperature_high_threshold: {
         numericality: {
           get greaterThan() {
-            let temp = YB.bom.convertTemperature(0, "C", YB.App.config.brineomatic.temperature_units);
+            let temp = YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units);
             temp = Math.round(temp);
             return temp;
           }
@@ -5693,7 +5693,7 @@
         }
 
         var bom = YB.bom;
-        var volumeUnits = YB.App.config.brineomatic.volume_units;
+        var volumeUnits = YB.config.brineomatic.volume_units;
         var shortUnits = bom.getShortVolumeUnits(volumeUnits);
 
         var entries = lines.map(function (l) { return JSON.parse(l); }).reverse();

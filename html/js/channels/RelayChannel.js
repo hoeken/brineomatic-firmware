@@ -136,7 +136,7 @@
     YB.client.send({
       "cmd": "toggle_relay_channel",
       "id": this.id,
-      "source": YB.App.config.hostname
+      "source": YB.App.config.http.hostname
     }, true);
   }
 
