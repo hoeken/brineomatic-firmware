@@ -45,11 +45,11 @@ void setup()
   yba.registerController(navico);
 
 #ifdef YB_HAS_PIEZO
-  buzzer.buzzerPin = YB_PIEZO_PIN;
+  buzzer.setBuzzerPin(YB_PIEZO_PIN);
   #ifdef YB_PIEZO_PASSIVE
-  buzzer.isActive = false;
+  buzzer.setIsActive(false);
   #else
-  buzzer.isActive = true;
+  buzzer.setIsActive(true);
   #endif
   yba.registerController(buzzer);
 #endif

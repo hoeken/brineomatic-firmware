@@ -98,9 +98,12 @@ bool BrineomaticController::loadConfigHook(JsonVariant config, char* error, size
 
     wm.loadConfigJSON(bom);
 
+    // todo: move to separate function
     if (_app.mqtt.isEnabled()) {
       MQTTController* mqtt = (MQTTController*)_app.getController("mqtt");
       String type;
+
+      // todo: unsubscribe from these topics before we subscribe (in case of multiple config loads)
 
       type = bom["motor_temperature_sensor_type"].as<String>();
       if (type.equals("MQTT")) {
