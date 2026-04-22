@@ -86,51 +86,47 @@ bool BrineomaticController::loadConfigHook(JsonVariant config, char* error, size
 {
   bool result = true;
 
-  if (config["brineomatic"]) {
-    JsonVariant bom = config["brineomatic"].as<JsonVariant>();
+  // validate prunes invalid entries, so it's safe to load even on error.
+  // we don't want a single bad config option to nuke the whole config loading.
+  if (!wm.validateConfigJSON(config, error, len)) {
+    YBP.println(error);
+    result = false;
+  }
 
-    // validate prunes invalid entries, so it's safe to load even on error.
-    // we don't want a single bad config option to nuke the whole config loading.
-    if (!wm.validateConfigJSON(bom, error, len)) {
-      YBP.println(error);
-      result = false;
+  wm.loadConfigJSON(config);
+
+  // todo: move to separate function
+  if (_app.mqtt.isEnabled()) {
+    MQTTController* mqtt = (MQTTController*)_app.getController("mqtt");
+    String type;
+
+    // todo: unsubscribe from these topics before we subscribe (in case of multiple config loads)
+
+    type = config["motor_temperature_sensor_type"].as<String>();
+    if (type.equals("MQTT")) {
+      mqtt->onTopic(config["motor_temperature_mqtt_path"], 0, &BrineomaticController::handleMotorTemperatureCallbackStatic);
     }
 
-    wm.loadConfigJSON(bom);
+    type = config["water_temperature_sensor_type"].as<String>();
+    if (type.equals("MQTT")) {
+      mqtt->onTopic(config["water_temperature_mqtt_path"], 0, &BrineomaticController::handleWaterTemperatureCallbackStatic);
+    }
 
-    // todo: move to separate function
-    if (_app.mqtt.isEnabled()) {
-      MQTTController* mqtt = (MQTTController*)_app.getController("mqtt");
-      String type;
+    type = config["tank_level_sensor_type"].as<String>();
+    if (type.equals("MQTT")) {
+      mqtt->onTopic(config["tank_level_mqtt_path"], 0, &BrineomaticController::handleTankLevelCallbackStatic);
+    }
 
-      // todo: unsubscribe from these topics before we subscribe (in case of multiple config loads)
-
-      type = bom["motor_temperature_sensor_type"].as<String>();
-      if (type.equals("MQTT")) {
-        mqtt->onTopic(bom["motor_temperature_mqtt_path"], 0, &BrineomaticController::handleMotorTemperatureCallbackStatic);
-      }
-
-      type = bom["water_temperature_sensor_type"].as<String>();
-      if (type.equals("MQTT")) {
-        mqtt->onTopic(bom["water_temperature_mqtt_path"], 0, &BrineomaticController::handleWaterTemperatureCallbackStatic);
-      }
-
-      type = bom["tank_level_sensor_type"].as<String>();
-      if (type.equals("MQTT")) {
-        mqtt->onTopic(bom["tank_level_mqtt_path"], 0, &BrineomaticController::handleTankLevelCallbackStatic);
-      }
-
-      type = bom["battery_level_sensor_type"].as<String>();
-      if (type.equals("MQTT")) {
-        mqtt->onTopic(bom["battery_level_mqtt_path"], 0, &BrineomaticController::handleBatteryLevelCallbackStatic);
-      }
+    type = config["battery_level_sensor_type"].as<String>();
+    if (type.equals("MQTT")) {
+      mqtt->onTopic(config["battery_level_mqtt_path"], 0, &BrineomaticController::handleBatteryLevelCallbackStatic);
     }
   }
 
   return result;
 }
 
-void BrineomaticController::generateConfigHook(JsonVariant output)
+void BrineomaticController::generateConfigHook(JsonVariant output, UserRole role, ConfigPurpose purpose)
 {
   wm.generateConfigJSON(output);
 };
@@ -138,39 +134,39 @@ void BrineomaticController::generateConfigHook(JsonVariant output)
 void BrineomaticController::generateCapabilitiesHook(JsonVariant config)
 {
 #ifdef YB_DS18B20_MOTOR_PIN
-  config["brineomatic"]["motor_temperature"] = true;
+  config["motor_temperature"] = true;
 #endif
 
 #ifdef YB_DS18B20_WATER_PIN
-  config["brineomatic"]["water_temperature"] = true;
+  config["water_temperature"] = true;
 #endif
 
 #ifdef YB_PRODUCT_FLOWMETER_PIN
-  config["brineomatic"]["product_flowmeter"] = true;
+  config["product_flowmeter"] = true;
 #endif
 
 #ifdef YB_BRINE_FLOWMETER_PIN
-  config["brineomatic"]["brine_flowmeter"] = true;
+  config["brine_flowmeter"] = true;
 #endif
 
 #ifdef YB_BRINE_TDS_CHANNEL
-  config["brineomatic"]["brine_tds"] = true;
+  config["brine_tds"] = true;
 #endif
 
 #ifdef YB_PRODUCT_TDS_CHANNEL
-  config["brineomatic"]["product_tds"] = true;
+  config["product_tds"] = true;
 #endif
 
 #ifdef YB_LP_SENSOR_CHANNEL
-  config["brineomatic"]["lp_sensor"] = true;
+  config["lp_sensor"] = true;
 #endif
 
 #ifdef YB_HP_SENSOR_CHANNEL
-  config["brineomatic"]["hp_sensor"] = true;
+  config["hp_sensor"] = true;
 #endif
 
 #ifdef YB_HAS_MODBUS
-  config["brineomatic"]["modbus"] = true;
+  config["modbus"] = true;
 #endif
 }
 

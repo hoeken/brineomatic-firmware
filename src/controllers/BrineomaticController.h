@@ -38,7 +38,7 @@ class BrineomaticController : public BaseController
     uint32_t getTotalRuntime() { return wm.getTotalRuntime(); }
 
     bool loadConfigHook(JsonVariant config, char* error, size_t len) override;
-    void generateConfigHook(JsonVariant config) override;
+    void generateConfigHook(JsonVariant config, UserRole role, ConfigPurpose purpose) override;
     void generateCapabilitiesHook(JsonVariant config) override;
     void generateUpdateHook(JsonVariant output) override;
     void generateStatsHook(JsonVariant output) override;

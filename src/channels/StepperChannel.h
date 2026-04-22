@@ -28,7 +28,7 @@ class StepperChannel : public BaseChannel
 
     void init(uint8_t id) override;
     bool loadConfig(JsonVariantConst config, char* error, size_t len) override;
-    void generateConfig(JsonVariant config) override;
+    void generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose) override;
     void generateUpdate(JsonVariant config) override;
 
     void setup(FastAccelStepperEngine* engine, byte step_pin, byte dir_pin, byte enable_pin, byte diag_pin);

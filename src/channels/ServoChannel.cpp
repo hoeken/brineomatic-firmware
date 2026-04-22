@@ -29,9 +29,9 @@ bool ServoChannel::loadConfig(JsonVariantConst config, char* error, size_t len)
   return true;
 }
 
-void ServoChannel::generateConfig(JsonVariant config)
+void ServoChannel::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)
 {
-  BaseChannel::generateConfig(config);
+  BaseChannel::generateConfig(config, role, purpose);
 }
 
 void ServoChannel::generateUpdate(JsonVariant config)

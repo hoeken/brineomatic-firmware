@@ -32,7 +32,7 @@ class RelayChannel : public BaseChannel
 
     void init(uint8_t id) override;
     bool loadConfig(JsonVariantConst config, char* error, size_t err_size) override;
-    void generateConfig(JsonVariant config) override;
+    void generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose) override;
     void generateUpdate(JsonVariant config) override;
 
     void setup(byte pin);

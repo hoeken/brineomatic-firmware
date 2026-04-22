@@ -32,9 +32,9 @@ bool MaintenanceItem::loadConfig(JsonVariantConst config, char* error, size_t le
   return true;
 }
 
-void MaintenanceItem::generateConfig(JsonVariant config)
+void MaintenanceItem::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)
 {
-  BaseChannel::generateConfig(config);
+  BaseChannel::generateConfig(config, role, purpose);
 
   config["runtimeInterval"] = this->runtimeInterval;
   config["timestampInterval"] = this->timestampInterval;

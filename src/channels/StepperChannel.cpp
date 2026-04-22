@@ -30,9 +30,9 @@ bool StepperChannel::loadConfig(JsonVariantConst config, char* error, size_t len
   return true;
 }
 
-void StepperChannel::generateConfig(JsonVariant config)
+void StepperChannel::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)
 {
-  BaseChannel::generateConfig(config);
+  BaseChannel::generateConfig(config, role, purpose);
 }
 
 void StepperChannel::generateUpdate(JsonVariant config)

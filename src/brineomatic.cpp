@@ -2207,178 +2207,177 @@ void Brineomatic::generateUpdateJSON(JsonVariant output)
 
 void Brineomatic::generateConfigJSON(JsonVariant output)
 {
-  JsonObject bom = output["brineomatic"].to<JsonObject>();
-  bom["has_boost_pump"] = this->hasBoostPump();
-  bom["has_high_pressure_pump"] = this->hasHighPressurePump();
-  bom["has_diverter_valve"] = this->hasDiverterValve();
-  bom["has_flush_valve"] = this->hasFlushValve();
-  bom["has_cooling_fan"] = this->hasCoolingFan();
+  output["has_boost_pump"] = this->hasBoostPump();
+  output["has_high_pressure_pump"] = this->hasHighPressurePump();
+  output["has_diverter_valve"] = this->hasDiverterValve();
+  output["has_flush_valve"] = this->hasFlushValve();
+  output["has_cooling_fan"] = this->hasCoolingFan();
 
-  bom["gauge_order"] = this->gaugeOrder;
+  output["gauge_order"] = this->gaugeOrder;
 
-  bom["autoflush_mode"] = this->autoflushMode;
-  bom["autoflush_salinity"] = this->autoflushSalinity;
-  bom["autoflush_duration"] = this->autoflushDuration;
-  bom["autoflush_volume"] = this->autoflushVolume;
-  bom["autoflush_interval"] = this->autoflushInterval;
-  bom["autoflush_use_high_pressure_motor"] = this->autoflushUseHighPressureMotor;
+  output["autoflush_mode"] = this->autoflushMode;
+  output["autoflush_salinity"] = this->autoflushSalinity;
+  output["autoflush_duration"] = this->autoflushDuration;
+  output["autoflush_volume"] = this->autoflushVolume;
+  output["autoflush_interval"] = this->autoflushInterval;
+  output["autoflush_use_high_pressure_motor"] = this->autoflushUseHighPressureMotor;
 
-  bom["flush_timeout"] = this->flushTimeout;
-  bom["membrane_pressure_timeout"] = this->membranePressureTimeout;
-  bom["product_flowrate_timeout"] = this->productFlowrateTimeout;
-  bom["product_salinity_timeout"] = this->productSalinityTimeout;
-  bom["production_runtime_timeout"] = this->productionRuntimeTimeout;
+  output["flush_timeout"] = this->flushTimeout;
+  output["membrane_pressure_timeout"] = this->membranePressureTimeout;
+  output["product_flowrate_timeout"] = this->productFlowrateTimeout;
+  output["product_salinity_timeout"] = this->productSalinityTimeout;
+  output["production_runtime_timeout"] = this->productionRuntimeTimeout;
 
-  bom["tank_capacity"] = this->tankCapacity;
-  bom["temperature_units"] = this->temperatureUnits;
-  bom["pressure_units"] = this->pressureUnits;
-  bom["volume_units"] = this->volumeUnits;
-  bom["flowrate_units"] = this->flowrateUnits;
-  bom["success_melody"] = this->successMelody;
-  bom["error_melody"] = this->errorMelody;
+  output["tank_capacity"] = this->tankCapacity;
+  output["temperature_units"] = this->temperatureUnits;
+  output["pressure_units"] = this->pressureUnits;
+  output["volume_units"] = this->volumeUnits;
+  output["flowrate_units"] = this->flowrateUnits;
+  output["success_melody"] = this->successMelody;
+  output["error_melody"] = this->errorMelody;
 
-  bom["boost_pump_control"] = this->boostPumpControl;
-  bom["boost_pump_relay_id"] = this->boostPumpRelayId;
-  bom["boost_pump_relay_inverted"] = this->boostPumpRelayInverted;
-  bom["boost_pump_delay"] = this->boostPumpDelay;
+  output["boost_pump_control"] = this->boostPumpControl;
+  output["boost_pump_relay_id"] = this->boostPumpRelayId;
+  output["boost_pump_relay_inverted"] = this->boostPumpRelayInverted;
+  output["boost_pump_delay"] = this->boostPumpDelay;
 
-  bom["high_pressure_pump_control"] = this->highPressurePumpControl;
-  bom["high_pressure_relay_id"] = this->highPressureRelayId;
-  bom["high_pressure_relay_inverted"] = this->highPressureRelayInverted;
-  bom["high_pressure_modbus_device"] = this->highPressurePumpModbusDevice;
-  bom["high_pressure_modbus_slave_id"] = this->highPressurePumpModbusSlaveId;
-  bom["high_pressure_modbus_frequency"] = this->highPressurePumpModbusFrequency;
-  bom["high_pressure_pump_delay"] = this->highPressurePumpDelay;
+  output["high_pressure_pump_control"] = this->highPressurePumpControl;
+  output["high_pressure_relay_id"] = this->highPressureRelayId;
+  output["high_pressure_relay_inverted"] = this->highPressureRelayInverted;
+  output["high_pressure_modbus_device"] = this->highPressurePumpModbusDevice;
+  output["high_pressure_modbus_slave_id"] = this->highPressurePumpModbusSlaveId;
+  output["high_pressure_modbus_frequency"] = this->highPressurePumpModbusFrequency;
+  output["high_pressure_pump_delay"] = this->highPressurePumpDelay;
 
-  bom["high_pressure_valve_control"] = this->highPressureValveControl;
-  bom["membrane_pressure_target"] = this->membranePressureTarget;
-  bom["high_pressure_valve_stepper_id"] = this->highPressureValveStepperId;
-  bom["high_pressure_stepper_step_angle"] = this->highPressureValveStepperStepAngle;
-  bom["high_pressure_stepper_gear_ratio"] = this->highPressureValveStepperGearRatio;
-  bom["high_pressure_stepper_close_angle"] = this->highPressureValveStepperCloseAngle;
-  bom["high_pressure_stepper_close_speed"] = this->highPressureValveStepperCloseSpeed;
-  bom["high_pressure_stepper_open_angle"] = this->highPressureValveStepperOpenAngle;
-  bom["high_pressure_stepper_open_speed"] = this->highPressureValveStepperOpenSpeed;
-  bom["high_pressure_stepper_run_current"] = this->highPressureValveStepperRunCurrent;
-  bom["high_pressure_stepper_home_current"] = this->highPressureValveStepperHomeCurrent;
-  bom["high_pressure_stepper_inverted"] = this->highPressureStepperInverted;
+  output["high_pressure_valve_control"] = this->highPressureValveControl;
+  output["membrane_pressure_target"] = this->membranePressureTarget;
+  output["high_pressure_valve_stepper_id"] = this->highPressureValveStepperId;
+  output["high_pressure_stepper_step_angle"] = this->highPressureValveStepperStepAngle;
+  output["high_pressure_stepper_gear_ratio"] = this->highPressureValveStepperGearRatio;
+  output["high_pressure_stepper_close_angle"] = this->highPressureValveStepperCloseAngle;
+  output["high_pressure_stepper_close_speed"] = this->highPressureValveStepperCloseSpeed;
+  output["high_pressure_stepper_open_angle"] = this->highPressureValveStepperOpenAngle;
+  output["high_pressure_stepper_open_speed"] = this->highPressureValveStepperOpenSpeed;
+  output["high_pressure_stepper_run_current"] = this->highPressureValveStepperRunCurrent;
+  output["high_pressure_stepper_home_current"] = this->highPressureValveStepperHomeCurrent;
+  output["high_pressure_stepper_inverted"] = this->highPressureStepperInverted;
 
-  bom["diverter_valve_control"] = this->diverterValveControl;
-  bom["diverter_valve_servo_id"] = this->diverterValveServoId;
-  bom["diverter_valve_relay_id"] = this->diverterValveRelayId;
-  bom["diverter_valve_relay_inverted"] = this->diverterValveRelayInverted;
-  bom["diverter_valve_open_angle"] = this->diverterValveOpenAngle;
-  bom["diverter_valve_close_angle"] = this->diverterValveCloseAngle;
-  bom["diverter_valve_tank_relay_id"] = this->diverterValveTankRelayId;
-  bom["diverter_valve_tank_relay_inverted"] = this->diverterValveTankRelayInverted;
-  bom["diverter_valve_overboard_relay_id"] = this->diverterValveOverboardRelayId;
-  bom["diverter_valve_overboard_relay_inverted"] = this->diverterValveOverboardRelayInverted;
-  bom["diverter_valve_relay_change_interval"] = this->diverterValveRelayChangeInterval;
+  output["diverter_valve_control"] = this->diverterValveControl;
+  output["diverter_valve_servo_id"] = this->diverterValveServoId;
+  output["diverter_valve_relay_id"] = this->diverterValveRelayId;
+  output["diverter_valve_relay_inverted"] = this->diverterValveRelayInverted;
+  output["diverter_valve_open_angle"] = this->diverterValveOpenAngle;
+  output["diverter_valve_close_angle"] = this->diverterValveCloseAngle;
+  output["diverter_valve_tank_relay_id"] = this->diverterValveTankRelayId;
+  output["diverter_valve_tank_relay_inverted"] = this->diverterValveTankRelayInverted;
+  output["diverter_valve_overboard_relay_id"] = this->diverterValveOverboardRelayId;
+  output["diverter_valve_overboard_relay_inverted"] = this->diverterValveOverboardRelayInverted;
+  output["diverter_valve_relay_change_interval"] = this->diverterValveRelayChangeInterval;
 
-  bom["flush_valve_control"] = this->flushValveControl;
-  bom["flush_valve_relay_id"] = this->flushValveRelayId;
-  bom["flush_valve_relay_inverted"] = this->flushValveRelayInverted;
-  bom["flush_valve_servo_id"] = this->flushValveServoId;
-  bom["flush_valve_open_angle"] = this->flushValveOpenAngle;
-  bom["flush_valve_close_angle"] = this->flushValveCloseAngle;
+  output["flush_valve_control"] = this->flushValveControl;
+  output["flush_valve_relay_id"] = this->flushValveRelayId;
+  output["flush_valve_relay_inverted"] = this->flushValveRelayInverted;
+  output["flush_valve_servo_id"] = this->flushValveServoId;
+  output["flush_valve_open_angle"] = this->flushValveOpenAngle;
+  output["flush_valve_close_angle"] = this->flushValveCloseAngle;
 
-  bom["cooling_fan_control"] = this->coolingFanControl;
-  bom["cooling_fan_relay_id"] = this->coolingFanRelayId;
-  bom["cooling_fan_relay_inverted"] = this->coolingFanRelayInverted;
-  bom["cooling_fan_on_temperature"] = this->coolingFanOnTemperature;
-  bom["cooling_fan_off_temperature"] = this->coolingFanOffTemperature;
+  output["cooling_fan_control"] = this->coolingFanControl;
+  output["cooling_fan_relay_id"] = this->coolingFanRelayId;
+  output["cooling_fan_relay_inverted"] = this->coolingFanRelayInverted;
+  output["cooling_fan_on_temperature"] = this->coolingFanOnTemperature;
+  output["cooling_fan_off_temperature"] = this->coolingFanOffTemperature;
 
-  bom["has_membrane_pressure_sensor"] = this->hasMembranePressureSensor;
-  bom["membrane_pressure_sensor_min"] = this->membranePressureSensorMin;
-  bom["membrane_pressure_sensor_max"] = this->membranePressureSensorMax;
+  output["has_membrane_pressure_sensor"] = this->hasMembranePressureSensor;
+  output["membrane_pressure_sensor_min"] = this->membranePressureSensorMin;
+  output["membrane_pressure_sensor_max"] = this->membranePressureSensorMax;
 
-  bom["has_filter_pressure_sensor"] = this->hasFilterPressureSensor;
-  bom["filter_pressure_sensor_min"] = this->filterPressureSensorMin;
-  bom["filter_pressure_sensor_max"] = this->filterPressureSensorMax;
+  output["has_filter_pressure_sensor"] = this->hasFilterPressureSensor;
+  output["filter_pressure_sensor_min"] = this->filterPressureSensorMin;
+  output["filter_pressure_sensor_max"] = this->filterPressureSensorMax;
 
-  bom["has_product_tds_sensor"] = this->hasProductTDSSensor;
-  bom["product_tds_sensor_offset"] = this->productTDSSensorOffset;
+  output["has_product_tds_sensor"] = this->hasProductTDSSensor;
+  output["product_tds_sensor_offset"] = this->productTDSSensorOffset;
 
-  bom["has_brine_tds_sensor"] = this->hasBrineTDSSensor;
-  bom["brine_tds_sensor_offset"] = this->brineTDSSensorOffset;
+  output["has_brine_tds_sensor"] = this->hasBrineTDSSensor;
+  output["brine_tds_sensor_offset"] = this->brineTDSSensorOffset;
 
-  bom["has_product_flow_sensor"] = this->hasProductFlowSensor;
-  bom["product_flowmeter_ppl"] = this->productFlowmeterPPL;
+  output["has_product_flow_sensor"] = this->hasProductFlowSensor;
+  output["product_flowmeter_ppl"] = this->productFlowmeterPPL;
 
-  bom["has_brine_flow_sensor"] = this->hasBrineFlowSensor;
-  bom["brine_flowmeter_ppl"] = this->brineFlowmeterPPL;
+  output["has_brine_flow_sensor"] = this->hasBrineFlowSensor;
+  output["brine_flowmeter_ppl"] = this->brineFlowmeterPPL;
 
-  bom["motor_temperature_sensor_type"] = this->motorTemperatureSensorType;
-  bom["motor_temperature_mqtt_path"] = this->motorTemperatureMqttPath;
-  bom["water_temperature_sensor_type"] = this->waterTemperatureSensorType;
-  bom["water_temperature_mqtt_path"] = this->waterTemperatureMqttPath;
-  bom["tank_level_sensor_type"] = this->tankLevelSensorType;
-  bom["tank_level_mqtt_path"] = this->tankLevelMqttPath;
-  bom["battery_level_sensor_type"] = this->batteryLevelSensorType;
-  bom["battery_level_mqtt_path"] = this->batteryLevelMqttPath;
+  output["motor_temperature_sensor_type"] = this->motorTemperatureSensorType;
+  output["motor_temperature_mqtt_path"] = this->motorTemperatureMqttPath;
+  output["water_temperature_sensor_type"] = this->waterTemperatureSensorType;
+  output["water_temperature_mqtt_path"] = this->waterTemperatureMqttPath;
+  output["tank_level_sensor_type"] = this->tankLevelSensorType;
+  output["tank_level_mqtt_path"] = this->tankLevelMqttPath;
+  output["battery_level_sensor_type"] = this->batteryLevelSensorType;
+  output["battery_level_mqtt_path"] = this->batteryLevelMqttPath;
 
-  bom["enable_membrane_pressure_high_check"] = this->enableMembranePressureHighCheck;
-  bom["membrane_pressure_high_threshold"] = this->membranePressureHighThreshold;
-  bom["membrane_pressure_high_delay"] = this->membranePressureHighDelay;
+  output["enable_membrane_pressure_high_check"] = this->enableMembranePressureHighCheck;
+  output["membrane_pressure_high_threshold"] = this->membranePressureHighThreshold;
+  output["membrane_pressure_high_delay"] = this->membranePressureHighDelay;
 
-  bom["enable_membrane_pressure_low_check"] = this->enableMembranePressureLowCheck;
-  bom["membrane_pressure_low_threshold"] = this->membranePressureLowThreshold;
-  bom["membrane_pressure_low_delay"] = this->membranePressureLowDelay;
+  output["enable_membrane_pressure_low_check"] = this->enableMembranePressureLowCheck;
+  output["membrane_pressure_low_threshold"] = this->membranePressureLowThreshold;
+  output["membrane_pressure_low_delay"] = this->membranePressureLowDelay;
 
-  bom["enable_filter_pressure_high_check"] = this->enableFilterPressureHighCheck;
-  bom["filter_pressure_high_threshold"] = this->filterPressureHighThreshold;
-  bom["filter_pressure_high_delay"] = this->filterPressureHighDelay;
+  output["enable_filter_pressure_high_check"] = this->enableFilterPressureHighCheck;
+  output["filter_pressure_high_threshold"] = this->filterPressureHighThreshold;
+  output["filter_pressure_high_delay"] = this->filterPressureHighDelay;
 
-  bom["enable_filter_pressure_low_check"] = this->enableFilterPressureLowCheck;
-  bom["filter_pressure_low_threshold"] = this->filterPressureLowThreshold;
-  bom["filter_pressure_low_delay"] = this->filterPressureLowDelay;
+  output["enable_filter_pressure_low_check"] = this->enableFilterPressureLowCheck;
+  output["filter_pressure_low_threshold"] = this->filterPressureLowThreshold;
+  output["filter_pressure_low_delay"] = this->filterPressureLowDelay;
 
-  bom["enable_product_flowrate_high_check"] = this->enableProductFlowrateHighCheck;
-  bom["product_flowrate_high_threshold"] = this->productFlowrateHighThreshold;
-  bom["product_flowrate_high_delay"] = this->productFlowrateHighDelay;
+  output["enable_product_flowrate_high_check"] = this->enableProductFlowrateHighCheck;
+  output["product_flowrate_high_threshold"] = this->productFlowrateHighThreshold;
+  output["product_flowrate_high_delay"] = this->productFlowrateHighDelay;
 
-  bom["enable_product_flowrate_low_check"] = this->enableProductFlowrateLowCheck;
-  bom["product_flowrate_low_threshold"] = this->productFlowrateLowThreshold;
-  bom["product_flowrate_low_delay"] = this->productFlowrateLowDelay;
+  output["enable_product_flowrate_low_check"] = this->enableProductFlowrateLowCheck;
+  output["product_flowrate_low_threshold"] = this->productFlowrateLowThreshold;
+  output["product_flowrate_low_delay"] = this->productFlowrateLowDelay;
 
-  bom["enable_run_total_flowrate_low_check"] = this->enableRunTotalFlowrateLowCheck;
-  bom["run_total_flowrate_low_threshold"] = this->runTotalFlowrateLowThreshold;
-  bom["run_total_flowrate_low_delay"] = this->runTotalFlowrateLowDelay;
+  output["enable_run_total_flowrate_low_check"] = this->enableRunTotalFlowrateLowCheck;
+  output["run_total_flowrate_low_threshold"] = this->runTotalFlowrateLowThreshold;
+  output["run_total_flowrate_low_delay"] = this->runTotalFlowrateLowDelay;
 
-  bom["enable_pickle_total_flowrate_low_check"] = this->enablePickleTotalFlowrateLowCheck;
-  bom["pickle_total_flowrate_low_threshold"] = this->pickleTotalFlowrateLowThreshold;
-  bom["pickle_total_flowrate_low_delay"] = this->pickleTotalFlowrateLowDelay;
+  output["enable_pickle_total_flowrate_low_check"] = this->enablePickleTotalFlowrateLowCheck;
+  output["pickle_total_flowrate_low_threshold"] = this->pickleTotalFlowrateLowThreshold;
+  output["pickle_total_flowrate_low_delay"] = this->pickleTotalFlowrateLowDelay;
 
-  bom["enable_diverter_valve_closed_check"] = this->enableDiverterValveClosedCheck;
-  bom["diverter_valve_closed_flowrate_high_threshold"] = this->diverterValveClosedFlowrateHighThreshold;
-  bom["diverter_valve_closed_delay"] = this->diverterValveClosedDelay;
+  output["enable_diverter_valve_closed_check"] = this->enableDiverterValveClosedCheck;
+  output["diverter_valve_closed_flowrate_high_threshold"] = this->diverterValveClosedFlowrateHighThreshold;
+  output["diverter_valve_closed_delay"] = this->diverterValveClosedDelay;
 
-  bom["enable_product_salinity_high_check"] = this->enableProductSalinityHighCheck;
-  bom["product_salinity_high_threshold"] = this->productSalinityHighThreshold;
-  bom["product_salinity_high_delay"] = this->productSalinityHighDelay;
+  output["enable_product_salinity_high_check"] = this->enableProductSalinityHighCheck;
+  output["product_salinity_high_threshold"] = this->productSalinityHighThreshold;
+  output["product_salinity_high_delay"] = this->productSalinityHighDelay;
 
-  bom["enable_motor_temperature_check"] = this->enableMotorTemperatureCheck;
-  bom["motor_temperature_high_threshold"] = this->motorTemperatureHighThreshold;
-  bom["motor_temperature_high_delay"] = this->motorTemperatureHighDelay;
+  output["enable_motor_temperature_check"] = this->enableMotorTemperatureCheck;
+  output["motor_temperature_high_threshold"] = this->motorTemperatureHighThreshold;
+  output["motor_temperature_high_delay"] = this->motorTemperatureHighDelay;
 
-  bom["enable_flush_flowrate_low_check"] = this->enableFlushFlowrateLowCheck;
-  bom["flush_flowrate_low_threshold"] = this->flushFlowrateLowThreshold;
-  bom["flush_flowrate_low_delay"] = this->flushFlowrateLowDelay;
+  output["enable_flush_flowrate_low_check"] = this->enableFlushFlowrateLowCheck;
+  output["flush_flowrate_low_threshold"] = this->flushFlowrateLowThreshold;
+  output["flush_flowrate_low_delay"] = this->flushFlowrateLowDelay;
 
-  bom["enable_flush_filter_pressure_low_check"] = this->enableFlushFilterPressureLowCheck;
-  bom["flush_filter_pressure_low_threshold"] = this->flushFilterPressureLowThreshold;
-  bom["flush_filter_pressure_low_delay"] = this->flushFilterPressureLowDelay;
+  output["enable_flush_filter_pressure_low_check"] = this->enableFlushFilterPressureLowCheck;
+  output["flush_filter_pressure_low_threshold"] = this->flushFilterPressureLowThreshold;
+  output["flush_filter_pressure_low_delay"] = this->flushFilterPressureLowDelay;
 
-  bom["enable_flush_valve_off_check"] = this->enableFlushValveOffCheck;
-  bom["flush_valve_off_threshold"] = this->flushValveOffThreshold;
-  bom["flush_valve_off_delay"] = this->flushValveOffDelay;
+  output["enable_flush_valve_off_check"] = this->enableFlushValveOffCheck;
+  output["flush_valve_off_threshold"] = this->flushValveOffThreshold;
+  output["flush_valve_off_delay"] = this->flushValveOffDelay;
 
-  bom["enable_flush_tank_level_low_check"] = this->enableFlushTankLevelLowCheck;
-  bom["flush_tank_level_low_threshold"] = this->flushTankLevelLowThreshold;
-  bom["flush_tank_level_low_delay"] = this->flushTankLevelLowDelay;
+  output["enable_flush_tank_level_low_check"] = this->enableFlushTankLevelLowCheck;
+  output["flush_tank_level_low_threshold"] = this->flushTankLevelLowThreshold;
+  output["flush_tank_level_low_delay"] = this->flushTankLevelLowDelay;
 
-  bom["enable_battery_level_low_check"] = this->enableBatteryLevelLowCheck;
-  bom["battery_level_low_threshold"] = this->batteryLevelLowThreshold;
+  output["enable_battery_level_low_check"] = this->enableBatteryLevelLowCheck;
+  output["battery_level_low_threshold"] = this->batteryLevelLowThreshold;
 }
 
 bool Brineomatic::validateConfigJSON(JsonVariant config, char* error, size_t err_size)

@@ -93,9 +93,9 @@ bool RelayChannel::loadConfig(JsonVariantConst config, char* error, size_t len)
   return true;
 }
 
-void RelayChannel::generateConfig(JsonVariant config)
+void RelayChannel::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)
 {
-  BaseChannel::generateConfig(config);
+  BaseChannel::generateConfig(config, role, purpose);
 
   config["type"] = this->type;
   config["defaultState"] = this->defaultState;

@@ -18,7 +18,7 @@ class MaintenanceItem : public BaseChannel
   public:
     void init(uint8_t id) override;
     bool loadConfig(JsonVariantConst config, char* error, size_t len) override;
-    void generateConfig(JsonVariant config) override;
+    void generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose) override;
     void generateUpdate(JsonVariant config) override;
 
     void recordMaintenance(float runtime, uint32_t timestamp, String notes);
