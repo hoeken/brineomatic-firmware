@@ -488,7 +488,7 @@
     setTimeout(YB.App.getStatsData, 1000);
 
     let deleteButton = `
-      <button id="deleteMaintenanceLogsButton" class="btn btn-primary" type="button">
+      <button id="deleteMaintenanceLogsButton" class="btn btn-warning" type="button">
         Delete Maintenance Logs
       </button>
     `;

@@ -5785,7 +5785,7 @@
   //get totalRuntime
   YB.App.onStart(function () {
     let deleteButton = `
-      <button id="deleteBrineomaticLogsButton" class="btn btn-primary" type="button">
+      <button id="deleteBrineomaticLogsButton" class="btn btn-warning" type="button">
         Delete Run Logs
       </button>
     `;
