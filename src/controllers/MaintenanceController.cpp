@@ -27,7 +27,9 @@ bool MaintenanceController::setup()
   _app.protocol.registerCommand(ADMIN, "record_maintenance", this, &MaintenanceController::handleRecordMaintenance);
   _app.protocol.registerCommand(ADMIN, "maintenance_delete_logs", this, &MaintenanceController::handleDeleteLogs);
 
-  _app.http.getServer()->serveStatic("/maintenance.json", LittleFS, "/maintenance.json");
+  PsychicHttpServer* server = _app.http.getServer();
+  if (server)
+    server->serveStatic("/maintenance.json", LittleFS, "/maintenance.json");
 
   return true;
 }

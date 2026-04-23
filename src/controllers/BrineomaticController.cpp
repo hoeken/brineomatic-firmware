@@ -25,7 +25,9 @@ bool BrineomaticController::setup()
 {
   _instance = this; // Capture the instance for callbacks
 
-  _app.http.getServer()->serveStatic("/run_log.json", LittleFS, "/run_log.json");
+  PsychicHttpServer* server = _app.http.getServer();
+  if (server)
+    server->serveStatic("/run_log.json", LittleFS, "/run_log.json");
 
   _app.protocol.registerCommand(GUEST, "start_watermaker", this, &BrineomaticController::handleStartWatermaker);
   _app.protocol.registerCommand(GUEST, "flush_watermaker", this, &BrineomaticController::handleFlushWatermaker);
@@ -82,17 +84,15 @@ void BrineomaticController::stateMachine()
   }
 }
 
-bool BrineomaticController::loadConfigHook(JsonVariant config, char* error, size_t len)
+bool BrineomaticController::validateConfigHook(JsonVariant config, char* error, size_t len)
 {
-  bool result = true;
-
   // validate prunes invalid entries, so it's safe to load even on error.
   // we don't want a single bad config option to nuke the whole config loading.
-  if (!wm.validateConfigJSON(config, error, len)) {
-    YBP.println(error);
-    result = false;
-  }
+  return wm.validateConfigJSON(config, error, len);
+}
 
+bool BrineomaticController::loadConfigHook(JsonVariant config, char* error, size_t len)
+{
   wm.loadConfigJSON(config);
 
   // todo: move to separate function
@@ -123,7 +123,7 @@ bool BrineomaticController::loadConfigHook(JsonVariant config, char* error, size
     }
   }
 
-  return result;
+  return true;
 }
 
 void BrineomaticController::generateConfigHook(JsonVariant output, UserRole role, ConfigPurpose purpose)
