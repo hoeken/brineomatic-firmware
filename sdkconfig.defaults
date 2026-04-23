@@ -1,0 +1,21 @@
+# Enable OPI PSRAM (8MB on ESP32-S3-WROOM-1-N16R8).
+# board_build.arduino.memory_type = qio_opi selects the right bootloader/linker,
+# but IDF still needs these Kconfig options to actually map PSRAM into the heap.
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_USE_MALLOC=y
+
+# Move mbedTLS dynamic allocations to PSRAM.
+# Without this, each TLS session chews ~40-100KB of internal RAM plus two 16KB
+# record buffers, exhausting internal heap when multiple clients connect.
+# Has no effect on targets without SPIRAM (CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC
+# depends on SPIRAM in Kconfig, so it is silently ignored on C3/C5/C6/esp32).
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+
+# Use asymmetric record buffer sizes: full 16KB in (needed for receiving TLS
+# records from browsers) but only 4KB out (sufficient for JSON API responses).
+# Saves ~24KB of PSRAM per session vs the default symmetric 32KB allocation.
+CONFIG_MBEDTLS_ASYMMETRIC_CONTENT_LEN=y
+CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN=16384
+CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN=4096
