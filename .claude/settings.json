@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/hoeken/github/YarrboardFramework log --oneline -5)",
+      "Read(//Users/hoeken/github/YarrboardFramework/src/controllers/**)",
+      "Read(//Users/hoeken/github/YarrboardFramework/src/**)"
+    ]
+  }
+}

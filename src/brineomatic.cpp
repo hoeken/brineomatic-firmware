@@ -3476,7 +3476,7 @@ bool Brineomatic::validateSafeguardsConfigJSON(JsonVariant config,
   return ok;
 }
 
-void Brineomatic::loadConfigJSON(JsonVariant config)
+void Brineomatic::loadConfigJSON(JsonVariantConst config)
 {
   this->loadUIConfigJSON(config);
   this->loadGeneralConfigJSON(config);
@@ -3484,12 +3484,12 @@ void Brineomatic::loadConfigJSON(JsonVariant config)
   this->loadSafeguardsConfigJSON(config);
 }
 
-void Brineomatic::loadUIConfigJSON(JsonVariant config)
+void Brineomatic::loadUIConfigJSON(JsonVariantConst config)
 {
   this->gaugeOrder = config["gauge_order"] | "";
 }
 
-void Brineomatic::loadGeneralConfigJSON(JsonVariant config)
+void Brineomatic::loadGeneralConfigJSON(JsonVariantConst config)
 {
   this->temperatureUnits = config["temperature_units"] | YB_TEMPERATURE_UNITS;
   this->pressureUnits = config["pressure_units"] | YB_PRESSURE_UNITS;
@@ -3499,7 +3499,7 @@ void Brineomatic::loadGeneralConfigJSON(JsonVariant config)
   this->errorMelody = config["error_melody"] | YB_ERROR_MELODY;
 }
 
-void Brineomatic::loadHardwareConfigJSON(JsonVariant config)
+void Brineomatic::loadHardwareConfigJSON(JsonVariantConst config)
 {
   this->boostPumpControl = config["boost_pump_control"] | YB_BOOST_PUMP_CONTROL;
   this->boostPumpRelayId = config["boost_pump_relay_id"] | YB_BOOST_PUMP_RELAY_ID;
@@ -3598,7 +3598,7 @@ void Brineomatic::loadHardwareConfigJSON(JsonVariant config)
     this->waterTemperatureSensorType = "DS18B20";
 }
 
-void Brineomatic::loadSafeguardsConfigJSON(JsonVariant config)
+void Brineomatic::loadSafeguardsConfigJSON(JsonVariantConst config)
 {
   this->flushTimeout = config["flush_timeout"] | YB_FLUSH_TIMEOUT;
   this->membranePressureTimeout = config["membrane_pressure_timeout"] | YB_MEMBRANE_PRESSURE_TIMEOUT;

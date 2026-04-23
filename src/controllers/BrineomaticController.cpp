@@ -84,14 +84,14 @@ void BrineomaticController::stateMachine()
   }
 }
 
-bool BrineomaticController::validateConfigHook(JsonVariant config, char* error, size_t len)
+bool BrineomaticController::sanitizeConfigHook(JsonVariant config, char* error, size_t len)
 {
   // validate prunes invalid entries, so it's safe to load even on error.
   // we don't want a single bad config option to nuke the whole config loading.
   return wm.validateConfigJSON(config, error, len);
 }
 
-bool BrineomaticController::loadConfigHook(JsonVariant config, char* error, size_t len)
+void BrineomaticController::loadConfigHook(JsonVariantConst config)
 {
   wm.loadConfigJSON(config);
 
@@ -122,8 +122,6 @@ bool BrineomaticController::loadConfigHook(JsonVariant config, char* error, size
       mqtt->onTopic(config["battery_level_mqtt_path"], 0, &BrineomaticController::handleBatteryLevelCallbackStatic);
     }
   }
-
-  return true;
 }
 
 void BrineomaticController::generateConfigHook(JsonVariant output, UserRole role, ConfigPurpose purpose)

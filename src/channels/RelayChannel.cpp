@@ -80,17 +80,14 @@ void RelayChannel::init(uint8_t id)
   snprintf(this->name, sizeof(this->name), "Relay Channel %d", id);
 }
 
-bool RelayChannel::loadConfig(JsonVariantConst config, char* error, size_t len)
+void RelayChannel::loadConfig(JsonVariantConst config)
 {
   // make our parent do the work.
-  if (!BaseChannel::loadConfig(config, error, len))
-    return false;
+  BaseChannel::loadConfig(config);
 
   strlcpy(this->type, config["type"] | "other", sizeof(this->type));
   this->defaultState = config["defaultState"];
   this->inverted = config["inverted"];
-
-  return true;
 }
 
 void RelayChannel::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)

@@ -21,13 +21,10 @@ void StepperChannel::init(uint8_t id)
   snprintf(this->name, sizeof(this->name), "Stepper Channel %d", id);
 }
 
-bool StepperChannel::loadConfig(JsonVariantConst config, char* error, size_t len)
+void StepperChannel::loadConfig(JsonVariantConst config)
 {
   // make our parent do the work.
-  if (!BaseChannel::loadConfig(config, error, len))
-    return false;
-
-  return true;
+  BaseChannel::loadConfig(config);
 }
 
 void StepperChannel::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)

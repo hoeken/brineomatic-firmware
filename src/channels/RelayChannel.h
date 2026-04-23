@@ -31,7 +31,7 @@ class RelayChannel : public BaseChannel
     unsigned int stateChangeCount = 0;
 
     void init(uint8_t id) override;
-    bool loadConfig(JsonVariantConst config, char* error, size_t err_size) override;
+    void loadConfig(JsonVariantConst config) override;
     void generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose) override;
     void generateUpdate(JsonVariant config) override;
 

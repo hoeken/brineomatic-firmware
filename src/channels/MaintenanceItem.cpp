@@ -18,18 +18,15 @@ void MaintenanceItem::init(uint8_t id)
   snprintf(this->name, sizeof(this->name), "Maintenance Item %d", id);
 }
 
-bool MaintenanceItem::loadConfig(JsonVariantConst config, char* error, size_t len)
+void MaintenanceItem::loadConfig(JsonVariantConst config)
 {
   // make our parent do the work.
-  if (!BaseChannel::loadConfig(config, error, len))
-    return false;
+  BaseChannel::loadConfig(config);
 
   this->runtimeInterval = config["runtimeInterval"] | 0.0f;
   this->timestampInterval = config["timestampInterval"] | 0;
   this->lastRuntime = config["lastRuntime"] | 0.0f;
   this->lastTimestamp = config["lastTimestamp"] | 0;
-
-  return true;
 }
 
 void MaintenanceItem::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)

@@ -20,13 +20,10 @@ void ServoChannel::init(uint8_t id)
   snprintf(this->name, sizeof(this->name), "Servo Channel %d", id);
 }
 
-bool ServoChannel::loadConfig(JsonVariantConst config, char* error, size_t len)
+void ServoChannel::loadConfig(JsonVariantConst config)
 {
   // make our parent do the work.
-  if (!BaseChannel::loadConfig(config, error, len))
-    return false;
-
-  return true;
+  BaseChannel::loadConfig(config);
 }
 
 void ServoChannel::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)
