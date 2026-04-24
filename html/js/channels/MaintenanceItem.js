@@ -164,6 +164,9 @@
   MaintenanceItem.prototype.updateControlUI = function () {
     $(`#maintenanceControlCard${this.id}`).toggle(this.enabled);
 
+    if (!this.enabled)
+      return;
+
     var showRuntime = this.cfg.runtimeInterval > 0;
     var showTimestamp = this.cfg.timestampInterval > 0;
     var hasInterval = showRuntime || showTimestamp;

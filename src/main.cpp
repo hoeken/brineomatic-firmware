@@ -66,8 +66,8 @@ void setup()
 
   yba.http.registerGulpedFiles(gulpedFiles, gulpedFilesCount);
 
-  yba.board_name = YB_BOARD_NAME;
-  yba.default_hostname = YB_DEFAULT_HOSTNAME;
+  yba.setDefaultBoardName(YB_BOARD_NAME);
+  yba.setDefaultHostname(YB_DEFAULT_HOSTNAME);
   yba.firmware_version = YB_FIRMWARE_VERSION;
   yba.hardware_version = YB_HARDWARE_VERSION;
   yba.manufacturer = YB_MANUFACTURER;

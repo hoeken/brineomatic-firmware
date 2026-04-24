@@ -223,7 +223,7 @@ void BrineomaticController::haGenerateDiscoveryHook(JsonVariant components, cons
   // configuration object for the individual channel
   JsonObject obj = components[ha_uuid].to<JsonObject>();
   obj["platform"] = "switch";
-  obj["name"] = _app.board_name;
+  obj["name"] = _app.config.getBoardName();
   obj["unique_id"] = ha_uuid;
   obj["state_topic"] = ha_topic_state_state;
   obj["command_topic"] = ha_topic_cmd_state;
