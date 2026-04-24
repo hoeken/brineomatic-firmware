@@ -47,9 +47,9 @@ void setup()
 #ifdef YB_HAS_PIEZO
   buzzer.setBuzzerPin(YB_PIEZO_PIN);
   #ifdef YB_PIEZO_PASSIVE
-  buzzer.setIsActive(false);
+  buzzer.setActive(false);
   #else
-  buzzer.setIsActive(true);
+  buzzer.setActive(true);
   #endif
   yba.registerController(buzzer);
 #endif
