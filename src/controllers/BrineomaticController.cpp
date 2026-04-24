@@ -126,7 +126,7 @@ void BrineomaticController::loadConfigHook(JsonVariantConst config)
 
 void BrineomaticController::generateConfigHook(JsonVariant output, UserRole role, ConfigPurpose purpose)
 {
-  wm.generateConfigJSON(output);
+  wm.generateConfigJSON(output, role, purpose);
 };
 
 void BrineomaticController::generateCapabilitiesHook(JsonVariant config)

@@ -2208,13 +2208,16 @@ void Brineomatic::generateUpdateJSON(JsonVariant output)
   }
 }
 
-void Brineomatic::generateConfigJSON(JsonVariant output)
+void Brineomatic::generateConfigJSON(JsonVariant output, UserRole role, ConfigPurpose purpose)
 {
-  output["has_boost_pump"] = this->hasBoostPump();
-  output["has_high_pressure_pump"] = this->hasHighPressurePump();
-  output["has_diverter_valve"] = this->hasDiverterValve();
-  output["has_flush_valve"] = this->hasFlushValve();
-  output["has_cooling_fan"] = this->hasCoolingFan();
+  // shortcuts for the UI
+  if (purpose == ConfigPurpose::UI_CONFIG) {
+    output["has_boost_pump"] = this->hasBoostPump();
+    output["has_high_pressure_pump"] = this->hasHighPressurePump();
+    output["has_diverter_valve"] = this->hasDiverterValve();
+    output["has_flush_valve"] = this->hasFlushValve();
+    output["has_cooling_fan"] = this->hasCoolingFan();
+  }
 
   output["gauge_order"] = this->gaugeOrder;
 
@@ -2402,7 +2405,6 @@ bool Brineomatic::validateConfigJSON(JsonVariant config, char* error, size_t err
 bool Brineomatic::validateUIConfigJSON(JsonVariant config, char* error, size_t err_size)
 {
   bool ok = true;
-
   return ok;
 }
 

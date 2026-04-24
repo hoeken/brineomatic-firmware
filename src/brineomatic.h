@@ -11,6 +11,7 @@
 
 #include "config.h"
 
+#include <controllers/AuthTypes.h>
 #include "Flowmeter.h"
 #include "GD20Modbus.h"
 #include "adchelper.h"
@@ -21,6 +22,7 @@
 #include <DallasTemperature.h>
 #include <GravityTDS.h>
 #include <OneWire.h>
+
 // #include <QuickPID.h>
 
 class YarrboardApp;
@@ -279,7 +281,7 @@ class Brineomatic
     void runStateMachine();
 
     void generateUpdateJSON(JsonVariant output);
-    void generateConfigJSON(JsonVariant output);
+    void generateConfigJSON(JsonVariant output, UserRole role, ConfigPurpose purpose);
 
     bool validateConfigJSON(JsonVariant config, char* error, size_t err_size);
     bool validateUIConfigJSON(JsonVariant config, char* error, size_t err_size);
