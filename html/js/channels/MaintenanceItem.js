@@ -264,15 +264,14 @@
       presence: true,
       numericality: {
         greaterThanOrEqualTo: 0.0,
-        lessThanOrEqualTo: 1000.0
+        lessThanOrEqualTo: 5000.0
       }
     };
 
     schema.lastRuntime = {
       presence: true,
       numericality: {
-        greaterThanOrEqualTo: 0.0,
-        lessThanOrEqualTo: 100000.0
+        greaterThanOrEqualTo: 0.0
       }
     };
 
