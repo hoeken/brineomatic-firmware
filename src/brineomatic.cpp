@@ -2421,7 +2421,7 @@ bool Brineomatic::validateGeneralConfigJSON(JsonVariant config, char* error, siz
 
   // autoflush_salinity (integer >= 0)
   if (config["autoflush_salinity"]) {
-    if (!checkIsInteger(config, "autoflush_salinity", error, err_size) ||
+    if (!checkIsNumber(config, "autoflush_salinity", error, err_size) ||
         !checkNumGT(config, "autoflush_salinity", 0, error, err_size)) {
       config.remove("autoflush_salinity");
       ok = false;
@@ -2538,7 +2538,7 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
     if (control.equals("RELAY")) {
       auto* ch = _relays.getChannelById(config["boost_pump_relay_id"]);
       if (!ch) {
-        YBP.printf("Boost pump relay id %d not found\n", config["boost_pump_relay_id"]);
+        snprintf(error, err_size, "boost_pump_relay_id %d not found", config["boost_pump_relay_id"].as<int>());
         config.remove("boost_pump_relay_id");
         ok = false;
       }
@@ -2577,7 +2577,7 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
     if (control.equals("RELAY")) {
       auto* ch = _relays.getChannelById(config["high_pressure_relay_id"]);
       if (!ch) {
-        YBP.printf("High Pressure pump relay id %d not found\n", config["boost_pump_relay_id"]);
+        snprintf(error, err_size, "high_pressure_relay_id %d not found", config["high_pressure_relay_id"].as<int>());
         config.remove("high_pressure_relay_id");
         ok = false;
       }
@@ -2632,7 +2632,7 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
     if (control.equals("STEPPER")) {
       auto* ch = _steppers.getChannelById(config["high_pressure_valve_stepper_id"]);
       if (!ch) {
-        YBP.printf("High Pressure Valve stepper id %d not found\n", config["high_pressure_valve_stepper_id"]);
+        snprintf(error, err_size, "high_pressure_valve_stepper_id %d not found", config["high_pressure_valve_stepper_id"].as<int>());
         config.remove("high_pressure_valve_stepper_id");
         ok = false;
       }
@@ -2649,7 +2649,8 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
   }
 
   if (config["high_pressure_stepper_gear_ratio"]) {
-    if (!checkNumGT(config, "high_pressure_stepper_gear_ratio", 0.0f, error, err_size)) {
+    if (!checkIsNumber(config, "high_pressure_stepper_gear_ratio", error, err_size) ||
+        !checkNumGT(config, "high_pressure_stepper_gear_ratio", 0.0f, error, err_size)) {
       config.remove("high_pressure_stepper_gear_ratio");
       ok = false;
     }
@@ -2742,27 +2743,27 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
     if (control.equals("SERVO")) {
       auto* ch = _servos.getChannelById(config["diverter_valve_servo_id"]);
       if (!ch) {
-        YBP.printf("Diverter Valve servo id %d not found\n", config["diverter_valve_servo_id"]);
+        snprintf(error, err_size, "diverter_valve_servo_id %d not found", config["diverter_valve_servo_id"].as<int>());
         config.remove("diverter_valve_servo_id");
         ok = false;
       }
     } else if (control.equals("RELAY")) {
       auto* ch = _relays.getChannelById(config["diverter_valve_relay_id"]);
       if (!ch) {
-        YBP.printf("Diverter Valve relay id %d not found\n", config["diverter_valve_relay_id"]);
+        snprintf(error, err_size, "diverter_valve_relay_id %d not found", config["diverter_valve_relay_id"].as<int>());
         config.remove("diverter_valve_relay_id");
         ok = false;
       }
     } else if (control.equals("DUAL_RELAYS")) {
       auto* tankCh = _relays.getChannelById(config["diverter_valve_tank_relay_id"]);
       if (!tankCh) {
-        YBP.printf("Diverter Valve tank relay id %d not found\n", config["diverter_valve_tank_relay_id"].as<int>());
+        snprintf(error, err_size, "diverter_valve_tank_relay_id %d not found", config["diverter_valve_tank_relay_id"].as<int>());
         config.remove("diverter_valve_tank_relay_id");
         ok = false;
       }
       auto* overboardCh = _relays.getChannelById(config["diverter_valve_overboard_relay_id"]);
       if (!overboardCh) {
-        YBP.printf("Diverter Valve overboard relay id %d not found\n", config["diverter_valve_overboard_relay_id"].as<int>());
+        snprintf(error, err_size, "diverter_valve_overboard_relay_id %d not found", config["diverter_valve_overboard_relay_id"].as<int>());
         config.remove("diverter_valve_overboard_relay_id");
         ok = false;
       }
@@ -2833,7 +2834,7 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
     if (control.equals("RELAY")) {
       auto* ch = _relays.getChannelById(config["flush_valve_relay_id"]);
       if (!ch) {
-        YBP.printf("Flush Valve relay id %d not found\n", config["flush_valve_relay_id"]);
+        snprintf(error, err_size, "flush_valve_relay_id %d not found", config["flush_valve_relay_id"].as<int>());
         config.remove("flush_valve_relay_id");
         ok = false;
       }
@@ -2864,7 +2865,7 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
     if (control.equals("RELAY")) {
       auto* ch = _relays.getChannelById(config["cooling_fan_relay_id"]);
       if (!ch) {
-        YBP.printf("Cooling Fan relay id %d not found\n", config["cooling_fan_relay_id"]);
+        snprintf(error, err_size, "cooling_fan_relay_id %d not found", config["cooling_fan_relay_id"].as<int>());
         config.remove("cooling_fan_relay_id");
         ok = false;
       }
@@ -2899,14 +2900,16 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
   }
 
   if (config["membrane_pressure_sensor_min"]) {
-    if (!checkNumGE(config, "membrane_pressure_sensor_min", 0.0f, error, err_size)) {
+    if (!checkIsNumber(config, "membrane_pressure_sensor_min", error, err_size) ||
+        !checkNumGE(config, "membrane_pressure_sensor_min", 0.0f, error, err_size)) {
       config.remove("membrane_pressure_sensor_min");
       ok = false;
     }
   }
 
   if (config["membrane_pressure_sensor_max"]) {
-    if (!checkNumGT(config, "membrane_pressure_sensor_max", 0.0f, error, err_size)) {
+    if (!checkIsNumber(config, "membrane_pressure_sensor_max", error, err_size) ||
+        !checkNumGT(config, "membrane_pressure_sensor_max", 0.0f, error, err_size)) {
       config.remove("membrane_pressure_sensor_max");
       ok = false;
     }
@@ -2920,14 +2923,16 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
   }
 
   if (config["filter_pressure_sensor_min"]) {
-    if (!checkNumGE(config, "filter_pressure_sensor_min", 0.0f, error, err_size)) {
+    if (!checkIsNumber(config, "filter_pressure_sensor_min", error, err_size) ||
+        !checkNumGE(config, "filter_pressure_sensor_min", 0.0f, error, err_size)) {
       config.remove("filter_pressure_sensor_min");
       ok = false;
     }
   }
 
   if (config["filter_pressure_sensor_max"]) {
-    if (!checkNumGT(config, "filter_pressure_sensor_max", 0.0f, error, err_size)) {
+    if (!checkIsNumber(config, "filter_pressure_sensor_max", error, err_size) ||
+        !checkNumGT(config, "filter_pressure_sensor_max", 0.0f, error, err_size)) {
       config.remove("filter_pressure_sensor_max");
       ok = false;
     }
@@ -2971,7 +2976,8 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
   }
 
   if (config["product_flowmeter_ppl"]) {
-    if (!checkNumGT(config, "product_flowmeter_ppl", 0.0f, error, err_size)) {
+    if (!checkIsNumber(config, "product_flowmeter_ppl", error, err_size) ||
+        !checkNumGT(config, "product_flowmeter_ppl", 0.0f, error, err_size)) {
       config.remove("product_flowmeter_ppl");
       ok = false;
     }
@@ -2985,25 +2991,12 @@ bool Brineomatic::validateHardwareConfigJSON(JsonVariant config,
   }
 
   if (config["brine_flowmeter_ppl"]) {
-    if (!checkNumGT(config, "brine_flowmeter_ppl", 0.0f, error, err_size)) {
+    if (!checkIsNumber(config, "brine_flowmeter_ppl", error, err_size) ||
+        !checkNumGT(config, "brine_flowmeter_ppl", 0.0f, error, err_size)) {
       config.remove("brine_flowmeter_ppl");
       ok = false;
     }
   }
-
-  // if (config["has_motor_temperature_sensor"]) {
-  //   if (!checkIsBool(config, "has_motor_temperature_sensor", error, err_size)) {
-  //     config.remove("has_motor_temperature_sensor");
-  //     ok = false;
-  //   }
-  // }
-
-  // if (config["has_water_temperature_sensor"]) {
-  //   if (!checkIsBool(config, "has_water_temperature_sensor", error, err_size)) {
-  //     config.remove("has_water_temperature_sensor");
-  //     ok = false;
-  //   }
-  // }
 
   if (config["motor_temperature_sensor_type"]) {
     if (!checkInclusion(config, "motor_temperature_sensor_type", MOTOR_TEMPERATURE_TYPES, error, err_size)) {
