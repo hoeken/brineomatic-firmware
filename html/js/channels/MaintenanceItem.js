@@ -35,7 +35,7 @@
   MaintenanceItem.prototype.generateControlUI = function () {
     return `
       <div id="maintenanceControlCard${this.id}" class="col-12">
-        <div class="p-3 border border-secondary rounded">
+        <div class="p-3 border rounded">
           <h4 id="maintenanceName${this.id}" class="mb-3 maintenanceName">${this.name}</h4>
           <div class="row">
             <div id="maintenance-runtimeCol${this.id}" class="col-6 col-md-4">
@@ -201,6 +201,8 @@
     //clear our badge
     let maintenancePage = YB.App.getPage("maintenance");
 
+    $(`#maintenanceControlCard${this.id} div`).removeClass("border-danger").addClass("border-secondary");
+
     if (YB.Brineomatic.totalRuntime) {
       let totalRuntime = parseFloat(YB.Brineomatic.totalRuntime);
       let lastRuntime = this.data.lastRuntime;
@@ -223,8 +225,10 @@
         $(`#maintenance-nextRuntimeRow${this.id} td`).removeClass('text-success text-danger').addClass(runtimeOverdue ? 'text-danger' : 'text-success');
         $(`#maintenance-remainingRuntimeRow${this.id} td`).removeClass('text-success text-danger').addClass(runtimeOverdue ? 'text-danger' : 'text-success');
 
-        if (runtimeOverdue && maintenancePage)
+        if (runtimeOverdue && maintenancePage) {
+          $(`#maintenanceControlCard${this.id} div`).removeClass("border-secondary").addClass("border-danger");
           maintenancePage.setBadge("danger");
+        }
       }
 
       let lastTimestamp = this.data.lastTimestamp;
@@ -248,8 +252,10 @@
         $(`#maintenance-nextTimestampRow${this.id} td`).removeClass('text-success text-danger').addClass(timestampOverdue ? 'text-danger' : 'text-success');
         $(`#maintenance-remainingTimestampRow${this.id} td`).removeClass('text-success text-danger').addClass(timestampOverdue ? 'text-danger' : 'text-success');
 
-        if (timestampOverdue && maintenancePage)
+        if (timestampOverdue && maintenancePage) {
+          $(`#maintenanceControlCard${this.id} div`).removeClass("border-secondary").addClass("border-danger");
           maintenancePage.setBadge("danger");
+        }
       }
     }
   };
