@@ -116,3 +116,78 @@ html[data-bs-theme="dark"] .c3 .c3-axis text {
     line-height: 1;
     margin-bottom: 0.25rem;
 }
+
+/* gridjs light/dark mode */
+.yarrboardLog .gridjs-container {
+    color: var(--bs-body-color);
+}
+
+.yarrboardLog .gridjs-wrapper {
+    border-color: var(--bs-border-color);
+}
+
+.yarrboardLog .gridjs-footer {
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+
+.yarrboardLog .gridjs-tbody,
+.yarrboardLog td.gridjs-td {
+    background-color: var(--bs-body-bg);
+}
+
+.yarrboardLog td.gridjs-td {
+    border-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+}
+
+.yarrboardLog th.gridjs-th {
+    background-color: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+    color: var(--bs-secondary-color);
+}
+
+.yarrboardLog th.gridjs-th-sort:hover,
+.yarrboardLog th.gridjs-th-sort:focus {
+    background-color: var(--bs-secondary-bg);
+}
+
+.yarrboardLog .gridjs-tr-selected td {
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.yarrboardLog .gridjs-pagination {
+    color: var(--bs-body-color);
+}
+
+.yarrboardLog input.gridjs-input {
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+}
+
+.yarrboardLog input.gridjs-input:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .25);
+}
+
+.yarrboardLog .gridjs-pagination .gridjs-pages button {
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+}
+
+.yarrboardLog .gridjs-pagination .gridjs-pages button:hover {
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-emphasis-color);
+}
+
+.yarrboardLog .gridjs-pagination .gridjs-pages button:disabled,
+.yarrboardLog .gridjs-pagination .gridjs-pages button[disabled] {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-secondary-color);
+}
+
+.yarrboardLog .gridjs-pagination .gridjs-pages button.gridjs-currentPage {
+    background-color: var(--bs-secondary-bg);
+}

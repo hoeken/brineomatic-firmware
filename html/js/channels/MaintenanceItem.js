@@ -389,57 +389,44 @@
       url: '/maintenance.json',
       dataType: 'text',
       success: function (text) {
-        var lines = text.trim().split('\n').filter(function (l) { return l.trim(); });
+        var lines = text.trim().split('\n').filter(function (l) { return l.trim(); }).reverse();
+
+        $('#maintenanceLogContent').html(
+          '<div class="yarrboardLog" id="maintenanceLogGrid"></div>' +
+          '<a href="/maintenance.json" class="btn btn-small btn-primary mt-2">Download maintenance log as JSON</a>'
+        );
+
         if (!lines.length) {
-          $('#maintenanceLogContent').html('<p class="text-muted">No maintenance events recorded.</p>');
+          $('#maintenanceLogGrid').html('<p class="text-muted">No maintenance events recorded.</p>');
+          let maintenance = YB.App.getPage("maintenance");
+          maintenance.ready = true;
           return;
         }
 
-        var rows = lines.map(function (line) {
+        var data = lines.map(function (line) {
           var entry = JSON.parse(line);
-          var safeName = $('<span>').text(entry.name).html();
-          var safeNotes = $('<span>').text(entry.notes || '').html();
-          var notesRow = safeNotes
-            ? `<tr class="d-md-none maintenance-notes-row" data-sort-method="none" data-entry-id="${entry.timestamp}"><td colspan="4" class="pt-0 text-muted small"><strong>Notes:</strong> ${safeNotes}</td></tr>`
-            : '';
-          return `
-            <tr data-entry-id="${entry.timestamp}">
-              <td style="white-space:nowrap">${safeName}</td>
-              <td style="white-space:nowrap">${entry.runtime.toFixed(1)} hrs</td>
-              <td style="white-space:nowrap">${formatDate(entry.timestamp)}</td>
-              <td class="d-none d-md-table-cell">${safeNotes}</td>
-            </tr>
-            ${notesRow}
-          `;
-        }).join('');
+          return [
+            entry.name || '',
+            entry.runtime.toFixed(1) + ' hrs',
+            formatDate(entry.timestamp),
+            entry.notes || ''
+          ];
+        });
 
-        $('#maintenanceLogContent').html(
-          `<table id="maintenanceLogTable" class="table table-sm">
-            <thead>
-              <tr>
-                <th style="white-space:nowrap">Name</th>
-                <th style="white-space:nowrap">Runtime</th>
-                <th style="white-space:nowrap">Date</th>
-                <th class="d-none d-md-table-cell">Notes</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-          <a href="/maintenance.json" class="btn btn-small btn-primary">Download maintenance log as JSON</a>
-          `
-        );
-
-        if (!YB.App.isMFD()) {
-          var tableEl = document.getElementById('maintenanceLogTable');
-          new Tablesort(tableEl);
-          tableEl.addEventListener('afterSort', function () {
-            var tbody = tableEl.tBodies[0];
-            Array.from(tbody.querySelectorAll('tr:not(.maintenance-notes-row)')).forEach(function (row) {
-              var notesRow = tbody.querySelector('.maintenance-notes-row[data-entry-id="' + row.dataset.entryId + '"]');
-              if (notesRow) tbody.insertBefore(notesRow, row.nextSibling);
-            });
-          });
-        }
+        new gridjs.Grid({
+          columns: ['Name', 'Runtime', 'Date', 'Notes'],
+          data: data,
+          search: {
+            selector: (cell, rowIndex, cellIndex) => {
+              // Only search the first 3 columns
+              if (cellIndex === 0 || cellIndex === 2 || cellIndex === 3) return cell;
+              // Return nothing for other columns
+              return null;
+            }
+          },
+          pagination: { limit: 25 },
+          sort: true,
+        }).render(document.getElementById('maintenanceLogGrid'));
 
         let maintenance = YB.App.getPage("maintenance");
         maintenance.ready = true;

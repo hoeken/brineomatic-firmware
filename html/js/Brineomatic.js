@@ -5698,43 +5698,36 @@
 
         var entries = lines.map(function (l) { return JSON.parse(l); }).reverse();
 
-        var rows = entries.map(function (entry) {
+        var data = entries.map(function (entry) {
           var dt = new Date(entry.timestamp * 1000);
           var dateStr = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0') + ' ' + String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0');
-          var runtimeStr = YB.Util.secondsToDhms(entry.total_runtime, 2);
+          var elapsedStr = entry.elapsed !== undefined ? YB.Util.secondsToDhms(Math.round(entry.elapsed / 1000), 2) || '0 secs' : '-';
+          var volumeStr = entry.volume !== undefined ? bom.formatReadable(bom.convertVolume(entry.volume, 'liters', volumeUnits)) + ' ' + shortUnits : '-';
+          return [dateStr, entry.mode, entry.result, elapsedStr, volumeStr];
+        });
 
-          var elapsedCell = `<td class="d-none d-md-table-cell" style="white-space:nowrap">${entry.elapsed !== undefined ? YB.Util.secondsToDhms(Math.round(entry.elapsed / 1000), 2) || '0 secs' : '-'}</td>`;
-          var volumeCell = `<td class="d-none d-md-table-cell">${entry.volume !== undefined ? bom.formatReadable(bom.convertVolume(entry.volume, 'liters', volumeUnits)) + ' ' + shortUnits : '-'}</td>`;
+        $('#brineomaticRunLogContent').html('<div class="yarrboardLog" id="brineomaticRunLogGrid"></div><a href="/run_log.json" class="btn btn-small btn-primary mt-2">Download run log as JSON</a>');
 
-          return `<tr>
-            <td style="white-space:nowrap">${dateStr}</td>
-            <td>${bom.modeBadgeHtml(entry.mode)}</td>
-            <td>${bom.resultBadgeHtml(entry.result)}</td>
-            ${elapsedCell}
-            ${volumeCell}
-          </tr>`;
-        }).join('');
-
-        $('#brineomaticRunLogContent').html(`
-          <table id="brineomaticRunLogTable" class="table table-sm">
-            <thead>
-              <tr>
-                <th style="white-space:nowrap">Timestamp</th>
-                <th style="white-space:nowrap">Mode</th>
-                <th style="white-space:nowrap">Result</th>
-                <th class="d-none d-md-table-cell" style="white-space:nowrap">Elapsed</th>
-                <th class="d-none d-md-table-cell" style="white-space:nowrap">Volume</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-          <a href="/run_log.json" class="btn btn-small btn-primary">Download run log as JSON</a>
-        `);
-
-        if (!YB.App.isMFD()) {
-          var tableEl = document.getElementById('brineomaticRunLogTable');
-          new Tablesort(tableEl);
-        }
+        new gridjs.Grid({
+          columns: [
+            { name: 'Timestamp', sort: true },
+            { name: 'Mode', sort: true, formatter: function (cell) { return gridjs.html(bom.modeBadgeHtml(cell)); } },
+            { name: 'Result', sort: true, formatter: function (cell) { return gridjs.html(bom.resultBadgeHtml(cell)); } },
+            { name: 'Elapsed', sort: true },
+            { name: 'Volume', sort: true }
+          ],
+          data: data,
+          search: {
+            selector: (cell, rowIndex, cellIndex) => {
+              // Only search the first 3 columns
+              if (cellIndex === 0 || cellIndex === 1 || cellIndex === 2) return cell;
+              // Return nothing for other columns
+              return null;
+            }
+          },
+          pagination: { limit: 25 },
+          sort: true
+        }).render(document.getElementById('brineomaticRunLogGrid'));
 
         let page = YB.App.getPage("logs");
         page.ready = true;
