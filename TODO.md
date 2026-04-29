@@ -2,7 +2,6 @@
 
 * Better high PPM handling - issue #4
 * move tank full to timeout style
-* toggle to edit gauge ordering - not manual mode.
 
 # v2.7
 
