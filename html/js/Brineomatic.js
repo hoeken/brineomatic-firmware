@@ -3581,6 +3581,34 @@
 
       <div class="mb-3">
         <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="enable_tank_level_full_check">
+          <label class="form-check-label" for="enable_tank_level_full_check">
+            Tank Level Full
+          </label>
+          <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-text">Requires <span class="badge text-bg-secondary">tank level sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+      </div>
+
+      <div id="enable_tank_level_full_check_form" class="row mb-3">
+        <div class="col-12 col-md-6">
+          <div class="input-group has-validation mb-3">
+            <input type="text" class="form-control text-end" id="tank_level_full_threshold">
+            <span class="input-group-text">%</span>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="input-group has-validation">
+            <input type="text" class="form-control text-end" id="tank_level_full_delay">
+            <span class="input-group-text">Delay (ms)</span>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" id="enable_battery_level_low_check">
           <label class="form-check-label" for="enable_battery_level_low_check">
             Battery Level Low
@@ -3816,6 +3844,11 @@
     $("#enable_flush_tank_level_low_check").prop('checked', data.enable_flush_tank_level_low_check);
     $("#flush_tank_level_low_threshold").val(this.formatReadable(data.flush_tank_level_low_threshold * 100));
     $("#flush_tank_level_low_delay").val(data.flush_tank_level_low_delay);
+
+    $("#enable_tank_level_full_check").prop('checked', data.enable_tank_level_full_check);
+    $("#tank_level_full_threshold").val(this.formatReadable(data.tank_level_full_threshold * 100));
+    $("#tank_level_full_delay").val(data.tank_level_full_delay);
+
 
     $("#enable_battery_level_low_check").prop('checked', data.enable_battery_level_low_check);
     $("#battery_level_low_threshold").val(this.formatReadable(data.battery_level_low_threshold * 100));
@@ -4566,10 +4599,20 @@
     }
   }
 
+  Brineomatic.prototype.updateTankLevelFullCheckVisibility = function (tank_level_sensor_type) {
+    const hasSensor = (tank_level_sensor_type !== "NONE");
+    $("#enable_tank_level_full_check").prop("disabled", !hasSensor);
+    if (!hasSensor) {
+      $("#enable_tank_level_full_check").prop("checked", false);
+    }
+  }
+
   Brineomatic.prototype.updateTankVisibility = function (tank_level_sensor_type) {
     $("#startRunAutomaticDialog").toggle(tank_level_sensor_type !== "NONE");
     $("#tank_capacity_form").toggle(tank_level_sensor_type !== "NONE");
     $("#tank_level_mqtt_path_form").toggle(tank_level_sensor_type === "MQTT");
+
+    this.updateTankLevelFullCheckVisibility(tank_level_sensor_type);
   }
 
   Brineomatic.prototype.updateBatteryLevelVisibility = function (battery_level_sensor_type) {
@@ -4776,6 +4819,10 @@
     data.enable_flush_tank_level_low_check = $("#enable_flush_tank_level_low_check").prop("checked");
     data.flush_tank_level_low_threshold = parseFloat($("#flush_tank_level_low_threshold").val()) / 100;
     data.flush_tank_level_low_delay = parseInt($("#flush_tank_level_low_delay").val());
+
+    data.enable_tank_level_full_check = $("#enable_tank_level_full_check").prop("checked");
+    data.tank_level_full_threshold = parseFloat($("#tank_level_full_threshold").val()) / 100;
+    data.tank_level_full_delay = parseInt($("#tank_level_full_delay").val());
 
     data.enable_battery_level_low_check = $("#enable_battery_level_low_check").prop("checked");
     data.battery_level_low_threshold = parseFloat($("#battery_level_low_threshold").val()) / 100;
@@ -5363,6 +5410,10 @@
       enable_flush_tank_level_low_check: { inclusion: [true, false] },
       flush_tank_level_low_threshold: { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } },
       flush_tank_level_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+
+      enable_tank_level_full_check: { inclusion: [true, false] },
+      tank_level_full_threshold: { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } },
+      tank_level_full_delay: { numericality: { greaterThanOrEqualTo: 0 } },
 
       enable_battery_level_low_check: { inclusion: [true, false] },
       battery_level_low_threshold: { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } }

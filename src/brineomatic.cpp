@@ -1410,10 +1410,8 @@ void Brineomatic::runStateMachine()
         }
 
         // tank level means we're finished successfully
-        if (checkTankLevel()) {
-          runResult = Result::SUCCESS_TANK_LEVEL;
+        if (checkTankLevel())
           break;
-        }
 
         // save our total runtime occasionally
         if (millis() - lastRuntimeUpdate > 15 * 60 * 1000) {
@@ -2127,7 +2125,15 @@ bool Brineomatic::checkTankLevel()
   if (currentTankLevel < 0)
     return false;
 
-  return currentTankLevel >= tankLevelFull;
+  if (!enableTankLevelFullCheck)
+    return false;
+
+  return checkTimedError(
+    currentTankLevel >= tankLevelFullThreshold,
+    tankLevelFullStart,
+    tankLevelFullDelay,
+    Result::SUCCESS_TANK_LEVEL,
+    runResult);
 }
 
 bool Brineomatic::checkBatteryLevel(Result& result)
@@ -2381,6 +2387,10 @@ void Brineomatic::generateConfigJSON(JsonVariant output, UserRole role, ConfigPu
   output["enable_flush_tank_level_low_check"] = this->enableFlushTankLevelLowCheck;
   output["flush_tank_level_low_threshold"] = this->flushTankLevelLowThreshold;
   output["flush_tank_level_low_delay"] = this->flushTankLevelLowDelay;
+
+  output["enable_tank_level_full_check"] = this->enableTankLevelFullCheck;
+  output["tank_level_full_threshold"] = this->tankLevelFullThreshold;
+  output["tank_level_full_delay"] = this->tankLevelFullDelay;
 
   output["enable_battery_level_low_check"] = this->enableBatteryLevelLowCheck;
   output["battery_level_low_threshold"] = this->batteryLevelLowThreshold;
@@ -3660,6 +3670,10 @@ void Brineomatic::loadSafeguardsConfigJSON(JsonVariantConst config)
   this->enableFlushTankLevelLowCheck = config["enable_flush_tank_level_low_check"] | YB_ENABLE_FLUSH_TANK_LEVEL_LOW_CHECK;
   this->flushTankLevelLowThreshold = config["flush_tank_level_low_threshold"] | YB_FLUSH_TANK_LEVEL_LOW_THRESHOLD;
   this->flushTankLevelLowDelay = config["flush_tank_level_low_delay"] | YB_FLUSH_TANK_LEVEL_LOW_DELAY;
+
+  this->enableTankLevelFullCheck = config["enable_tank_level_full_check"] | YB_ENABLE_TANK_LEVEL_FULL_CHECK;
+  this->tankLevelFullThreshold = config["tank_level_full_threshold"] | YB_TANK_LEVEL_FULL_THRESHOLD;
+  this->tankLevelFullDelay = config["tank_level_full_delay"] | YB_TANK_LEVEL_FULL_DELAY;
 
   this->enableBatteryLevelLowCheck = config["enable_battery_level_low_check"] | YB_ENABLE_BATTERY_LEVEL_LOW_CHECK;
   this->batteryLevelLowThreshold = config["battery_level_low_threshold"] | YB_BATTERY_LEVEL_LOW_THRESHOLD;

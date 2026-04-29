@@ -1,7 +1,6 @@
 # v2.6
 
 * Better high PPM handling - issue #4
-* move tank full to timeout style
 
 # v2.7
 

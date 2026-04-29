@@ -11,7 +11,6 @@
 
 #include "config.h"
 
-#include <controllers/AuthTypes.h>
 #include "Flowmeter.h"
 #include "GD20Modbus.h"
 #include "adchelper.h"
@@ -22,6 +21,7 @@
 #include <DallasTemperature.h>
 #include <GravityTDS.h>
 #include <OneWire.h>
+#include <controllers/AuthTypes.h>
 
 // #include <QuickPID.h>
 
@@ -362,6 +362,7 @@ class Brineomatic
     uint32_t diverterValveOpenStart = 0;
     uint32_t productSalinityHighStart = 0;
     uint32_t motorTemperatureStart = 0;
+    uint32_t tankLevelFullStart = 0;
 
     String gaugeOrder = "";
 
@@ -534,6 +535,10 @@ class Brineomatic
 
     bool enableBatteryLevelLowCheck = YB_ENABLE_BATTERY_LEVEL_LOW_CHECK;
     float batteryLevelLowThreshold = YB_BATTERY_LEVEL_LOW_THRESHOLD;
+
+    bool enableTankLevelFullCheck = YB_ENABLE_TANK_LEVEL_FULL_CHECK;
+    float tankLevelFullThreshold = YB_TANK_LEVEL_FULL_THRESHOLD;
+    uint32_t tankLevelFullDelay = YB_TANK_LEVEL_FULL_DELAY;
 
     void resetErrorTimers();
 
