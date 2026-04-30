@@ -1,14 +1,14 @@
 [
     {
         "type": "BRINEOMATIC_REV_B",
-        "version": "2.5.1",
-        "url": "https://firmware.brineomatic.com/releases/BRINEOMATIC_REV_B/2.5.1.bin",
-        "changelog": "https://firmware.brineomatic.com/releases/BRINEOMATIC_REV_B/CHANGELOG-2.5.1.md"
+        "version": "2.6.0",
+        "url": "https://firmware.brineomatic.com/releases/BRINEOMATIC_REV_B/2.6.0.bin",
+        "changelog": "https://firmware.brineomatic.com/releases/BRINEOMATIC_REV_B/CHANGELOG-2.6.0.md"
     },
     {
         "type": "BRINEOMATIC_REV_C",
-        "version": "2.5.1",
-        "url": "https://firmware.brineomatic.com/releases/BRINEOMATIC_REV_C/2.5.1.bin",
-        "changelog": "https://firmware.brineomatic.com/releases/BRINEOMATIC_REV_C/CHANGELOG-2.5.1.md"
+        "version": "2.6.0",
+        "url": "https://firmware.brineomatic.com/releases/BRINEOMATIC_REV_C/2.6.0.bin",
+        "changelog": "https://firmware.brineomatic.com/releases/BRINEOMATIC_REV_C/CHANGELOG-2.6.0.md"
     }
 ]
