@@ -1985,8 +1985,9 @@ bool Brineomatic::waitForMembranePressure()
   YBP.println("Wait for Membrane Pressure");
 
   uint32_t highPressurePumpStart = millis();
-  while (getMembranePressure() < getMembranePressureMinimum()) {
+  uint32_t stableStart = 0;
 
+  while (true) {
     // let the spice flow
     if (checkRunTotalFlowrateLow())
       return true;
@@ -2004,12 +2005,19 @@ bool Brineomatic::waitForMembranePressure()
       return true;
     }
 
+    if (getMembranePressure() >= getMembranePressureMinimum()) {
+      if (stableStart == 0)
+        stableStart = millis();
+      else if (millis() - stableStart >= membranePressureStabilizationTime) {
+        YBP.println("High Pressure Pump OK");
+        return false;
+      }
+    } else {
+      stableStart = 0;
+    }
+
     vTaskDelay(pdMS_TO_TICKS(100));
   }
-
-  YBP.println("High Pressure Pump OK");
-
-  return false;
 }
 
 bool Brineomatic::waitForProductFlowrate()
@@ -2019,19 +2027,14 @@ bool Brineomatic::waitForProductFlowrate()
 
   YBP.println("Wait for Product Flowrate");
 
-  int flowReady = 0;
   uint32_t flowCheckStart = millis();
+  uint32_t stableStart = 0;
 
-  while (flowReady < 10) {
+  while (true) {
     if (checkMembranePressureHigh())
       return true;
     if (checkStopFlag(runResult))
       return true;
-
-    if (getProductFlowrate() > getProductFlowrateMinimum() && getProductFlowrate() < productFlowrateHighThreshold)
-      flowReady++;
-    else
-      flowReady = 0;
 
     if (millis() - flowCheckStart > productFlowrateTimeout) {
       currentStatus = Status::STOPPING;
@@ -2039,12 +2042,19 @@ bool Brineomatic::waitForProductFlowrate()
       return true;
     }
 
+    if (getProductFlowrate() > getProductFlowrateMinimum() && getProductFlowrate() < productFlowrateHighThreshold) {
+      if (stableStart == 0)
+        stableStart = millis();
+      else if (millis() - stableStart >= productFlowrateStabilizationTime) {
+        YBP.println("Flowrate OK");
+        return false;
+      }
+    } else {
+      stableStart = 0;
+    }
+
     vTaskDelay(pdMS_TO_TICKS(100));
   }
-
-  YBP.println("Flowrate OK");
-
-  return false;
 }
 
 bool Brineomatic::waitForProductSalinity()
@@ -2054,18 +2064,14 @@ bool Brineomatic::waitForProductSalinity()
 
   YBP.println("Wait for Product Salinity");
 
-  int salinityReady = 0;
   uint32_t salinityCheckStart = millis();
-  while (salinityReady < 10) {
+  uint32_t stableStart = 0;
+
+  while (true) {
     if (checkMembranePressureHigh())
       return true;
     if (checkStopFlag(runResult))
       return true;
-
-    if (getProductSalinity() < getProductSalinityMaximum())
-      salinityReady++;
-    else
-      salinityReady = 0;
 
     if (millis() - salinityCheckStart > productSalinityTimeout) {
       currentStatus = Status::STOPPING;
@@ -2073,12 +2079,19 @@ bool Brineomatic::waitForProductSalinity()
       return true;
     }
 
+    if (getProductSalinity() < getProductSalinityMaximum()) {
+      if (stableStart == 0)
+        stableStart = millis();
+      else if (millis() - stableStart >= productSalinityStabilizationTime) {
+        YBP.println("Salinity OK");
+        return false;
+      }
+    } else {
+      stableStart = 0;
+    }
+
     vTaskDelay(pdMS_TO_TICKS(100));
   }
-
-  YBP.println("Salinity OK");
-
-  return false;
 }
 
 bool Brineomatic::waitForFlushValveOff()
