@@ -84,8 +84,8 @@ html[data-bs-theme="dark"] .c3 .c3-axis text {
 .bomGaugeItem .gauge-hide-btn {
     display: none;
     position: absolute;
-    top: 4px;
-    right: 8px;
+    top: 0px;
+    right: 4px;
     z-index: 10;
 }
 
@@ -102,6 +102,24 @@ html[data-bs-theme="dark"] .c3 .c3-axis text {
 #bomGauges.gauge-editing .bomGaugeItem:active,
 #bomGaugesMFD.gauge-editing .bomGaugeItem:active {
     cursor: grabbing;
+}
+
+.gauge-move-overlay {
+    position: absolute;
+    inset: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(var(--bs-body-bg-rgb), 0.75);
+    pointer-events: none;
+    z-index: 5;
+    /* border: 2px dashed var(--bs-border-color); */
+}
+
+.gauge-move-overlay svg {
+    width: 50%;
+    height: 50%;
+    opacity: 1;
 }
 
 .bomAddGaugeTile {

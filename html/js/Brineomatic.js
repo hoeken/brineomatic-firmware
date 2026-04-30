@@ -1828,7 +1828,7 @@
                   </div>
               </div>
           </div>
-          <div id="bomGauges" class="row gx-0 my-3 mfdHide">
+          <div id="bomGauges" class="row gx-2 my-3 mfdHide">
               <div class="filterPressureUI bomGaugeItem col-md-3 col-sm-4 col-6" data-gauge="filterPressure">
                   <button class="gauge-hide-btn btn-close" aria-label="Hide"></button>
                   <h6 class="my-0 text-center">Filter Pressure</h6>
@@ -1932,7 +1932,7 @@
                   <h5 id="volumeUnits" class="text-body-tertiary volumeUnitsLong">liters</h5>
               </div>
           </div>
-          <div id="bomGaugesMFD" class="mfdShow row gx-0 gy-3 my-3 text-center">
+          <div id="bomGaugesMFD" class="mfdShow row gx-2 gy-3 my-3 text-center">
               <div class="filterPressureUI bomGaugeItem col-md-3 col-sm-4 col-6" data-gauge="filterPressure">
                   <button class="gauge-hide-btn btn-close" aria-label="Hide"></button>
                   <h6 class="my-0">Filter Pressure</h6>
@@ -2108,11 +2108,13 @@
     this.sortableGauges = Sortable.create(document.getElementById('bomGauges'), {
       animation: 150,
       filter: '.gauge-hide-btn',
+      preventOnFilter: false,
       onEnd: () => this.syncMFDOrder()
     });
     this.sortableGaugesMFD = Sortable.create(document.getElementById('bomGaugesMFD'), {
       animation: 150,
       filter: '.gauge-hide-btn',
+      preventOnFilter: false,
       onEnd: () => this.syncGaugesOrder()
     });
 
@@ -2122,6 +2124,12 @@
       this.hideGauge(key);
       this.renderAddGaugeTile();
     });
+
+    const moveOverlay = '<div class="gauge-move-overlay">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16">' +
+      '<path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10M.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8"/>' +
+      '</svg></div>';
+    $('#bomGauges .bomGaugeItem, #bomGaugesMFD .bomGaugeItem').append(moveOverlay);
 
     this.renderAddGaugeTile();
   };
@@ -2138,6 +2146,7 @@
     if (this.sortableGaugesMFD) { this.sortableGaugesMFD.destroy(); this.sortableGaugesMFD = null; }
 
     $('#bomAddGaugeTile, #bomAddGaugeTileMFD').remove();
+    $('.gauge-move-overlay').remove();
   };
 
   Brineomatic.prototype.hideGauge = function (key) {
