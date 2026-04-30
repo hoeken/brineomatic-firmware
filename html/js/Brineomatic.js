@@ -3116,7 +3116,7 @@
         </div>
         <div class="form-text">
           Time at target until membrane pressure is considered stable.<br/>
-          Requires <span class="badge text-bg-secondary">membrane pressure sensor</span>
+          <span class="requires_sensor_type requires_membrane_pressure_sensor">Requires <span class="badge text-bg-danger">membrane pressure sensor</span></span>
         </div>
       </div>
 
@@ -3129,7 +3129,7 @@
         </div>
         <div class="form-text">
           Maximum time to wait for membrane pressure.<br/>
-          Requires <span class="badge text-bg-secondary">membrane pressure sensor</span>
+          <span class="requires_sensor_type requires_membrane_pressure_sensor">Requires <span class="badge text-bg-danger">membrane pressure sensor</span></span>
         </div>
       </div>
 
@@ -3142,7 +3142,7 @@
         </div>
         <div class="form-text">
           Time at target until product flowrate is considered stable.<br/>
-          Requires <span class="badge text-bg-secondary">product flowrate sensor</span>
+          <span class="requires_sensor_type requires_product_flowrate_sensor">Requires <span class="badge text-bg-danger">product flowrate sensor</span></span>
         </div>
       </div>
 
@@ -3155,7 +3155,7 @@
         </div>
         <div class="form-text">
           Maximum time to wait for product flowrate.<br/>
-          Requires <span class="badge text-bg-secondary">product flowrate sensor</span>
+          <span class="requires_sensor_type requires_product_flowrate_sensor">Requires <span class="badge text-bg-danger">product flowrate sensor</span></span>
         </div>
       </div>
 
@@ -3168,7 +3168,7 @@
         </div>
         <div class="form-text">
           Time at target until product salinity is considered stable.<br/>
-          Requires <span class="badge text-bg-secondary">product salinity sensor</span>
+          <span class="requires_sensor_type requires_product_tds_sensor">Requires <span class="badge text-bg-danger">product salinity sensor</span></span>
         </div>
       </div>
 
@@ -3181,7 +3181,7 @@
         </div>
         <div class="form-text">
           Maximum time to wait for product salinity.<br/>
-          Requires <span class="badge text-bg-secondary">product salinity sensor</span>
+          <span class="requires_sensor_type requires_product_tds_sensor">Requires <span class="badge text-bg-danger">product salinity sensor</span></span>
         </div>
       </div>
 
@@ -3217,7 +3217,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">membrane pressure sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_membrane_pressure_sensor">Requires <span class="badge text-bg-danger">membrane pressure sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_membrane_pressure_high_check_form" class="row mb-3">
@@ -3245,7 +3249,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">membrane pressure sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_membrane_pressure_sensor">Requires <span class="badge text-bg-danger">membrane pressure sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_membrane_pressure_low_check_form" class="row mb-3">
@@ -3273,7 +3281,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">filter pressure sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_filter_pressure_sensor">Requires <span class="badge text-bg-danger">filter pressure sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_filter_pressure_high_check_form" class="row mb-3">
@@ -3301,7 +3313,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">filter pressure sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_filter_pressure_sensor">Requires <span class="badge text-bg-danger">filter pressure sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_filter_pressure_low_check_form" class="row mb-3">
@@ -3329,7 +3345,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">product flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_product_flowrate_sensor">Requires <span class="badge text-bg-danger">product flow sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_product_flowrate_high_check_form" class="row mb-3">
@@ -3357,7 +3377,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">product flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_product_flowrate_sensor">Requires <span class="badge text-bg-danger">product flow sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_product_flowrate_low_check_form" class="row mb-3">
@@ -3385,7 +3409,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">brine flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_brine_flow_sensor">Requires <span class="badge text-bg-danger">brine flow sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_run_total_flowrate_low_check_form" class="row mb-3">
@@ -3413,7 +3441,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">brine flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-warning">PICKLING</span> and <span class="badge text-bg-warning">DEPICKLING</span> modes.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-warning">PICKLING</span> and <span class="badge text-bg-warning">DEPICKLING</span> modes.
+          <br/>
+          <span class="requires_sensor_type requires_brine_flow_sensor">Requires <span class="badge text-bg-danger">brine flow sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_pickle_total_flowrate_low_check_form" class="row mb-3">
@@ -3441,7 +3473,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">brine flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_brine_flow_sensor">Requires <span class="badge text-bg-danger">brine flow sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_diverter_valve_closed_check_form" class="row mb-3">
@@ -3469,7 +3505,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">product TDS sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_product_tds_sensor">Requires <span class="badge text-bg-danger">product TDS sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_product_salinity_high_check_form" class="row mb-3">
@@ -3497,7 +3537,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">motor temperature sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_motor_temperature_sensor">Requires <span class="badge text-bg-danger">motor temperature sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_motor_temperature_check_form" class="row mb-3">
@@ -3525,7 +3569,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">brine flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-primary">FLUSHING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-primary">FLUSHING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_brine_flow_sensor">Requires <span class="badge text-bg-danger">brine flow sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_flush_flowrate_low_check_form" class="row mb-3">
@@ -3553,7 +3601,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">filter pressure sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-primary">FLUSHING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-primary">FLUSHING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_filter_pressure_sensor">Requires <span class="badge text-bg-danger">filter pressure sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_flush_filter_pressure_low_check_form" class="row mb-3">
@@ -3581,7 +3633,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">filter pressure sensor</span> or <span class="badge text-bg-secondary">brine flow sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-primary">FLUSHING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-primary">FLUSHING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_flush_valve_sensor">Requires <span class="badge text-bg-danger">filter pressure sensor</span> or <span class="badge text-bg-danger">brine flow sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_flush_valve_off_check_form" class="row mb-3">
@@ -3609,7 +3665,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">tank level sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-primary">FLUSHING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-primary">FLUSHING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_tank_level_sensor">Requires <span class="badge text-bg-danger">tank level sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_flush_tank_level_low_check_form" class="row mb-3">
@@ -3637,7 +3697,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">tank level sensor</span> <br class="d-md-none"> Checked during <span class="badge text-bg-success">RUNNING</span> mode.</div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode.
+          <br/>
+          <span class="requires_sensor_type requires_tank_level_sensor">Requires <span class="badge text-bg-danger">tank level sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_tank_level_full_check_form" class="row mb-3">
@@ -3665,7 +3729,11 @@
           </label>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Requires <span class="badge text-bg-secondary">battery level sensor</span> <br class="d-md-none"> Checked during all operating modes.</div>
+        <div class="form-text">
+          Checked during all operating modes.
+          <br/>
+          <span class="requires_sensor_type requires_battery_level_sensor">Requires <span class="badge text-bg-danger">battery level sensor</span></span>
+        </div>
       </div>
 
       <div id="enable_battery_level_low_check_form" class="row mb-3">
@@ -4555,6 +4623,7 @@
       $("#enable_membrane_pressure_low_check").prop("checked", false);
     }
 
+    $(".requires_membrane_pressure_sensor").toggle(!hasSensor);
     $("#has_membrane_pressure_sensor_form").toggle(hasSensor);
   }
 
@@ -4569,6 +4638,7 @@
       $("#enable_flush_filter_pressure_low_check").prop("checked", false);
     }
 
+    $(".requires_filter_pressure_sensor").toggle(!hasSensor);
     $("#has_filter_pressure_sensor_form").toggle(hasSensor);
   }
 
@@ -4583,6 +4653,7 @@
       $("#enable_product_flowrate_low_check").prop("checked", false);
     }
 
+    $(".requires_product_flowrate_sensor").toggle(!hasSensor);
     $("#startRunVolumeDialog").toggle(hasSensor);
     $("#has_product_flow_sensor_form").toggle(hasSensor);
   }
@@ -4598,6 +4669,7 @@
       $("#enable_flush_flowrate_low_check").prop("checked", false);
     }
 
+    $(".requires_brine_flow_sensor").toggle(!hasSensor);
     $("#startFlushVolumeDialog").toggle(hasSensor);
     $("#has_brine_flow_sensor_form").toggle(hasSensor);
   }
@@ -4611,6 +4683,7 @@
       $("#enable_product_salinity_high_check").prop("checked", false);
     }
 
+    $(".requires_product_tds_sensor").toggle(!hasSensor);
     $("#has_product_tds_sensor_form").toggle(hasSensor);
   }
 
@@ -4626,6 +4699,7 @@
       $("#enable_motor_temperature_check").prop("checked", false);
     }
 
+    $(".requires_motor_temperature_sensor").toggle(!hasSensor);
     $("#motor_temperature_mqtt_path_form").toggle(type === "MQTT");
   }
 
@@ -4648,6 +4722,7 @@
     if (!hasSensor) {
       $("#enable_flush_valve_off_check").prop("checked", false);
     }
+    $(".requires_flush_valve_sensor").toggle(!hasSensor);
   }
 
   Brineomatic.prototype.updateFlushTankLowCheckVisibility = function (tank_level_sensor_type, flush_valve_control) {
@@ -4664,6 +4739,7 @@
     if (!hasSensor) {
       $("#enable_tank_level_full_check").prop("checked", false);
     }
+    $(".requires_tank_level_sensor").toggle(!hasSensor);
   }
 
   Brineomatic.prototype.updateTankVisibility = function (tank_level_sensor_type) {
@@ -4681,6 +4757,7 @@
       $("#enable_battery_level_low_check").prop("checked", false);
     }
     $("#battery_level_mqtt_path_form").toggle(battery_level_sensor_type === "MQTT");
+    $(".requires_battery_level_sensor").toggle(!hasSensor);
   }
 
   Brineomatic.prototype.getBrineomaticConfigFormData = function () {
