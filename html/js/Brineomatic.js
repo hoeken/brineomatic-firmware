@@ -4547,6 +4547,8 @@
   Brineomatic.prototype.updateMembranePressureVisibility = function (hasSensor) {
     $("#enable_membrane_pressure_high_check").prop("disabled", !hasSensor);
     $("#enable_membrane_pressure_low_check").prop("disabled", !hasSensor);
+    $("#membrane_pressure_stabilization_time").prop("disabled", !hasSensor);
+    $("#membrane_pressure_timeout").prop("disabled", !hasSensor);
 
     if (!hasSensor) {
       $("#enable_membrane_pressure_high_check").prop("checked", false);
@@ -4573,6 +4575,8 @@
   Brineomatic.prototype.updateProductFlowrateVisibility = function (hasSensor) {
     $("#enable_product_flowrate_high_check").prop("disabled", !hasSensor);
     $("#enable_product_flowrate_low_check").prop("disabled", !hasSensor);
+    $("#product_flowrate_stabilization_time").prop("disabled", !hasSensor);
+    $("#product_flowrate_timeout").prop("disabled", !hasSensor);
 
     if (!hasSensor) {
       $("#enable_product_flowrate_high_check").prop("checked", false);
@@ -4600,6 +4604,8 @@
 
   Brineomatic.prototype.updateProductTDSVisibility = function (hasSensor) {
     $("#enable_product_salinity_high_check").prop("disabled", !hasSensor);
+    $("#product_salinity_stabilization_time").prop("disabled", !hasSensor);
+    $("#product_salinity_timeout").prop("disabled", !hasSensor);
 
     if (!hasSensor) {
       $("#enable_product_salinity_high_check").prop("checked", false);
@@ -5376,21 +5382,18 @@
       },
 
       membrane_pressure_timeout: {
-        numericality: {
-          greaterThan: 0
-        }
+        numericality: { greaterThan: 0 },
+        greaterThanField: "membrane_pressure_stabilization_time"
       },
 
       product_flowrate_timeout: {
-        numericality: {
-          greaterThan: 0
-        }
+        numericality: { greaterThan: 0 },
+        greaterThanField: "product_flowrate_stabilization_time"
       },
 
       product_salinity_timeout: {
-        numericality: {
-          greaterThan: 0
-        }
+        numericality: { greaterThan: 0 },
+        greaterThanField: "product_salinity_stabilization_time"
       },
 
       membrane_pressure_stabilization_time: {
@@ -5916,6 +5919,13 @@
     $("#deleteBrineomaticLogsButton").on("click", YB.Brineomatic.deleteLogs);
   });
 
+
+  validate.validators.greaterThanField = function (value, options, key, attributes) {
+    const other = parseFloat(attributes[options]);
+    const val = parseFloat(value);
+    if (isNaN(other) || isNaN(val)) return;
+    if (val <= other) return `must be greater than ${options.replace(/_/g, " ")} (${other})`;
+  };
 
   validate.validators.relayUnique = function (value, options, key, attributes) {
     const map = {
