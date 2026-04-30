@@ -3109,13 +3109,13 @@
 
       <div class="mb-3">
         <div class="input-group has-validation">
-          <span class="input-group-text">High Pressure Stabilization Time</span>
+          <span class="input-group-text">Pressure Stabilization Time</span>
           <input id="membrane_pressure_stabilization_time" type="text" class="form-control text-end">
-          <span class="input-group-text">seconds</span>
+          <span class="input-group-text">s</span>
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">
-          How long at target until pressure is considered stable.<br/>
+          Time at target until membrane pressure is considered stable.<br/>
           Requires <span class="badge text-bg-secondary">membrane pressure sensor</span>
         </div>
       </div>
@@ -3124,7 +3124,7 @@
         <div class="input-group has-validation">
           <span class="input-group-text">High Pressure Timeout</span>
           <input id="membrane_pressure_timeout" type="text" class="form-control text-end">
-          <span class="input-group-text">seconds</span>
+          <span class="input-group-text">s</span>
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">
@@ -3135,13 +3135,13 @@
 
       <div class="mb-3">
         <div class="input-group has-validation">
-          <span class="input-group-text">Product Flowrate Stabilization Time</span>
+          <span class="input-group-text">Flowrate Stabilization Time</span>
           <input id="product_flowrate_stabilization_time" type="text" class="form-control text-end">
-          <span class="input-group-text">seconds</span>
+          <span class="input-group-text">s</span>
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">
-          How long at target until flowrate is considered stable.<br/>
+          Time at target until product flowrate is considered stable.<br/>
           Requires <span class="badge text-bg-secondary">product flowrate sensor</span>
         </div>
       </div>
@@ -3150,7 +3150,7 @@
         <div class="input-group has-validation">
           <span class="input-group-text">Product Flowrate Timeout</span>
           <input id="product_flowrate_timeout" type="text" class="form-control text-end">
-          <span class="input-group-text">seconds</span>
+          <span class="input-group-text">s</span>
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">
@@ -3161,13 +3161,13 @@
 
       <div class="mb-3">
         <div class="input-group has-validation">
-          <span class="input-group-text">Product Salinity Stabilization Time</span>
+          <span class="input-group-text">Salinity Stabilization Time</span>
           <input id="product_salinity_stabilization_time" type="text" class="form-control text-end">
-          <span class="input-group-text">seconds</span>
+          <span class="input-group-text">s</span>
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">
-          How long at target until salinity is considered stable.<br/>
+          Time at target until product salinity is considered stable.<br/>
           Requires <span class="badge text-bg-secondary">product salinity sensor</span>
         </div>
       </div>
@@ -3176,7 +3176,7 @@
         <div class="input-group has-validation">
           <span class="input-group-text">Product Salinity Timeout</span>
           <input id="product_salinity_timeout" type="text" class="form-control text-end">
-          <span class="input-group-text">seconds</span>
+          <span class="input-group-text">s</span>
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">
@@ -3189,7 +3189,7 @@
         <div class="input-group has-validation">
           <span class="input-group-text">Production Runtime Timeout</span>
           <input id="production_runtime_timeout" type="text" class="form-control text-end">
-          <span class="input-group-text">hours</span>
+          <span class="input-group-text">hr</span>
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">Maximum time a run cycle can take.</div>
@@ -3201,7 +3201,7 @@
         <div class="input-group has-validation">
           <span class="input-group-text">Flush Timeout</span>
           <input id="flush_timeout" type="text" class="form-control text-end">
-          <span class="input-group-text">seconds</span>
+          <span class="input-group-text">s</span>
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">Maximum time a flush cycle can run.</div>
