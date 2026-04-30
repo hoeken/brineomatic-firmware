@@ -467,11 +467,14 @@ class Brineomatic
     String batteryLevelSensorType = YB_BATTERY_LEVEL_SENSOR_TYPE;
     String batteryLevelMqttPath = YB_BATTERY_LEVEL_MQTT_PATH;
 
-    uint32_t flushTimeout = YB_FLUSH_TIMEOUT;                          // timeout for flush cycle in ms
-    uint32_t membranePressureTimeout = YB_MEMBRANE_PRESSURE_TIMEOUT;   // timeout for membrane pressure to stabilize in ms
-    uint32_t productFlowrateTimeout = YB_PRODUCT_FLOWRATE_TIMEOUT;     // timeout for product flowrate to stabilize in ms
-    uint32_t productSalinityTimeout = YB_PRODUCT_SALINITY_TIMEOUT;     // timeout for salinity to stabilize in ms
-    uint32_t productionRuntimeTimeout = YB_PRODUCTION_RUNTIME_TIMEOUT; // maximum length of run in ms
+    uint32_t flushTimeout = YB_FLUSH_TIMEOUT;                                             // timeout for flush cycle in ms
+    uint32_t membranePressureTimeout = YB_MEMBRANE_PRESSURE_TIMEOUT;                      // timeout for membrane pressure to stabilize in ms
+    uint32_t productFlowrateTimeout = YB_PRODUCT_FLOWRATE_TIMEOUT;                        // timeout for product flowrate to stabilize in ms
+    uint32_t productSalinityTimeout = YB_PRODUCT_SALINITY_TIMEOUT;                        // timeout for salinity to stabilize in ms
+    uint32_t membranePressureStabilizationTime = YB_MEMBRANE_PRESSURE_STABILIZATION_TIME; // time at target to be considered stable in ms
+    uint32_t productFlowrateStabilizationTime = YB_PRODUCT_FLOWRATE_STABILIZATION_TIME;   // time at target to be considered stable in ms
+    uint32_t productSalinityStabilizationTime = YB_PRODUCT_SALINITY_STABILIZATION_TIME;   // time at target to be considered stable in ms
+    uint32_t productionRuntimeTimeout = YB_PRODUCTION_RUNTIME_TIMEOUT;                    // maximum length of run in ms
 
     bool enableMembranePressureHighCheck = YB_ENABLE_MEMBRANE_PRESSURE_HIGH_CHECK;
     float membranePressureHighThreshold = YB_MEMBRANE_PRESSURE_HIGH_THRESHOLD;

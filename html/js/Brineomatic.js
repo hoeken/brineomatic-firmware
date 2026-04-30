@@ -3105,16 +3105,19 @@
   Brineomatic.prototype.generateSafeguardsSettingsUI = function () {
     return /*html*/ `
 
-    <h6 class="border-start border-primary border-3 ps-2 mb-2">Timeouts</h6>
+      <h6 class="border-start border-primary border-3 ps-2 mb-2"><span class="badge text-bg-success">RUN</span> Mode Timings</h6>
 
-    <div class="mb-3">
+      <div class="mb-3">
         <div class="input-group has-validation">
-          <span class="input-group-text">Flush Timeout</span>
-          <input id="flush_timeout" type="text" class="form-control text-end">
+          <span class="input-group-text">High Pressure Stabilization Time</span>
+          <input id="membrane_pressure_stabilization_time" type="text" class="form-control text-end">
           <span class="input-group-text">seconds</span>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Maximum time a flush cycle can run.</div>
+        <div class="form-text">
+          How long at target until pressure is considered stable.<br/>
+          Requires <span class="badge text-bg-secondary">membrane pressure sensor</span>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -3124,7 +3127,23 @@
           <span class="input-group-text">seconds</span>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Maximum time to wait for membrane pressure.</div>
+        <div class="form-text">
+          Maximum time to wait for membrane pressure.<br/>
+          Requires <span class="badge text-bg-secondary">membrane pressure sensor</span>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="input-group has-validation">
+          <span class="input-group-text">Product Flowrate Stabilization Time</span>
+          <input id="product_flowrate_stabilization_time" type="text" class="form-control text-end">
+          <span class="input-group-text">seconds</span>
+          <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-text">
+          How long at target until flowrate is considered stable.<br/>
+          Requires <span class="badge text-bg-secondary">product flowrate sensor</span>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -3134,7 +3153,23 @@
           <span class="input-group-text">seconds</span>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Maximum time to wait for product flowrate.</div>
+        <div class="form-text">
+          Maximum time to wait for product flowrate.<br/>
+          Requires <span class="badge text-bg-secondary">product flowrate sensor</span>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="input-group has-validation">
+          <span class="input-group-text">Product Salinity Stabilization Time</span>
+          <input id="product_salinity_stabilization_time" type="text" class="form-control text-end">
+          <span class="input-group-text">seconds</span>
+          <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-text">
+          How long at target until salinity is considered stable.<br/>
+          Requires <span class="badge text-bg-secondary">product salinity sensor</span>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -3144,7 +3179,10 @@
           <span class="input-group-text">seconds</span>
           <div class="invalid-feedback"></div>
         </div>
-        <div class="form-text">Maximum time to wait for product salinity.</div>
+        <div class="form-text">
+          Maximum time to wait for product salinity.<br/>
+          Requires <span class="badge text-bg-secondary">product salinity sensor</span>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -3155,6 +3193,18 @@
           <div class="invalid-feedback"></div>
         </div>
         <div class="form-text">Maximum time a run cycle can take.</div>
+      </div>
+
+      <h6 class="border-start border-primary border-3 ps-2 mb-2"><span class="badge text-bg-primary">FLUSH</span> Mode Timing</h6>
+
+      <div class="mb-3">
+        <div class="input-group has-validation">
+          <span class="input-group-text">Flush Timeout</span>
+          <input id="flush_timeout" type="text" class="form-control text-end">
+          <span class="input-group-text">seconds</span>
+          <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-text">Maximum time a flush cycle can run.</div>
       </div>
 
       <h6 class="border-start border-primary border-3 ps-2 mb-2 mt-5">Sensor Checks</h6>
@@ -3770,6 +3820,9 @@
     $("#membrane_pressure_timeout").val(data.membrane_pressure_timeout / (1000));
     $("#product_flowrate_timeout").val(data.product_flowrate_timeout / (1000));
     $("#product_salinity_timeout").val(data.product_salinity_timeout / (1000));
+    $("#membrane_pressure_stabilization_time").val(data.membrane_pressure_stabilization_time / (1000));
+    $("#product_flowrate_stabilization_time").val(data.product_flowrate_stabilization_time / (1000));
+    $("#product_salinity_stabilization_time").val(data.product_salinity_stabilization_time / (1000));
     $("#production_runtime_timeout").val(data.production_runtime_timeout / (60 * 60 * 1000));
 
     $("#enable_membrane_pressure_high_check").prop('checked', data.enable_membrane_pressure_high_check);
@@ -4751,6 +4804,9 @@
     data.membrane_pressure_timeout = Math.round(parseFloat($("#membrane_pressure_timeout").val()) * 1000);
     data.product_flowrate_timeout = Math.round(parseFloat($("#product_flowrate_timeout").val() * 1000));
     data.product_salinity_timeout = Math.round(parseFloat($("#product_salinity_timeout").val() * 1000));
+    data.membrane_pressure_stabilization_time = Math.round(parseFloat($("#membrane_pressure_stabilization_time").val()) * 1000);
+    data.product_flowrate_stabilization_time = Math.round(parseFloat($("#product_flowrate_stabilization_time").val() * 1000));
+    data.product_salinity_stabilization_time = Math.round(parseFloat($("#product_salinity_stabilization_time").val() * 1000));
     data.production_runtime_timeout = Math.round(parseFloat($("#production_runtime_timeout").val() * 60 * 60 * 1000));
 
     data.enable_membrane_pressure_high_check = $("#enable_membrane_pressure_high_check").prop("checked");
@@ -5332,6 +5388,24 @@
       },
 
       product_salinity_timeout: {
+        numericality: {
+          greaterThan: 0
+        }
+      },
+
+      membrane_pressure_stabilization_time: {
+        numericality: {
+          greaterThan: 0
+        }
+      },
+
+      product_flowrate_stabilization_time: {
+        numericality: {
+          greaterThan: 0
+        }
+      },
+
+      product_salinity_stabilization_time: {
         numericality: {
           greaterThan: 0
         }

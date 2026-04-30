@@ -2238,6 +2238,9 @@ void Brineomatic::generateConfigJSON(JsonVariant output, UserRole role, ConfigPu
   output["membrane_pressure_timeout"] = this->membranePressureTimeout;
   output["product_flowrate_timeout"] = this->productFlowrateTimeout;
   output["product_salinity_timeout"] = this->productSalinityTimeout;
+  output["membrane_pressure_stabilization_time"] = this->membranePressureStabilizationTime;
+  output["product_flowrate_stabilization_time"] = this->productFlowrateStabilizationTime;
+  output["product_salinity_stabilization_time"] = this->productSalinityStabilizationTime;
   output["production_runtime_timeout"] = this->productionRuntimeTimeout;
 
   output["tank_capacity"] = this->tankCapacity;
@@ -3117,6 +3120,30 @@ bool Brineomatic::validateSafeguardsConfigJSON(JsonVariant config,
     }
   }
 
+  if (config["membrane_pressure_stabilization_time"]) {
+    if (!checkIsNumber(config, "membrane_pressure_stabilization_time", error, err_size) ||
+        !checkNumGT(config, "membrane_pressure_stabilization_time", 0.0f, error, err_size)) {
+      config.remove("membrane_pressure_stabilization_time");
+      ok = false;
+    }
+  }
+
+  if (config["product_flowrate_stabilization_time"]) {
+    if (!checkIsNumber(config, "product_flowrate_stabilization_time", error, err_size) ||
+        !checkNumGT(config, "product_flowrate_stabilization_time", 0.0f, error, err_size)) {
+      config.remove("product_flowrate_stabilization_time");
+      ok = false;
+    }
+  }
+
+  if (config["product_salinity_stabilization_time"]) {
+    if (!checkIsNumber(config, "product_salinity_stabilization_time", error, err_size) ||
+        !checkNumGT(config, "product_salinity_stabilization_time", 0.0f, error, err_size)) {
+      config.remove("product_salinity_stabilization_time");
+      ok = false;
+    }
+  }
+
   if (config["production_runtime_timeout"]) {
     if (!checkIsNumber(config, "production_runtime_timeout", error, err_size) ||
         !checkNumGT(config, "production_runtime_timeout", 0.0f, error, err_size)) {
@@ -3609,6 +3636,9 @@ void Brineomatic::loadSafeguardsConfigJSON(JsonVariantConst config)
   this->membranePressureTimeout = config["membrane_pressure_timeout"] | YB_MEMBRANE_PRESSURE_TIMEOUT;
   this->productFlowrateTimeout = config["product_flowrate_timeout"] | YB_PRODUCT_FLOWRATE_TIMEOUT;
   this->productSalinityTimeout = config["product_salinity_timeout"] | YB_PRODUCT_SALINITY_TIMEOUT;
+  this->membranePressureStabilizationTime = config["membrane_pressure_stabilization_time"] | YB_MEMBRANE_PRESSURE_STABILIZATION_TIME;
+  this->productFlowrateStabilizationTime = config["product_flowrate_stabilization_time"] | YB_PRODUCT_FLOWRATE_STABILIZATION_TIME;
+  this->productSalinityStabilizationTime = config["product_salinity_stabilization_time"] | YB_PRODUCT_SALINITY_STABILIZATION_TIME;
   this->productionRuntimeTimeout = config["production_runtime_timeout"] | YB_PRODUCTION_RUNTIME_TIMEOUT;
 
   this->enableMembranePressureHighCheck = config["enable_membrane_pressure_high_check"] | YB_ENABLE_MEMBRANE_PRESSURE_HIGH_CHECK;
