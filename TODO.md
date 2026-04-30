@@ -1,10 +1,11 @@
-# v2.6
-
-* Better high PPM handling - issue #4
-
 # v2.7
 
 * configurable thresholds for gauges - issue #3
+* move to config struct
+    * public config and public defaults.
+    * no more huge #define list
+    * move config handling to controller
+        * how to handle brineomatic class and brineomatic controller both needing the config.
 
 # LONG TERM:
 
