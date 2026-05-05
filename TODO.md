@@ -1,11 +1,24 @@
 # v2.7
 
-* configurable thresholds for gauges - issue #3
 * move to config struct
     * public config and public defaults.
     * no more huge #define list
     * move config handling to controller
         * how to handle brineomatic class and brineomatic controller both needing the config.
+* configurable thresholds for gauges - issue #3
+* threshold indication on gauges - issue #9
+* add graphs (stored in psram)
+* add averages to salinity / pressure / flowrate for runtime - log it.
+
+# v2.8
+
+* pid control of pressure
+    * stepper -> stepper fixed angle
+    * pid_stepper -> stepper w/ pid
+    * use quickpid + sTune
+* non-reboot necessary config (add to manual mode?)
+    * tds offset
+    * not sure i like this.
 
 # LONG TERM:
 
