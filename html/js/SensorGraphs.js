@@ -107,10 +107,7 @@
       },
     ];
 
-    // only show tabs that have at least one available sensor, and let each
-    // series inherit its tab's display precision so values can be rounded as
-    // they're stored (a steady-state reading then graphs as a flat line
-    // instead of jittering in the noise below the displayed precision).
+    // only show tabs that have at least one available sensor.
     //
     // The y-axis range is pulled from the shared sensor config
     // (YB.bom.sensorConfig) so the graphs and the home-page gauges share a
@@ -123,7 +120,6 @@
     for (let tab of this.setup) {
       tab.enabled = tab.series.some(s => s.enabled);
       for (let s of tab.series) {
-        s.decimals = tab.decimals;
         const g = gauges[s.sensor];
         if (g && g.min !== undefined) {
           s.min = g.min;
@@ -543,21 +539,22 @@
       });
   };
 
-  // Smooth (optionally) and round an incoming value before it's stored.
+  // Smooth (optionally) an incoming value before it's stored.
   //
   // series.smooth is the EMA alpha (0..1): lower = smoother/laggier.  The EMA
   // state lives on the passed data object (the same one the value is stored
   // in) so the smoothed value carries from loaded history into live updates
-  // seamlessly; we keep it at full precision and only round the returned
-  // (stored/plotted) value to series.decimals so a steady reading graphs as a
-  // flat line instead of jittering in sub-display noise.
+  // seamlessly.  The value is stored/plotted at full precision; rounding to the
+  // tab's display precision happens only in the series' label value() formatter
+  // (see create()), so the graph plots the true reading and only the tooltip
+  // label is rounded.
   SensorGraphs.prototype.smoothValue = function (series, value, data) {
     if (series.smooth) {
       const prev = data._ema;
       value = (prev === undefined) ? value : prev + series.smooth * (value - prev);
       data._ema = value;
     }
-    return (series.decimals === undefined) ? value : Number(value.toFixed(series.decimals));
+    return value;
   };
 
   // Build uPlot's aligned data array for a tab: [xs, valuesForSeries1, ...].
