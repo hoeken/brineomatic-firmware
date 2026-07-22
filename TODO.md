@@ -1,7 +1,3 @@
-# v2.8.1
-
-* averages not accurate - reset wrong or double internally?
-
 # LONG TERM:
 
 * move non-hardware config out of hardware config - add a single tab "Runtime"
