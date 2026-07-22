@@ -1419,6 +1419,9 @@ void BrineomaticController::generateConfigJSON(JsonVariant output, UserRole role
   output["flush_valve_open_angle"] = _config.flushValveOpenAngle;
   output["flush_valve_close_angle"] = _config.flushValveCloseAngle;
 
+  output["preflush_enabled"] = _config.preflushEnabled;
+  output["preflush_duration"] = _config.preflushDuration;
+
   output["cooling_fan_control"] = _config.coolingFanControl;
   output["cooling_fan_relay_id"] = _config.coolingFanRelayId;
   output["cooling_fan_relay_inverted"] = _config.coolingFanRelayInverted;
@@ -2001,6 +2004,21 @@ bool BrineomaticController::validateHardwareConfigJSON(JsonVariant config,
         config.remove("flush_valve_relay_id");
         ok = false;
       }
+    }
+  }
+
+  if (config["preflush_enabled"]) {
+    if (!checkIsBool(config, "preflush_enabled", error, err_size)) {
+      config.remove("preflush_enabled");
+      ok = false;
+    }
+  }
+
+  if (config["preflush_duration"]) {
+    if (!checkIsInteger(config, "preflush_duration", error, err_size) ||
+        !checkIntGE(config, "preflush_duration", 0, error, err_size)) {
+      config.remove("preflush_duration");
+      ok = false;
     }
   }
 
@@ -2733,6 +2751,9 @@ void BrineomaticController::loadHardwareConfigJSON(JsonVariantConst config)
   _config.flushValveServoId = config["flush_valve_servo_id"] | defaults.flushValveServoId;
   _config.flushValveOpenAngle = config["flush_valve_open_angle"] | defaults.flushValveOpenAngle;
   _config.flushValveCloseAngle = config["flush_valve_close_angle"] | defaults.flushValveCloseAngle;
+
+  _config.preflushEnabled = config["preflush_enabled"] | defaults.preflushEnabled;
+  _config.preflushDuration = config["preflush_duration"] | defaults.preflushDuration;
 
   // Flush settings.  Legacy "autoflush_*" keys are migrated for backward
   // compatibility: post run flush inherits them directly; scheduled flush

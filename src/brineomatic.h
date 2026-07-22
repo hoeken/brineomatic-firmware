@@ -198,6 +198,7 @@ class Brineomatic
 
     bool initializeHardware(bool emergencyStop = false);
 
+    bool preRunFlushEnabled();
     bool postRunFlushEnabled();
     bool scheduledFlushEnabled();
 

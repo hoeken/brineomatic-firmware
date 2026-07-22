@@ -638,6 +638,14 @@ bool Brineomatic::initializeHardware(bool emergencyStop)
   return isFailure;
 }
 
+bool Brineomatic::preRunFlushEnabled()
+{
+  if (!hasFlushValve())
+    return false;
+
+  return _config.preflushEnabled;
+}
+
 bool Brineomatic::postRunFlushEnabled()
 {
   if (!hasFlushValve())
@@ -1397,6 +1405,12 @@ void Brineomatic::runStateMachine()
         return logResult(Status::RUNNING, runResult);
       }
 
+      if (preRunFlushEnabled()) {
+        YBP.println("Pre Run Flush Started");
+        openFlushValve();
+        vTaskDelay(pdMS_TO_TICKS(_config.preflushDuration));
+      }
+
       uint32_t boostPumpStart = millis();
       if (hasBoostPump()) {
         YBP.println("Boost Pump Started");
@@ -1422,6 +1436,11 @@ void Brineomatic::runStateMachine()
 
       enableHighPressurePump();
       vTaskDelay(pdMS_TO_TICKS(_config.highPressurePumpDelay));
+
+      if (preRunFlushEnabled()) {
+        YBP.println("Pre Run Flush Complete");
+        closeFlushValve();
+      }
 
       setMembranePressureTarget(_config.membranePressureTarget);
 

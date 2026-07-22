@@ -228,6 +228,14 @@
   #define YB_FLUSH_VALVE_CLOSE_ANGLE 125
 #endif
 
+#ifndef YB_PREFLUSH_ENABLED
+  #define YB_PREFLUSH_ENABLED false
+#endif
+
+#ifndef YB_PREFLUSH_DURATION
+  #define YB_PREFLUSH_DURATION 5000
+#endif
+
 #ifndef YB_COOLING_FAN_CONTROL
   #define YB_COOLING_FAN_CONTROL "MANUAL"
 #endif
@@ -650,6 +658,10 @@ struct BrineomaticConfig {
     uint8_t flushValveServoId = YB_FLUSH_VALVE_SERVO_ID;
     float flushValveOpenAngle = YB_FLUSH_VALVE_OPEN_ANGLE;
     float flushValveCloseAngle = YB_FLUSH_VALVE_CLOSE_ANGLE;
+
+    // Pre run flush: opens the flush valve before starting the main pump to prime the system
+    bool preflushEnabled = YB_PREFLUSH_ENABLED;
+    uint32_t preflushDuration = YB_PREFLUSH_DURATION;
 
     String coolingFanControl = YB_COOLING_FAN_CONTROL;
     uint8_t coolingFanRelayId = YB_COOLING_FAN_RELAY_ID;

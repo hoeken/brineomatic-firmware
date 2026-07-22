@@ -2458,6 +2458,32 @@
         </div>
       </div>
 
+      <div id="preflush_form">
+        <h6 class="mt-3">Pre Run Flush</h6>
+        <p class="text-muted small">Opens the flush valve before starting the main pump to prime the system.</p>
+
+        <div class="mb-3">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="preflush_enabled">
+            <label class="form-check-label" for="preflush_enabled">
+              Enable Pre Run Flush
+            </label>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+
+        <div id="preflush_duration_form" class="mb-3">
+          <div class="col-12 col-md-6">
+            <div class="input-group has-validation">
+              <span class="input-group-text">Duration</span>
+              <input type="text" class="form-control text-end" id="preflush_duration">
+              <span class="input-group-text">ms</span>
+              <div class="invalid-feedback"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="autoflush_form">
         <h6 class="mt-3">Post Run Flush</h6>
         <p class="text-muted small">Runs automatically after every run cycle.</p>
@@ -3398,6 +3424,8 @@
     $("#flush_valve_servo_id").val(data.flush_valve_servo_id);
     $("#flush_valve_open_angle").val(data.flush_valve_open_angle);
     $("#flush_valve_close_angle").val(data.flush_valve_close_angle);
+    $("#preflush_enabled").prop('checked', data.preflush_enabled);
+    $("#preflush_duration").val(data.preflush_duration);
 
     $("#post_run_flush_mode").val(data.post_run_flush_mode);
     $("#post_run_flush_salinity").val(data.post_run_flush_salinity);
@@ -3567,6 +3595,7 @@
     this.updateHighPressureValveVisibility(data.high_pressure_valve_control);
     this.updateDiverterValveVisibility(data.diverter_valve_control);
     this.updateFlushValveVisibility(data.flush_valve_control);
+    this.updatePreflushVisibility(data.preflush_enabled);
     this.updateCoolingFanVisibility(data.cooling_fan_control);
 
     this.updateMembranePressureVisibility(data.has_membrane_pressure_sensor);
@@ -3733,6 +3762,10 @@
 
     $("#flush_valve_control").on("change", (e) => {
       YB.bom.updateFlushValveVisibility(e.target.value);
+    });
+
+    $("#preflush_enabled").on("change", (e) => {
+      YB.bom.updatePreflushVisibility(e.target.checked);
     });
 
     $("#cooling_fan_control").on("change", (e) => {
@@ -4117,7 +4150,12 @@
     $("#flushBrineomatic").toggleClass("bomIDLE bomPICKLED", mode !== "NONE");
     $("#flushBrineomatic").toggle(mode !== "NONE")
     $("#flushValveControlUI").toggle(mode !== "NONE");
+    $("#preflush_form").toggle(mode !== "NONE");
     $("#autoflush_form").toggle(mode !== "NONE");
+  };
+
+  Brineomatic.prototype.updatePreflushVisibility = function (enabled) {
+    $("#preflush_duration_form").toggle(!!enabled);
   };
 
   Brineomatic.prototype.updateCoolingFanVisibility = function (mode) {
@@ -4360,6 +4398,8 @@
     data.flush_valve_servo_id = parseInt($("#flush_valve_servo_id").val());
     data.flush_valve_open_angle = parseFloat($("#flush_valve_open_angle").val());
     data.flush_valve_close_angle = parseFloat($("#flush_valve_close_angle").val());
+    data.preflush_enabled = $("#preflush_enabled").prop("checked");
+    data.preflush_duration = parseInt($("#preflush_duration").val());
 
     data.post_run_flush_mode = $("#post_run_flush_mode").val();
     data.post_run_flush_salinity = parseFloat($("#post_run_flush_salinity").val());
@@ -4797,6 +4837,17 @@
         numericality: {
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 180
+        }
+      },
+
+      preflush_enabled: {
+        inclusion: [true, false]
+      },
+
+      preflush_duration: {
+        numericality: {
+          onlyInteger: true,
+          greaterThanOrEqualTo: 0
         }
       },
 
