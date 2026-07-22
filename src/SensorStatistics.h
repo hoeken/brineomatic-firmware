@@ -35,7 +35,10 @@ class SensorStatistics
     float getStdDev();
 
   private:
-    statistic::Statistic<float, uint32_t, true> _stats;
+    // double accumulator: float's 24-bit mantissa (~7 sig digits) loses
+    // precision once the running sum grows over long runs (tens of thousands
+    // of samples), skewing the average and stddev.  double gives ~15-16.
+    statistic::Statistic<double, uint32_t, true> _stats;
     bool _active = false;
     float _start = NAN;
     float _end = NAN;
