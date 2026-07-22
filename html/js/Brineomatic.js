@@ -467,6 +467,11 @@
 
     $(`.bom${msg.status}`).show();
 
+    // flush valve only shows during RUNNING if pre-run flush is enabled
+    if (msg.status === "RUNNING" && !YB.config.brineomatic.preflush_enabled) {
+      $('#bomFlushValveStatus').hide();
+    }
+
     if (msg.run_result)
       this.showResult("#bomRunResult", msg.run_result);
 
@@ -1233,7 +1238,7 @@
                                   <th>Diverter Valve:</th>
                                   <td><span></span></td>
                               </tr>
-                              <tr id="bomFlushValveStatus" class="bomFLUSHING bomSTOPPING">
+                              <tr id="bomFlushValveStatus" class="bomRUNNING bomFLUSHING bomSTOPPING">
                                   <th>Flush Valve:</th>
                                   <td><span></span></td>
                               </tr>
