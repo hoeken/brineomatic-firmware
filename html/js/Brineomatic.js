@@ -2031,7 +2031,7 @@
       <div class="form-floating mb-3">
           <select id="motor_temperature_sensor_type" class="form-select" aria-label="Motor Temperature Sensor">
             <option value="NONE">None</option>
-            <option value="EXTERNAL">External (via NodeRED or API)</option>
+            <option value="EXTERNAL">External (via SignalK / API)</option>
             <option value="DS18B20">DS18B20 (directly connected)</option>
             <option value="MQTT">MQTT</option>
           </select>
@@ -2054,7 +2054,7 @@
       <div class="form-floating mb-3">
           <select id="water_temperature_sensor_type" class="form-select" aria-label="Water Temperature Sensor">
             <option value="NONE">None</option>
-            <option value="EXTERNAL">External (via NodeRED or API)</option>
+            <option value="EXTERNAL">External (via SignalK / API)</option>
             <option value="DS18B20">DS18B20 (directly connected)</option>
             <option value="MQTT">MQTT</option>
           </select>
@@ -2653,7 +2653,7 @@
       <div class="form-floating mb-3">
           <select id="tank_level_sensor_type" class="form-select" aria-label="Tank Level Sensor">
             <option value="NONE">None</option>
-            <option value="EXTERNAL">External (via NodeRED or API)</option>
+            <option value="EXTERNAL">External (via SignalK / API)</option>
             <option value="MQTT">MQTT</option>
           </select>
           <label for="tank_level_sensor_type">Tank Level Sensor</label>
@@ -2684,7 +2684,7 @@
       <div class="form-floating mb-3">
           <select id="battery_level_sensor_type" class="form-select" aria-label="Battery Level Sensor">
             <option value="NONE">None</option>
-            <option value="EXTERNAL">External (via NodeRED or API)</option>
+            <option value="EXTERNAL">External (via SignalK / API)</option>
             <option value="MQTT">MQTT</option>
           </select>
           <label for="battery_level_sensor_type">Battery Level Sensor</label>
