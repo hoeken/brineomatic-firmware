@@ -4428,34 +4428,52 @@
     let cooling_fan_off_temp = parseFloat($("#cooling_fan_off_temperature").val());
     data.cooling_fan_off_temperature = YB.bom.convertTemperature(cooling_fan_off_temp, YB.config.brineomatic.temperature_units, "C");
 
-    data.has_membrane_pressure_sensor = $("#has_membrane_pressure_sensor").prop("checked");
-    let membrane_pressure_sensor_min = parseFloat($("#membrane_pressure_sensor_min").val());
-    data.membrane_pressure_sensor_min = YB.bom.convertPressure(membrane_pressure_sensor_min, YB.config.brineomatic.pressure_units, "Bar");
-    let membrane_pressure_sensor_max = parseFloat($("#membrane_pressure_sensor_max").val());
-    data.membrane_pressure_sensor_max = YB.bom.convertPressure(membrane_pressure_sensor_max, YB.config.brineomatic.pressure_units, "Bar");
+    //only collect fields for sensors this board actually has - matches generateHardwareSettingsUI
+    if (YB.capabilities.brineomatic.hp_sensor) {
+      data.has_membrane_pressure_sensor = $("#has_membrane_pressure_sensor").prop("checked");
+      let membrane_pressure_sensor_min = parseFloat($("#membrane_pressure_sensor_min").val());
+      data.membrane_pressure_sensor_min = YB.bom.convertPressure(membrane_pressure_sensor_min, YB.config.brineomatic.pressure_units, "Bar");
+      let membrane_pressure_sensor_max = parseFloat($("#membrane_pressure_sensor_max").val());
+      data.membrane_pressure_sensor_max = YB.bom.convertPressure(membrane_pressure_sensor_max, YB.config.brineomatic.pressure_units, "Bar");
+    }
 
-    data.has_filter_pressure_sensor = $("#has_filter_pressure_sensor").prop("checked");
-    let filter_pressure_sensor_min = parseFloat($("#filter_pressure_sensor_min").val());
-    data.filter_pressure_sensor_min = YB.bom.convertPressure(filter_pressure_sensor_min, YB.config.brineomatic.pressure_units, "Bar");
-    let filter_pressure_sensor_max = parseFloat($("#filter_pressure_sensor_max").val());
-    data.filter_pressure_sensor_max = YB.bom.convertPressure(filter_pressure_sensor_max, YB.config.brineomatic.pressure_units, "Bar");
+    if (YB.capabilities.brineomatic.lp_sensor) {
+      data.has_filter_pressure_sensor = $("#has_filter_pressure_sensor").prop("checked");
+      let filter_pressure_sensor_min = parseFloat($("#filter_pressure_sensor_min").val());
+      data.filter_pressure_sensor_min = YB.bom.convertPressure(filter_pressure_sensor_min, YB.config.brineomatic.pressure_units, "Bar");
+      let filter_pressure_sensor_max = parseFloat($("#filter_pressure_sensor_max").val());
+      data.filter_pressure_sensor_max = YB.bom.convertPressure(filter_pressure_sensor_max, YB.config.brineomatic.pressure_units, "Bar");
+    }
 
-    data.has_product_tds_sensor = $("#has_product_tds_sensor").prop("checked");
-    data.product_tds_sensor_offset = parseFloat($("#product_tds_sensor_offset").val());
+    if (YB.capabilities.brineomatic.product_tds) {
+      data.has_product_tds_sensor = $("#has_product_tds_sensor").prop("checked");
+      data.product_tds_sensor_offset = parseFloat($("#product_tds_sensor_offset").val());
+    }
 
-    data.has_brine_tds_sensor = $("#has_brine_tds_sensor").prop("checked");
-    data.brine_tds_sensor_offset = parseFloat($("#brine_tds_sensor_offset").val());
+    if (YB.capabilities.brineomatic.brine_tds) {
+      data.has_brine_tds_sensor = $("#has_brine_tds_sensor").prop("checked");
+      data.brine_tds_sensor_offset = parseFloat($("#brine_tds_sensor_offset").val());
+    }
 
-    data.has_product_flow_sensor = $("#has_product_flow_sensor").prop("checked");
-    data.product_flowmeter_ppl = Math.round(YB.bom.convertPulsesPerVolume(parseInt($("#product_flowmeter_ppl").val()), YB.config.brineomatic.flowrate_units, "lph"));
+    if (YB.capabilities.brineomatic.product_flowmeter) {
+      data.has_product_flow_sensor = $("#has_product_flow_sensor").prop("checked");
+      data.product_flowmeter_ppl = Math.round(YB.bom.convertPulsesPerVolume(parseInt($("#product_flowmeter_ppl").val()), YB.config.brineomatic.flowrate_units, "lph"));
+    }
 
-    data.has_brine_flow_sensor = $("#has_brine_flow_sensor").prop("checked");
-    data.brine_flowmeter_ppl = Math.round(YB.bom.convertPulsesPerVolume(parseInt($("#brine_flowmeter_ppl").val()), YB.config.brineomatic.flowrate_units, "lph"));
+    if (YB.capabilities.brineomatic.brine_flowmeter) {
+      data.has_brine_flow_sensor = $("#has_brine_flow_sensor").prop("checked");
+      data.brine_flowmeter_ppl = Math.round(YB.bom.convertPulsesPerVolume(parseInt($("#brine_flowmeter_ppl").val()), YB.config.brineomatic.flowrate_units, "lph"));
+    }
 
-    data.motor_temperature_sensor_type = $("#motor_temperature_sensor_type").val();
-    data.motor_temperature_mqtt_path = $("#motor_temperature_mqtt_path").val();
-    data.water_temperature_sensor_type = $("#water_temperature_sensor_type").val();
-    data.water_temperature_mqtt_path = $("#water_temperature_mqtt_path").val();
+    if (YB.capabilities.brineomatic.motor_temperature) {
+      data.motor_temperature_sensor_type = $("#motor_temperature_sensor_type").val();
+      data.motor_temperature_mqtt_path = $("#motor_temperature_mqtt_path").val();
+    }
+
+    if (YB.capabilities.brineomatic.water_temperature) {
+      data.water_temperature_sensor_type = $("#water_temperature_sensor_type").val();
+      data.water_temperature_mqtt_path = $("#water_temperature_mqtt_path").val();
+    }
 
     data.tank_level_sensor_type = $("#tank_level_sensor_type").val();
     data.tank_level_mqtt_path = $("#tank_level_mqtt_path").val();
@@ -4588,6 +4606,9 @@
     };
   }
 
+  //only validate dependent fields when their parent device/check is enabled - hidden fields shouldnt block saving
+  const when = (test, constraints) => (value, attributes) => (test(attributes) ? constraints : null);
+
   Brineomatic.prototype.getHardwareConfigSchema = function () {
     return {
       boost_pump_control: {
@@ -4595,142 +4616,142 @@
         inclusion: ["NONE", "MANUAL", "RELAY"]
       },
 
-      boost_pump_relay_id: {
+      boost_pump_relay_id: when((a) => a.boost_pump_control == "RELAY", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         relayUnique: {}
-      },
+      }),
 
       boost_pump_relay_inverted: {
         inclusion: [true, false]
       },
 
-      boost_pump_delay: {
+      boost_pump_delay: when((a) => a.boost_pump_control != "NONE", {
         numericality: {
           greaterThanOrEqualTo: 0.0,
           lessThanOrEqualTo: 60000.0
         }
-      },
+      }),
 
       high_pressure_pump_control: {
         presence: true,
         inclusion: ["NONE", "MANUAL", "RELAY", "MODBUS"]
       },
 
-      high_pressure_relay_id: {
+      high_pressure_relay_id: when((a) => a.high_pressure_pump_control == "RELAY", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         relayUnique: {}
-      },
+      }),
 
       high_pressure_relay_inverted: {
         inclusion: [true, false]
       },
 
-      high_pressure_modbus_device: {
+      high_pressure_modbus_device: when((a) => a.high_pressure_pump_control == "MODBUS", {
         inclusion: ["GD20"]
-      },
+      }),
 
-      high_pressure_modbus_slave_id: {
+      high_pressure_modbus_slave_id: when((a) => a.high_pressure_pump_control == "MODBUS", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 255
         }
-      },
+      }),
 
-      high_pressure_modbus_frequency: {
+      high_pressure_modbus_frequency: when((a) => a.high_pressure_pump_control == "MODBUS", {
         numericality: {
           greaterThanOrEqualTo: 0.0,
           lessThanOrEqualTo: 400.0
         }
-      },
+      }),
 
-      high_pressure_pump_delay: {
+      high_pressure_pump_delay: when((a) => a.high_pressure_pump_control != "NONE", {
         numericality: {
           greaterThanOrEqualTo: 0.0,
           lessThanOrEqualTo: 60000.0
         }
-      },
+      }),
 
       high_pressure_valve_control: {
         presence: true,
         inclusion: ["NONE", "MANUAL", "STEPPER"]
       },
 
-      membrane_pressure_target: {
+      membrane_pressure_target: when((a) => a.high_pressure_valve_control != "NONE", {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
-      high_pressure_valve_stepper_id: {
+      high_pressure_valve_stepper_id: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         }
-      },
+      }),
 
-      high_pressure_stepper_step_angle: {
+      high_pressure_stepper_step_angle: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           greaterThan: 0,
           lessThanOrEqualTo: 90
         }
-      },
+      }),
 
-      high_pressure_stepper_gear_ratio: {
+      high_pressure_stepper_gear_ratio: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
-      high_pressure_stepper_close_angle: {
+      high_pressure_stepper_close_angle: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 5000
         }
-      },
+      }),
 
-      high_pressure_stepper_close_speed: {
+      high_pressure_stepper_close_speed: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           greaterThan: 0,
           lessThanOrEqualTo: 200
         }
-      },
+      }),
 
-      high_pressure_stepper_open_angle: {
+      high_pressure_stepper_open_angle: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 5000
         }
-      },
+      }),
 
-      high_pressure_stepper_open_speed: {
+      high_pressure_stepper_open_speed: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           greaterThan: 0,
           lessThanOrEqualTo: 200
         }
-      },
+      }),
 
-      high_pressure_stepper_run_current: {
+      high_pressure_stepper_run_current: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 100
         }
-      },
+      }),
 
-      high_pressure_stepper_home_current: {
+      high_pressure_stepper_home_current: when((a) => a.high_pressure_valve_control == "STEPPER", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 100
         }
-      },
+      }),
 
       high_pressure_stepper_inverted: {
         inclusion: [true, false]
@@ -4741,167 +4762,167 @@
         inclusion: ["NONE", "MANUAL", "RELAY", "SERVO", "DUAL_RELAYS"]
       },
 
-      diverter_valve_relay_id: {
+      diverter_valve_relay_id: when((a) => a.diverter_valve_control == "RELAY", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         relayUnique: {}
-      },
+      }),
 
       diverter_valve_relay_inverted: {
         inclusion: [true, false]
       },
 
-      diverter_valve_servo_id: {
+      diverter_valve_servo_id: when((a) => a.diverter_valve_control == "SERVO", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         servoUnique: {}
-      },
+      }),
 
-      diverter_valve_open_angle: {
+      diverter_valve_open_angle: when((a) => a.diverter_valve_control == "SERVO", {
         numericality: {
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 180
         }
-      },
+      }),
 
-      diverter_valve_close_angle: {
+      diverter_valve_close_angle: when((a) => a.diverter_valve_control == "SERVO", {
         numericality: {
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 180
         }
-      },
+      }),
 
-      diverter_valve_tank_relay_id: {
+      diverter_valve_tank_relay_id: when((a) => a.diverter_valve_control == "DUAL_RELAYS", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         relayUnique: {}
-      },
+      }),
 
       diverter_valve_tank_relay_inverted: {
         inclusion: [true, false]
       },
 
-      diverter_valve_overboard_relay_id: {
+      diverter_valve_overboard_relay_id: when((a) => a.diverter_valve_control == "DUAL_RELAYS", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         relayUnique: {}
-      },
+      }),
 
       diverter_valve_overboard_relay_inverted: {
         inclusion: [true, false]
       },
 
-      diverter_valve_relay_change_interval: {
+      diverter_valve_relay_change_interval: when((a) => a.diverter_valve_control == "DUAL_RELAYS", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         }
-      },
+      }),
 
       flush_valve_control: {
         presence: true,
         inclusion: ["NONE", "MANUAL", "RELAY", "SERVO"]
       },
 
-      flush_valve_relay_id: {
+      flush_valve_relay_id: when((a) => a.flush_valve_control == "RELAY", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         relayUnique: {}
-      },
+      }),
 
       flush_valve_relay_inverted: {
         inclusion: [true, false]
       },
 
-      flush_valve_servo_id: {
+      flush_valve_servo_id: when((a) => a.flush_valve_control == "SERVO", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         servoUnique: {}
-      },
+      }),
 
-      flush_valve_open_angle: {
+      flush_valve_open_angle: when((a) => a.flush_valve_control == "SERVO", {
         numericality: {
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 180
         }
-      },
+      }),
 
-      flush_valve_close_angle: {
+      flush_valve_close_angle: when((a) => a.flush_valve_control == "SERVO", {
         numericality: {
           greaterThanOrEqualTo: 0,
           lessThanOrEqualTo: 180
         }
-      },
+      }),
 
       preflush_enabled: {
         inclusion: [true, false]
       },
 
-      preflush_duration: {
+      preflush_duration: when((a) => a.flush_valve_control != "NONE" && a.preflush_enabled, {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         }
-      },
+      }),
 
-      post_run_flush_mode: {
+      post_run_flush_mode: when((a) => a.flush_valve_control != "NONE", {
         presence: true,
         inclusion: ["NONE", "TIME", "SALINITY", "VOLUME"]
-      },
+      }),
 
-      post_run_flush_salinity: {
+      post_run_flush_salinity: when((a) => a.flush_valve_control != "NONE" && a.post_run_flush_mode == "SALINITY", {
         numericality: {
           onlyInteger: true,
           greaterThan: 0
         }
-      },
+      }),
 
-      post_run_flush_duration: {
+      post_run_flush_duration: when((a) => a.flush_valve_control != "NONE" && a.post_run_flush_mode == "TIME", {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
-      post_run_flush_volume: {
+      post_run_flush_volume: when((a) => a.flush_valve_control != "NONE" && a.post_run_flush_mode == "VOLUME", {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
-      scheduled_flush_mode: {
+      scheduled_flush_mode: when((a) => a.flush_valve_control != "NONE", {
         presence: true,
         inclusion: ["NONE", "TIME", "VOLUME"]
-      },
+      }),
 
-      scheduled_flush_duration: {
+      scheduled_flush_duration: when((a) => a.flush_valve_control != "NONE" && a.scheduled_flush_mode == "TIME", {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
-      scheduled_flush_volume: {
+      scheduled_flush_volume: when((a) => a.flush_valve_control != "NONE" && a.scheduled_flush_mode == "VOLUME", {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
-      scheduled_flush_interval: {
+      scheduled_flush_interval: when((a) => a.flush_valve_control != "NONE" && a.scheduled_flush_mode != "NONE", {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
       autoflush_use_high_pressure_motor: {
         inclusion: [true, false]
@@ -4912,19 +4933,19 @@
         inclusion: ["NONE", "MANUAL", "RELAY"]
       },
 
-      cooling_fan_relay_id: {
+      cooling_fan_relay_id: when((a) => a.cooling_fan_control == "RELAY", {
         numericality: {
           onlyInteger: true,
           greaterThanOrEqualTo: 0
         },
         relayUnique: {}
-      },
+      }),
 
       cooling_fan_relay_inverted: {
         inclusion: [true, false]
       },
 
-      cooling_fan_on_temperature: {
+      cooling_fan_on_temperature: when((a) => a.cooling_fan_control != "NONE", {
         numericality: {
           get greaterThanOrEqualTo() {
             let temp = YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units);
@@ -4937,9 +4958,9 @@
             return temp;
           }
         }
-      },
+      }),
 
-      cooling_fan_off_temperature: {
+      cooling_fan_off_temperature: when((a) => a.cooling_fan_control != "NONE", {
         numericality: {
           get greaterThanOrEqualTo() {
             let temp = YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units);
@@ -4952,116 +4973,116 @@
             return temp;
           }
         }
-      },
+      }),
 
       has_membrane_pressure_sensor: {
         inclusion: [true, false]
       },
 
-      membrane_pressure_sensor_min: {
+      membrane_pressure_sensor_min: when((a) => a.has_membrane_pressure_sensor, {
         numericality: {
           greaterThanOrEqualTo: 0
         }
-      },
+      }),
 
-      membrane_pressure_sensor_max: {
+      membrane_pressure_sensor_max: when((a) => a.has_membrane_pressure_sensor, {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
       has_filter_pressure_sensor: {
         inclusion: [true, false]
       },
 
-      filter_pressure_sensor_min: {
+      filter_pressure_sensor_min: when((a) => a.has_filter_pressure_sensor, {
         numericality: {
           greaterThanOrEqualTo: 0
         }
-      },
+      }),
 
-      filter_pressure_sensor_max: {
+      filter_pressure_sensor_max: when((a) => a.has_filter_pressure_sensor, {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
       has_product_tds_sensor: { inclusion: [true, false] },
 
-      product_tds_sensor_offset: {
+      product_tds_sensor_offset: when((a) => a.has_product_tds_sensor, {
         numericality: {
           greaterThanOrEqualTo: -1000,
           lessThanOrEqualTo: 1000
         }
-      },
+      }),
 
       has_brine_tds_sensor: { inclusion: [true, false] },
 
-      brine_tds_sensor_offset: {
+      brine_tds_sensor_offset: when((a) => a.has_brine_tds_sensor, {
         numericality: {
           greaterThanOrEqualTo: -1000,
           lessThanOrEqualTo: 1000
         }
-      },
+      }),
 
       has_product_flow_sensor: { inclusion: [true, false] },
 
-      product_flowmeter_ppl: {
+      product_flowmeter_ppl: when((a) => a.has_product_flow_sensor, {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
       has_brine_flow_sensor: { inclusion: [true, false] },
 
-      brine_flowmeter_ppl: {
+      brine_flowmeter_ppl: when((a) => a.has_brine_flow_sensor, {
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
-      motor_temperature_sensor_type: {
+      motor_temperature_sensor_type: when(() => YB.capabilities.brineomatic.motor_temperature, {
         presence: true,
         inclusion: ["NONE", "EXTERNAL", "DS18B20", "MQTT"]
-      },
+      }),
 
-      motor_temperature_mqtt_path: {
+      motor_temperature_mqtt_path: when((a) => a.motor_temperature_sensor_type == "MQTT", {
         length: { maximum: 255 }
-      },
+      }),
 
-      water_temperature_sensor_type: {
+      water_temperature_sensor_type: when(() => YB.capabilities.brineomatic.water_temperature, {
         presence: true,
         inclusion: ["NONE", "EXTERNAL", "DS18B20", "MQTT"]
-      },
+      }),
 
-      water_temperature_mqtt_path: {
+      water_temperature_mqtt_path: when((a) => a.water_temperature_sensor_type == "MQTT", {
         length: { maximum: 255 }
-      },
+      }),
 
       tank_level_sensor_type: {
         presence: true,
         inclusion: ["NONE", "EXTERNAL", "MQTT"]
       },
 
-      tank_level_mqtt_path: {
+      tank_level_mqtt_path: when((a) => a.tank_level_sensor_type == "MQTT", {
         length: { maximum: 255 }
-      },
+      }),
 
-      tank_capacity: {
+      tank_capacity: when((a) => a.tank_level_sensor_type != "NONE", {
         presence: true,
         numericality: {
           greaterThan: 0
         }
-      },
+      }),
 
       battery_level_sensor_type: {
         presence: true,
         inclusion: ["NONE", "EXTERNAL", "MQTT"]
       },
 
-      battery_level_mqtt_path: {
+      battery_level_mqtt_path: when((a) => a.battery_level_sensor_type == "MQTT", {
         length: { maximum: 255 }
-      }
+      })
     };
   }
 
@@ -5113,48 +5134,48 @@
       },
 
       enable_membrane_pressure_high_check: { inclusion: [true, false] },
-      membrane_pressure_high_threshold: { numericality: { greaterThan: 0 } },
-      membrane_pressure_high_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      membrane_pressure_high_threshold: when((a) => a.enable_membrane_pressure_high_check, { numericality: { greaterThan: 0 } }),
+      membrane_pressure_high_delay: when((a) => a.enable_membrane_pressure_high_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_membrane_pressure_low_check: { inclusion: [true, false] },
-      membrane_pressure_low_threshold: { numericality: { greaterThan: 0 } },
-      membrane_pressure_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      membrane_pressure_low_threshold: when((a) => a.enable_membrane_pressure_low_check, { numericality: { greaterThan: 0 } }),
+      membrane_pressure_low_delay: when((a) => a.enable_membrane_pressure_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_filter_pressure_high_check: { inclusion: [true, false] },
-      filter_pressure_high_threshold: { numericality: { greaterThan: 0 } },
-      filter_pressure_high_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      filter_pressure_high_threshold: when((a) => a.enable_filter_pressure_high_check, { numericality: { greaterThan: 0 } }),
+      filter_pressure_high_delay: when((a) => a.enable_filter_pressure_high_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_filter_pressure_low_check: { inclusion: [true, false] },
-      filter_pressure_low_threshold: { numericality: { greaterThan: 0 } },
-      filter_pressure_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      filter_pressure_low_threshold: when((a) => a.enable_filter_pressure_low_check, { numericality: { greaterThan: 0 } }),
+      filter_pressure_low_delay: when((a) => a.enable_filter_pressure_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_product_flowrate_high_check: { inclusion: [true, false] },
-      product_flowrate_high_threshold: { numericality: { greaterThan: 0 } },
-      product_flowrate_high_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      product_flowrate_high_threshold: when((a) => a.enable_product_flowrate_high_check, { numericality: { greaterThan: 0 } }),
+      product_flowrate_high_delay: when((a) => a.enable_product_flowrate_high_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_product_flowrate_low_check: { inclusion: [true, false] },
-      product_flowrate_low_threshold: { numericality: { greaterThan: 0 } },
-      product_flowrate_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      product_flowrate_low_threshold: when((a) => a.enable_product_flowrate_low_check, { numericality: { greaterThan: 0 } }),
+      product_flowrate_low_delay: when((a) => a.enable_product_flowrate_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_run_total_flowrate_low_check: { inclusion: [true, false] },
-      run_total_flowrate_low_threshold: { numericality: { greaterThan: 0 } },
-      run_total_flowrate_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      run_total_flowrate_low_threshold: when((a) => a.enable_run_total_flowrate_low_check, { numericality: { greaterThan: 0 } }),
+      run_total_flowrate_low_delay: when((a) => a.enable_run_total_flowrate_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_pickle_total_flowrate_low_check: { inclusion: [true, false] },
-      pickle_total_flowrate_low_threshold: { numericality: { greaterThan: 0 } },
-      pickle_total_flowrate_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      pickle_total_flowrate_low_threshold: when((a) => a.enable_pickle_total_flowrate_low_check, { numericality: { greaterThan: 0 } }),
+      pickle_total_flowrate_low_delay: when((a) => a.enable_pickle_total_flowrate_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_diverter_valve_closed_check: { inclusion: [true, false] },
-      diverter_valve_closed_flowrate_high_threshold: { numericality: { greaterThanOrEqualTo: 0 } },
-      diverter_valve_closed_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      diverter_valve_closed_flowrate_high_threshold: when((a) => a.enable_diverter_valve_closed_check, { numericality: { greaterThanOrEqualTo: 0 } }),
+      diverter_valve_closed_delay: when((a) => a.enable_diverter_valve_closed_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_product_salinity_high_check: { inclusion: [true, false] },
-      product_salinity_high_threshold: { numericality: { greaterThan: 0 } },
-      product_salinity_high_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      product_salinity_high_threshold: when((a) => a.enable_product_salinity_high_check, { numericality: { greaterThan: 0 } }),
+      product_salinity_high_delay: when((a) => a.enable_product_salinity_high_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_motor_temperature_check: { inclusion: [true, false] },
-      motor_temperature_high_delay: { numericality: { greaterThanOrEqualTo: 0 } },
-      motor_temperature_high_threshold: {
+      motor_temperature_high_delay: when((a) => a.enable_motor_temperature_check, { numericality: { greaterThanOrEqualTo: 0 } }),
+      motor_temperature_high_threshold: when((a) => a.enable_motor_temperature_check, {
         numericality: {
           get greaterThan() {
             let temp = YB.bom.convertTemperature(0, "C", YB.config.brineomatic.temperature_units);
@@ -5162,30 +5183,30 @@
             return temp;
           }
         }
-      },
+      }),
 
       enable_flush_flowrate_low_check: { inclusion: [true, false] },
-      flush_flowrate_low_threshold: { numericality: { greaterThan: 0 } },
-      flush_flowrate_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      flush_flowrate_low_threshold: when((a) => a.enable_flush_flowrate_low_check, { numericality: { greaterThan: 0 } }),
+      flush_flowrate_low_delay: when((a) => a.enable_flush_flowrate_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_flush_filter_pressure_low_check: { inclusion: [true, false] },
-      flush_filter_pressure_low_threshold: { numericality: { greaterThan: 0 } },
-      flush_filter_pressure_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      flush_filter_pressure_low_threshold: when((a) => a.enable_flush_filter_pressure_low_check, { numericality: { greaterThan: 0 } }),
+      flush_filter_pressure_low_delay: when((a) => a.enable_flush_filter_pressure_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_flush_valve_off_check: { inclusion: [true, false] },
-      flush_valve_off_threshold: { numericality: { greaterThan: 0 } },
-      flush_valve_off_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      flush_valve_off_threshold: when((a) => a.enable_flush_valve_off_check, { numericality: { greaterThan: 0 } }),
+      flush_valve_off_delay: when((a) => a.enable_flush_valve_off_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_flush_tank_level_low_check: { inclusion: [true, false] },
-      flush_tank_level_low_threshold: { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } },
-      flush_tank_level_low_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      flush_tank_level_low_threshold: when((a) => a.enable_flush_tank_level_low_check, { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } }),
+      flush_tank_level_low_delay: when((a) => a.enable_flush_tank_level_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_tank_level_full_check: { inclusion: [true, false] },
-      tank_level_full_threshold: { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } },
-      tank_level_full_delay: { numericality: { greaterThanOrEqualTo: 0 } },
+      tank_level_full_threshold: when((a) => a.enable_tank_level_full_check, { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } }),
+      tank_level_full_delay: when((a) => a.enable_tank_level_full_check, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_battery_level_low_check: { inclusion: [true, false] },
-      battery_level_low_threshold: { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } }
+      battery_level_low_threshold: when((a) => a.enable_battery_level_low_check, { numericality: { greaterThan: 0, lessThanOrEqualTo: 100 } })
     };
   }
 
