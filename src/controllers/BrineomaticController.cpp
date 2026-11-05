@@ -320,6 +320,9 @@ void BrineomaticController::generateUpdateHook(JsonVariant output)
 
   output["next_flush_countdown"] = wm.getNextFlushCountdown();
 
+  if (wm.lastFlushTimestamp > 1700000000)
+    output["last_flush_time"] = wm.lastFlushTimestamp;
+
   if (!strcmp(wm.getStatus(), "RUNNING")) {
     output["runtime_elapsed"] = wm.getRuntimeElapsed();
     output["finish_countdown"] = wm.getFinishCountdown();
