@@ -48,6 +48,11 @@ void Brineomatic::init()
   else
     pickledOnTimestamp = 0;
 
+  if (_app.config.preferences.isKey("bomLastFlush"))
+    lastFlushTimestamp = _app.config.preferences.getLong64("bomLastFlush");
+  else
+    lastFlushTimestamp = 0;
+
   if (_app.config.preferences.isKey("bomTotVolume"))
     totalVolume = _app.config.preferences.getFloat("bomTotVolume");
   else
@@ -207,6 +212,14 @@ void Brineomatic::loop()
   if (_app.ntp.isReady() && lastAutoflushTimeNTP == 0) {
     lastAutoflushTimeNTP = _app.ntp.getTime();
     _app.config.preferences.putLong64("lastautoflush", lastAutoflushTimeNTP);
+  }
+
+  // a flush that finished before NTP was ready gets its timestamp now,
+  // backdated by how long ago it finished.
+  if (lastFlushPending && _app.ntp.isReady()) {
+    lastFlushPending = false;
+    lastFlushTimestamp = _app.ntp.getTime() - (millis() - lastFlushPendingMillis) / 1000;
+    _app.config.preferences.putLong64("bomLastFlush", lastFlushTimestamp);
   }
 
   adcHelper->onLoop();
@@ -1699,6 +1712,11 @@ void Brineomatic::runStateMachine()
       initializeHardware(!success);
       waitForFlushValveOff();
 
+      // only a completed flush counts, whatever started it (manual, post run, scheduled).
+      // checked again because a stuck flush valve turns a success into ERR_FLUSH_VALVE_ON.
+      if (flushResult == Result::SUCCESS_TIME || flushResult == Result::SUCCESS_VOLUME || flushResult == Result::SUCCESS_SALINITY)
+        recordLastFlushTime();
+
       currentStatus = Status::IDLE;
 
       break;
@@ -1846,6 +1864,20 @@ void Brineomatic::resetErrorTimers()
   diverterValveOpenStart = 0;
   productSalinityHighStart = 0;
   motorTemperatureStart = 0;
+}
+
+void Brineomatic::recordLastFlushTime()
+{
+  // without NTP we only know the uptime, so loop() converts it once NTP is ready.
+  // a pending flush is lost on reboot, which is better than a wrong timestamp.
+  if (_app.ntp.isReady()) {
+    lastFlushPending = false;
+    lastFlushTimestamp = _app.ntp.getTime();
+    _app.config.preferences.putLong64("bomLastFlush", lastFlushTimestamp);
+  } else {
+    lastFlushPendingMillis = millis();
+    lastFlushPending = true;
+  }
 }
 
 bool Brineomatic::checkStopFlag(Result& result)

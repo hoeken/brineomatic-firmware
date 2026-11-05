@@ -110,6 +110,7 @@ class Brineomatic
 
     bool isPickled;
     int64_t pickledOnTimestamp = 0;
+    int64_t lastFlushTimestamp = 0;
 
     RelayChannel* flushValve = NULL;
     ServoChannel* flushValveServo = NULL;
@@ -326,6 +327,8 @@ class Brineomatic
     uint32_t flushStart = 0;
     uint32_t lastAutoflushTimeMillis = 0;
     int64_t lastAutoflushTimeNTP = 0;
+    bool lastFlushPending = false;
+    uint32_t lastFlushPendingMillis = 0;
     uint32_t pickleStart = 0;
     uint32_t pickleDuration;
     uint32_t depickleStart = 0;
@@ -376,6 +379,7 @@ class Brineomatic
     float tankLevelFull = 0.99; // 0 = empty, 1 = full (runtime, not persisted)
 
     void resetErrorTimers();
+    void recordLastFlushTime();
 
     bool checkStopFlag(Result& result);
     bool checkTankLevel();

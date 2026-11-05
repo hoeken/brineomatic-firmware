@@ -497,6 +497,22 @@
     } else
       $('#bomPickledSinceRow').hide();
 
+    // the row's state classes decide when it shows; only hide it when there is no time yet
+    if (msg.last_flush_time > 0) {
+      let current_time = Math.floor(Date.now() / 1000);
+      let duration = current_time - msg.last_flush_time;
+      let time_ago = YB.Util.secondsToDhms(duration, 1);
+      let date_obj = new Date(msg.last_flush_time * 1000);
+      let flush_date = date_obj.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+
+      $('#bomLastFlush').html(`${flush_date}<br/>(${time_ago} ago)`);
+    } else
+      $('#bomLastFlushRow').hide();
+
     if (msg.depickle_result)
       this.showResult("#bomDePickleResult", msg.depickle_result);
 
@@ -1046,6 +1062,10 @@
                       <tr id="bomPickledSinceRow" class="bomPICKLED" style="display: none">
                           <th>Pickled Since</th>
                           <td><span id="bomPickledSince"></span></td>
+                      </tr>
+                      <tr id="bomLastFlushRow" class="bomIDLE bomPICKLED" style="display: none">
+                          <th>Last Flush</th>
+                          <td><span id="bomLastFlush"></span></td>
                       </tr>
                       <tr id="bomDePickleResultRow" class="bomIDLE" style="display: none">
                           <th>Depickle Result</th>
