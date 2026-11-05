@@ -201,6 +201,7 @@ class Brineomatic
     bool preRunFlushEnabled();
     bool postRunFlushEnabled();
     bool scheduledFlushEnabled();
+    uint64_t getAutoflushElapsed();
 
     bool isBoostPumpOn();
     bool hasBoostPump();

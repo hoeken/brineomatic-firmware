@@ -1136,14 +1136,25 @@ const char* Brineomatic::resultToString(Result result)
   }
 }
 
+// milliseconds since the scheduled flush timer was last reset.  64 bits because
+// the NTP difference in ms no longer fits 32 bits after 49.7 days.
+uint64_t Brineomatic::getAutoflushElapsed()
+{
+  if (_app.ntp.isReady() && lastAutoflushTimeNTP > 1700000000) {
+    int64_t seconds = _app.ntp.getTime() - lastAutoflushTimeNTP;
+    // a clock that stepped back counts as no time passed
+    return seconds > 0 ? (uint64_t)seconds * 1000 : 0;
+  }
+
+  return millis() - lastAutoflushTimeMillis;
+}
+
 uint32_t Brineomatic::getNextFlushCountdown()
 {
   if (currentStatus == Status::IDLE && scheduledFlushEnabled()) {
-    uint32_t elapsed;
-    if (_app.ntp.isReady() && lastAutoflushTimeNTP > 1700000000)
-      elapsed = (_app.ntp.getTime() - lastAutoflushTimeNTP) * 1000;
-    else
-      elapsed = millis() - lastAutoflushTimeMillis;
+    uint64_t elapsed = getAutoflushElapsed();
+    if (elapsed >= _config.scheduledFlushInterval)
+      return 0;
 
     return _config.scheduledFlushInterval - elapsed;
   }
@@ -1365,13 +1376,7 @@ void Brineomatic::runStateMachine()
     //
     case Status::IDLE:
       if (scheduledFlushEnabled()) {
-        uint32_t elapsed;
-        if (_app.ntp.isReady() && lastAutoflushTimeNTP > 1700000000)
-          elapsed = (_app.ntp.getTime() - lastAutoflushTimeNTP) * 1000;
-        else
-          elapsed = millis() - lastAutoflushTimeMillis;
-
-        if (elapsed > _config.scheduledFlushInterval) {
+        if (getAutoflushElapsed() > _config.scheduledFlushInterval) {
           if (_config.scheduledFlushMode.equals("TIME"))
             flushDuration(_config.scheduledFlushDuration);
           else if (_config.scheduledFlushMode.equals("VOLUME"))
