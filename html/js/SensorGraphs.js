@@ -122,8 +122,10 @@
       for (let s of tab.series) {
         const g = gauges[s.sensor];
         if (g && g.min !== undefined) {
-          s.min = g.min;
-          s.max = g.max;
+          // read through to the shared config, so a units or threshold change
+          // re-spans the axis on the next redraw without rebuilding the graphs
+          Object.defineProperty(s, 'min', { get: () => g.min, configurable: true });
+          Object.defineProperty(s, 'max', { get: () => g.max, configurable: true });
         }
       }
     }
@@ -290,7 +292,9 @@
               min -= pad;
               max += pad;
               if (cMin !== undefined) min = cMin;
-              if (cMax !== undefined) max = cMax;
+              // readings above the gauge range stretch the axis instead of
+              // being cut off, so a pressure spike stays visible
+              if (cMax !== undefined && dataMax <= cMax) max = cMax;
               return [min, max];
             }
           }
