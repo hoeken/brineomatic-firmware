@@ -78,6 +78,8 @@ void Brineomatic::init()
   currentBatteryLevel = -1;
   currentWaterTemperature = 25.0;
   currentMotorTemperature = 0.0;
+  // the sensor gets the full timeout after boot before it counts as silent
+  lastMotorTemperatureMillis = millis();
   currentProductFlowrate = 0.0;
   currentBrineFlowrate = 0.0;
   currentVolume = 0.0;
@@ -221,6 +223,7 @@ void Brineomatic::loop()
   measureWaterTemperature();
   manageHighPressureValve();
   manageCoolingFan();
+  reportMotorTemperatureError();
 }
 
 void Brineomatic::measureProductFlowmeter()
@@ -857,14 +860,46 @@ void Brineomatic::disableCoolingFan()
 
 void Brineomatic::manageCoolingFan()
 {
-  if (currentStatus != Status::MANUAL) {
-    if (hasCoolingFan() && hasMotorTemperature()) {
-      if (getMotorTemperature() >= _config.coolingFanOnTemperature)
-        enableCoolingFan();
-      else if (getMotorTemperature() <= _config.coolingFanOffTemperature)
-        disableCoolingFan();
-    }
+  if (currentStatus == Status::MANUAL || !hasCoolingFan())
+    return;
+
+  // fail-safe: without a usable motor temperature the fan runs whenever the
+  // high pressure pump does, so a missing or broken sensor can't cook the motor.
+  if (!hasMotorTemperature() || getMotorTemperatureError()) {
+    if (isHighPressurePumpOn() && !isCoolingFanOn())
+      enableCoolingFan();
+    else if (!isHighPressurePumpOn() && isCoolingFanOn())
+      disableCoolingFan();
+    return;
   }
+
+  if (getMotorTemperature() >= _config.coolingFanOnTemperature)
+    enableCoolingFan();
+  else if (getMotorTemperature() <= _config.coolingFanOffTemperature)
+    disableCoolingFan();
+}
+
+// tells every client once when the motor temperature sensor fails and once when it recovers
+void Brineomatic::reportMotorTemperatureError()
+{
+  const char* error = getMotorTemperatureError();
+  bool hasError = error != nullptr;
+  if (hasError == motorTemperatureErrorReported)
+    return;
+  motorTemperatureErrorReported = hasError;
+
+  JsonDocument output;
+  output["msg"] = "status";
+  if (hasError) {
+    output["status"] = "error";
+    output["message"] = String("Motor temperature sensor fault (") + error + "), cooling fan runs with the high pressure pump.";
+  } else {
+    output["status"] = "success";
+    output["message"] = "Motor temperature sensor is working again.";
+  }
+
+  YBP.println(output["message"].as<const char*>());
+  _app.protocol.sendToAll(output, GUEST);
 }
 
 float Brineomatic::getFilterPressure()
@@ -989,6 +1024,15 @@ void Brineomatic::setBatteryLevel(float level)
 
 void Brineomatic::setMotorTemperature(float temp)
 {
+  // an implausible reading is a sensor fault, not a temperature: keep it out
+  // of the value, the stats and the graphs.
+  if (isnan(temp) || temp < YB_MOTOR_TEMPERATURE_VALID_MIN || temp > YB_MOTOR_TEMPERATURE_VALID_MAX) {
+    motorTemperatureOutOfRange = true;
+    return;
+  }
+
+  motorTemperatureOutOfRange = false;
+  lastMotorTemperatureMillis = millis();
   currentMotorTemperature = temp;
   stats.add("motor_temperature", temp);
   history.add("motor_temperature", temp);
@@ -997,6 +1041,24 @@ void Brineomatic::setMotorTemperature(float temp)
 float Brineomatic::getMotorTemperature()
 {
   return currentMotorTemperature;
+}
+
+// nullptr while the configured sensor delivers plausible readings
+const char* Brineomatic::getMotorTemperatureError()
+{
+  if (!hasMotorTemperature())
+    return nullptr;
+
+  if (motorTemperatureOutOfRange)
+    return "OUT_OF_RANGE";
+
+  // read the timestamp before millis(): an external reading can arrive from
+  // another task in between, and a newer timestamp would underflow the difference.
+  uint32_t lastReading = lastMotorTemperatureMillis;
+  if (millis() - lastReading > YB_MOTOR_TEMPERATURE_TIMEOUT)
+    return "NO_DATA";
+
+  return nullptr;
 }
 
 float Brineomatic::getMotorTemperatureMaximum()

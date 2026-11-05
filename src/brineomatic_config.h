@@ -19,6 +19,20 @@
   #define YB_COOLING_FAN_OFF_TEMPERATURE 34.0
 #endif
 
+// motor temperature readings outside this range are a sensor fault (a missing
+// DS18B20 reads -127C), and so is no reading for this long (ms).
+#ifndef YB_MOTOR_TEMPERATURE_VALID_MIN
+  #define YB_MOTOR_TEMPERATURE_VALID_MIN -20.0
+#endif
+
+#ifndef YB_MOTOR_TEMPERATURE_VALID_MAX
+  #define YB_MOTOR_TEMPERATURE_VALID_MAX 100.0
+#endif
+
+#ifndef YB_MOTOR_TEMPERATURE_TIMEOUT
+  #define YB_MOTOR_TEMPERATURE_TIMEOUT 60000
+#endif
+
 #ifndef YB_AUTOFLUSH_MODE
   #define YB_AUTOFLUSH_MODE "TIME"
 #endif
