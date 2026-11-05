@@ -951,10 +951,10 @@ void BrineomaticController::handleWaterTemperatureCallback(const char* topic, co
 
   // convert from obvious kelvins
   if (temp > 150)
-    temp += -273.15;
+    temp -= 273.15;
   // convert from obvious fahrenheit
   else if (temp > 50)
-    temp = (temp * 9 / 5) + 32;
+    temp = (temp - 32) * 5 / 9;
 
   wm.setWaterTemperature(temp);
 }
@@ -972,10 +972,10 @@ void BrineomaticController::handleMotorTemperatureCallback(const char* topic, co
 
   // convert from obvious kelvins
   if (temp > 200)
-    temp -= -273.15;
+    temp -= 273.15;
   // convert from obvious fahrenheit
   else if (temp > 100)
-    temp = (temp * 9 / 5) + 32;
+    temp = (temp - 32) * 5 / 9;
 
   wm.setMotorTemperature(temp);
 }
