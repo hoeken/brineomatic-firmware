@@ -294,6 +294,11 @@ void BrineomaticController::generateUpdateHook(JsonVariant output)
   output["pickle_result"] = wm.resultToString(wm.getPickleResult());
   output["depickle_result"] = wm.resultToString(wm.getDepickleResult());
   output["motor_temperature"] = wm.getMotorTemperature();
+
+  const char* motorTemperatureError = wm.getMotorTemperatureError();
+  if (motorTemperatureError)
+    output["motor_temperature_error"] = motorTemperatureError;
+
   output["water_temperature"] = wm.getWaterTemperature();
   output["product_flowrate"] = wm.getProductFlowrate();
   output["brine_flowrate"] = wm.getBrineFlowrate();

@@ -390,7 +390,8 @@
     $(".membranePressureContent").toggle(!err);
     $(".membranePressureError").toggle(err);
 
-    err = motor_temperature < 0;
+    // a faulty sensor shows "No Data" instead of its last good reading
+    err = motor_temperature < 0 || Boolean(msg.motor_temperature_error);
     $(".motorTemperatureContent").toggle(!err);
     $(".motorTemperatureError").toggle(err);
 

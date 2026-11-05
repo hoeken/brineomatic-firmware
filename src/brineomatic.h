@@ -275,6 +275,7 @@ class Brineomatic
     float getTotalVolume();
     uint32_t getTotalRuntime();
     float getMotorTemperature();
+    const char* getMotorTemperatureError();
     float getWaterTemperature();
     float getProductSalinity();
     float getProductSalinityMaximum();
@@ -341,6 +342,9 @@ class Brineomatic
     float currentBatteryLevel;
     float currentWaterTemperature;
     float currentMotorTemperature;
+    uint32_t lastMotorTemperatureMillis = 0;
+    bool motorTemperatureOutOfRange = false;
+    bool motorTemperatureErrorReported = false;
     float currentProductFlowrate;
     float currentBrineFlowrate;
     float currentProductSalinity;
@@ -376,6 +380,7 @@ class Brineomatic
     float tankLevelFull = 0.99; // 0 = empty, 1 = full (runtime, not persisted)
 
     void resetErrorTimers();
+    void reportMotorTemperatureError();
 
     bool checkStopFlag(Result& result);
     bool checkTankLevel();
