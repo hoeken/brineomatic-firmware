@@ -112,13 +112,20 @@
         "colors": [bootstrapColors.primary, bootstrapColors.success, bootstrapColors.warning, bootstrapColors.danger]
       },
       "filter_pressure": {
-        get min() { return Math.round(YB.bom.convertPressure(0, "Bar", YB.config.brineomatic.pressure_units)); },
-        get max() { return Math.round(YB.bom.convertPressure(3.45, "Bar", YB.config.brineomatic.pressure_units)); },
+        // span and colour bands follow the configured sensor range and
+        // low/high pressure thresholds, see getFilterPressureGaugeMax()
+        get min() { return 0; },
+        get max() { return YB.bom.getFilterPressureGaugeMax(); },
         get thresholds() {
-          const barThresholds = [0, 0.34, 0.69, 2.76, 3.10, 3.45];
-          return barThresholds.map(pressure => YB.bom.convertPressure(pressure, "Bar", YB.config.brineomatic.pressure_units));
+          const cfg = YB.config.brineomatic;
+          const max = this.max;
+          const lowBar = parseFloat(cfg.filter_pressure_low_threshold);
+          const highBar = parseFloat(cfg.filter_pressure_high_threshold);
+          const low = lowBar > 0 ? Math.min(YB.bom.convertPressure(lowBar, "Bar", cfg.pressure_units), max) : 0;
+          const high = highBar > 0 ? Math.min(YB.bom.convertPressure(highBar, "Bar", cfg.pressure_units), max) : max;
+          return [0, low, high, max];
         },
-        "colors": [bootstrapColors.secondary, bootstrapColors.danger, bootstrapColors.warning, bootstrapColors.success, bootstrapColors.warning, bootstrapColors.danger]
+        "colors": [bootstrapColors.secondary, bootstrapColors.danger, bootstrapColors.success, bootstrapColors.danger]
       },
       "membrane_pressure": {
         get min() { return Math.round(YB.bom.convertPressure(0, "Bar", YB.config.brineomatic.pressure_units)); },
@@ -768,6 +775,23 @@
         $(this).remove();
     });
   }
+
+  // Upper end of the filter pressure gauge and graph, in display units.  The
+  // high pressure threshold plus 25% keeps its cutoff tick on the scale with
+  // room above it, capped at what the sensor can measure.  Without either
+  // setting it falls back to the old fixed 3.45 bar (a 50 psi sensor).
+  Brineomatic.prototype.getFilterPressureGaugeMax = function () {
+    const cfg = YB.config.brineomatic;
+    const sensorMax = parseFloat(cfg.filter_pressure_sensor_max);
+    const high = parseFloat(cfg.filter_pressure_high_threshold);
+
+    let maxBar = high > 0 ? high * 1.25 : 3.45;
+    if (sensorMax > 0)
+      maxBar = Math.min(maxBar, sensorMax);
+
+    // one decimal, rounded up so the threshold never sits past the end
+    return Math.ceil(YB.bom.convertPressure(maxBar, "Bar", cfg.pressure_units) * 10) / 10;
+  };
 
   Brineomatic.prototype.setDataColor = function (name, value, ele) {
     // Check if the name exists in this.sensorConfig
@@ -5287,6 +5311,14 @@
     //flash whole form green.
     YB.Util.flashClass($("#safeguardsSettingsPanel"), "border-success");
     YB.Util.flashClass($("#saveSafeguardsSettings"), "btn-success");
+
+    //the board sends no new config after this save, so apply it here: the
+    //gauge scales and cutoff ticks follow the thresholds.
+    Object.assign(YB.config.brineomatic, data);
+    if (this.gauges) {
+      this.gauges.updatePressureGauges();
+      this.gauges.drawAllGaugeTicks();
+    }
 
     //okay, send it off.
     data["cmd"] = "brineomatic_save_safeguards_config";
