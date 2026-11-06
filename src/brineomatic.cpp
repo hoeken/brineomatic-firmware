@@ -221,6 +221,60 @@ void Brineomatic::loop()
   measureWaterTemperature();
   manageHighPressureValve();
   manageCoolingFan();
+  updateWarnings();
+}
+
+void Brineomatic::updateWarnings()
+{
+  // a warning is checked in the same state as its cutoff
+  bool running = currentStatus == Status::RUNNING;
+
+  // a disconnected sensor reads -999: a sensor fault, not a low pressure
+  float filterPressure = getFilterPressure();
+  bool hasFilterPressure = _config.hasFilterPressureSensor && filterPressure >= 0;
+
+  updateWarning(warnings[WARNING_FILTER_PRESSURE_HIGH],
+    running && hasFilterPressure && _config.enableFilterPressureHighWarning && filterPressure > _config.filterPressureHighWarningThreshold,
+    _config.filterPressureHighWarningDelay,
+    "filter pressure high",
+    filterPressure,
+    "bar");
+
+  updateWarning(warnings[WARNING_FILTER_PRESSURE_LOW],
+    running && hasFilterPressure && _config.enableFilterPressureLowWarning && filterPressure < _config.filterPressureLowWarningThreshold,
+    _config.filterPressureLowWarningDelay,
+    "filter pressure low",
+    filterPressure,
+    "bar");
+}
+
+// a warning starts once its condition held for the delay and ends as soon as it
+// no longer holds.  every client is told once, when it starts.
+void Brineomatic::updateWarning(SensorWarning& warning, bool condition, uint32_t delay, const char* label, float value, const char* units)
+{
+  if (!condition) {
+    warning.start = 0;
+    warning.active = false;
+    return;
+  }
+
+  if (!warning.start)
+    warning.start = millis();
+
+  if (warning.active || millis() - warning.start < delay)
+    return;
+
+  warning.active = true;
+
+  char message[96];
+  snprintf(message, sizeof(message), "Warning: %s (%.2f %s).", label, value, units);
+  YBP.println(message);
+
+  JsonDocument output;
+  output["msg"] = "status";
+  output["status"] = "warning";
+  output["message"] = message;
+  _app.protocol.sendToAll(output, GUEST);
 }
 
 void Brineomatic::measureProductFlowmeter()

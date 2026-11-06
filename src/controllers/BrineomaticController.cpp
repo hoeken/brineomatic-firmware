@@ -320,6 +320,14 @@ void BrineomaticController::generateUpdateHook(JsonVariant output)
 
   output["next_flush_countdown"] = wm.getNextFlushCountdown();
 
+  // only present while at least one warning is active
+  for (const auto& warning : wm.warnings) {
+    if (warning.active) {
+      JsonArray active = output["warnings"].is<JsonArray>() ? output["warnings"].as<JsonArray>() : output["warnings"].to<JsonArray>();
+      active.add(warning.name);
+    }
+  }
+
   if (!strcmp(wm.getStatus(), "RUNNING")) {
     output["runtime_elapsed"] = wm.getRuntimeElapsed();
     output["finish_countdown"] = wm.getFinishCountdown();
@@ -1473,6 +1481,14 @@ void BrineomaticController::generateConfigJSON(JsonVariant output, UserRole role
   output["filter_pressure_low_threshold"] = _config.filterPressureLowThreshold;
   output["filter_pressure_low_delay"] = _config.filterPressureLowDelay;
 
+  output["enable_filter_pressure_high_warning"] = _config.enableFilterPressureHighWarning;
+  output["filter_pressure_high_warning_threshold"] = _config.filterPressureHighWarningThreshold;
+  output["filter_pressure_high_warning_delay"] = _config.filterPressureHighWarningDelay;
+
+  output["enable_filter_pressure_low_warning"] = _config.enableFilterPressureLowWarning;
+  output["filter_pressure_low_warning_threshold"] = _config.filterPressureLowWarningThreshold;
+  output["filter_pressure_low_warning_delay"] = _config.filterPressureLowWarningDelay;
+
   output["enable_product_flowrate_high_check"] = _config.enableProductFlowrateHighCheck;
   output["product_flowrate_high_threshold"] = _config.productFlowrateHighThreshold;
   output["product_flowrate_high_delay"] = _config.productFlowrateHighDelay;
@@ -2412,6 +2428,54 @@ bool BrineomaticController::validateSafeguardsConfigJSON(JsonVariant config,
     }
   }
 
+  // filter pressure warnings: same checks as the cutoffs above
+  for (const char* key : {"enable_filter_pressure_high_warning", "enable_filter_pressure_low_warning"}) {
+    if (config[key]) {
+      if (!checkIsBool(config, key, error, err_size)) {
+        config.remove(key);
+        ok = false;
+      }
+    }
+  }
+  for (const char* key : {"filter_pressure_high_warning_threshold", "filter_pressure_low_warning_threshold"}) {
+    if (config[key]) {
+      if (!checkIsNumber(config, key, error, err_size) ||
+          !checkNumGT(config, key, 0.0f, error, err_size)) {
+        config.remove(key);
+        ok = false;
+      }
+    }
+  }
+  for (const char* key : {"filter_pressure_high_warning_delay", "filter_pressure_low_warning_delay"}) {
+    if (config[key]) {
+      if (!checkIsNumber(config, key, error, err_size) ||
+          !checkNumGE(config, key, 0.0f, error, err_size)) {
+        config.remove(key);
+        ok = false;
+      }
+    }
+  }
+  // with both warnings on, a low threshold at or above the high one would raise both at once
+  if ((config["enable_filter_pressure_low_warning"] | false) && (config["enable_filter_pressure_high_warning"] | false) &&
+      config["filter_pressure_low_warning_threshold"].is<float>() && config["filter_pressure_high_warning_threshold"].is<float>() &&
+      config["filter_pressure_low_warning_threshold"].as<float>() >= config["filter_pressure_high_warning_threshold"].as<float>()) {
+    snprintf(error, err_size, "filter_pressure_low_warning_threshold must be below filter_pressure_high_warning_threshold");
+    ok = false;
+  }
+  // a warning past its enabled cutoff would never show, the cutoff stops the run first
+  if ((config["enable_filter_pressure_high_warning"] | false) && (config["enable_filter_pressure_high_check"] | false) &&
+      config["filter_pressure_high_warning_threshold"].is<float>() && config["filter_pressure_high_threshold"].is<float>() &&
+      config["filter_pressure_high_warning_threshold"].as<float>() >= config["filter_pressure_high_threshold"].as<float>()) {
+    snprintf(error, err_size, "filter_pressure_high_warning_threshold must be below filter_pressure_high_threshold");
+    ok = false;
+  }
+  if ((config["enable_filter_pressure_low_warning"] | false) && (config["enable_filter_pressure_low_check"] | false) &&
+      config["filter_pressure_low_warning_threshold"].is<float>() && config["filter_pressure_low_threshold"].is<float>() &&
+      config["filter_pressure_low_warning_threshold"].as<float>() <= config["filter_pressure_low_threshold"].as<float>()) {
+    snprintf(error, err_size, "filter_pressure_low_warning_threshold must be above filter_pressure_low_threshold");
+    ok = false;
+  }
+
   // enable_product_flowrate_high_check
   if (config["enable_product_flowrate_high_check"]) {
     if (!checkIsBool(config, "enable_product_flowrate_high_check", error, err_size)) {
@@ -2847,6 +2911,14 @@ void BrineomaticController::loadSafeguardsConfigJSON(JsonVariantConst config)
   _config.enableFilterPressureLowCheck = config["enable_filter_pressure_low_check"] | defaults.enableFilterPressureLowCheck;
   _config.filterPressureLowThreshold = config["filter_pressure_low_threshold"] | defaults.filterPressureLowThreshold;
   _config.filterPressureLowDelay = config["filter_pressure_low_delay"] | defaults.filterPressureLowDelay;
+
+  _config.enableFilterPressureHighWarning = config["enable_filter_pressure_high_warning"] | defaults.enableFilterPressureHighWarning;
+  _config.filterPressureHighWarningThreshold = config["filter_pressure_high_warning_threshold"] | defaults.filterPressureHighWarningThreshold;
+  _config.filterPressureHighWarningDelay = config["filter_pressure_high_warning_delay"] | defaults.filterPressureHighWarningDelay;
+
+  _config.enableFilterPressureLowWarning = config["enable_filter_pressure_low_warning"] | defaults.enableFilterPressureLowWarning;
+  _config.filterPressureLowWarningThreshold = config["filter_pressure_low_warning_threshold"] | defaults.filterPressureLowWarningThreshold;
+  _config.filterPressureLowWarningDelay = config["filter_pressure_low_warning_delay"] | defaults.filterPressureLowWarningDelay;
 
   _config.enableProductFlowrateHighCheck = config["enable_product_flowrate_high_check"] | defaults.enableProductFlowrateHighCheck;
   _config.productFlowrateHighThreshold = config["product_flowrate_high_threshold"] | defaults.productFlowrateHighThreshold;

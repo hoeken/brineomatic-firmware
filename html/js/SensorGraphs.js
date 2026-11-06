@@ -31,6 +31,44 @@
   SensorGraphs.prototype.HEIGHT = 400;
   SensorGraphs.prototype.COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'];
 
+  // series that get threshold lines, by sensor, with their gauge key for
+  // SensorGauges.thresholdTicks().  The lines use the RUNNING thresholds,
+  // since the graphs span all run modes.
+  SensorGraphs.prototype.THRESHOLD_LINES = { filter_pressure: 'filterPressure' };
+
+  SensorGraphs.prototype.drawThresholdLines = function (u, enabled) {
+    if (!this.bom || !this.bom.gauges)
+      return;
+
+    const colors = YB.Util.getBootstrapColors();
+    const ratio = window.devicePixelRatio || 1;
+    const ctx = u.ctx;
+    const top = u.bbox.top, bottom = u.bbox.top + u.bbox.height;
+
+    for (let i = 0; i < enabled.length; i++) {
+      const gaugeKey = this.THRESHOLD_LINES[enabled[i].sensor];
+      const us = u.series[i + 1];
+      if (!gaugeKey || !us || !us.show)
+        continue;
+
+      for (const t of this.bom.gauges.thresholdTicks(gaugeKey, 'RUNNING')) {
+        const y = Math.round(u.valToPos(t.value, 'y', true));
+        if (!isFinite(y) || y < top || y > bottom)
+          continue;
+
+        ctx.save();
+        ctx.strokeStyle = colors[t.kind];
+        ctx.lineWidth = ratio;
+        ctx.setLineDash([6 * ratio, 4 * ratio]);
+        ctx.beginPath();
+        ctx.moveTo(u.bbox.left, y);
+        ctx.lineTo(u.bbox.left + u.bbox.width, y);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  };
+
   SensorGraphs.prototype.buildSetup = function () {
     const cfg = YB.config.brineomatic;
     const bom = this.bom;
@@ -122,8 +160,10 @@
       for (let s of tab.series) {
         const g = gauges[s.sensor];
         if (g && g.min !== undefined) {
-          s.min = g.min;
-          s.max = g.max;
+          // read through to the shared config, so a units or threshold change
+          // re-spans the axis on the next redraw without rebuilding the graphs
+          Object.defineProperty(s, 'min', { get: () => g.min, configurable: true });
+          Object.defineProperty(s, 'max', { get: () => g.max, configurable: true });
         }
       }
     }
@@ -290,7 +330,9 @@
               min -= pad;
               max += pad;
               if (cMin !== undefined) min = cMin;
-              if (cMax !== undefined) max = cMax;
+              // readings above the gauge range stretch the axis instead of
+              // being cut off, so a pressure spike stays visible
+              if (cMax !== undefined && dataMax <= cMax) max = cMax;
               return [min, max];
             }
           }
@@ -331,6 +373,13 @@
               u.over.addEventListener('dblclick', function () {
                 u._userZoomed = false;
               });
+            }
+          ],
+          // dashed lines at the enabled warning and cutoff thresholds of
+          // the shown series that have them, the same set the gauge ticks show
+          draw: [
+            function (u) {
+              self.drawThresholdLines(u, enabled);
             }
           ]
         }

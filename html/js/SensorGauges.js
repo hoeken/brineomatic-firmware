@@ -74,6 +74,14 @@
     { gauge: 'totalFlowrate', statuses: ['PICKLING', 'DEPICKLING'], enableKey: 'enable_pickle_total_flowrate_low_check', valueKey: 'pickle_total_flowrate_low_threshold', unit: 'flowrate' }
   ];
 
+  // Warning thresholds: same shape as ERROR_TICKS, but they only report and
+  // never stop the watermaker (Brineomatic::updateWarnings), so they draw in
+  // warning yellow.
+  const WARNING_TICKS = [
+    { gauge: 'filterPressure', statuses: ['RUNNING'], enableKey: 'enable_filter_pressure_high_warning', valueKey: 'filter_pressure_high_warning_threshold', unit: 'pressure' },
+    { gauge: 'filterPressure', statuses: ['RUNNING'], enableKey: 'enable_filter_pressure_low_warning', valueKey: 'filter_pressure_low_warning_threshold', unit: 'pressure' }
+  ];
+
   // Tear down any existing c3 gauge charts and null their references so the
   // next create() rebuilds from scratch.  Wrapped in try/catch because the
   // containers may already be detached (handleConfigMessage rebuilds the DOM
@@ -527,27 +535,34 @@
     }
   };
 
-  // Build and draw the error-threshold ticks for a single gauge (camelCase key,
-  // e.g. 'membranePressure').  Picks the ERROR_TICKS rows for this gauge that
-  // are active in the current run mode (this.status) and whose enable flag (and
-  // any `requires` flag) is set, converts each into the gauge's display unit,
-  // and draws them all in danger red.  An empty set clears the gauge — desired
-  // for modes/gauges with no active threshold.
+  // Build and draw the threshold ticks for a single gauge (camelCase key,
+  // e.g. 'membranePressure').  Picks the ERROR_TICKS and WARNING_TICKS rows for
+  // this gauge that are active in the current run mode (this.status) and whose
+  // enable flag (and any `requires` flag) is set, converts each into the gauge's
+  // display unit, and draws errors in danger red and warnings in warning yellow.
+  // An empty set clears the gauge — desired for modes/gauges with no active
+  // threshold.
   SensorGauges.prototype.drawGaugeTicks = function (gaugeKey) {
     const chart = this[gaugeKey + 'Gauge'];
     if (!chart)
       return;
 
+    this.addGaugeTicks(chart, this.thresholdTicks(gaugeKey, this.status));
+  };
+
+  // The enabled warning and error thresholds of one gauge in one run mode, in
+  // its display unit.  `kind` is 'warning' or 'danger'; `color` is the CSS
+  // colour for the gauge ticks.  The graphs draw the same set as lines.
+  SensorGauges.prototype.thresholdTicks = function (gaugeKey, status) {
     const cfg = YB.config.brineomatic;
-    const danger = 'var(--bs-danger)';
-    const ticks = ERROR_TICKS
+    const pick = (list, kind) => list
       .filter(t => t.gauge === gaugeKey
-        && t.statuses.includes(this.status)
+        && t.statuses.includes(status)
         && cfg && cfg[t.enableKey]
         && (!t.requires || cfg[t.requires]))
-      .map(t => ({ value: this.convertThreshold(t.unit, cfg[t.valueKey]), color: danger }));
+      .map(t => ({ value: this.convertThreshold(t.unit, cfg[t.valueKey]), kind, color: `var(--bs-${kind})` }));
 
-    this.addGaugeTicks(chart, ticks);
+    return pick(WARNING_TICKS, 'warning').concat(pick(ERROR_TICKS, 'danger'));
   };
 
   // every gauge key that can carry error ticks (the c3 gauges; the volume

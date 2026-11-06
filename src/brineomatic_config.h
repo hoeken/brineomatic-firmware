@@ -390,6 +390,33 @@
   #define YB_FILTER_PRESSURE_LOW_DELAY 2000
 #endif
 
+// warnings only report, they never stop the watermaker.  off by default.
+#ifndef YB_ENABLE_FILTER_PRESSURE_HIGH_WARNING
+  #define YB_ENABLE_FILTER_PRESSURE_HIGH_WARNING false
+#endif
+
+#ifndef YB_FILTER_PRESSURE_HIGH_WARNING_THRESHOLD
+  // Bar
+  #define YB_FILTER_PRESSURE_HIGH_WARNING_THRESHOLD 3.0
+#endif
+
+#ifndef YB_FILTER_PRESSURE_HIGH_WARNING_DELAY
+  #define YB_FILTER_PRESSURE_HIGH_WARNING_DELAY 5000
+#endif
+
+#ifndef YB_ENABLE_FILTER_PRESSURE_LOW_WARNING
+  #define YB_ENABLE_FILTER_PRESSURE_LOW_WARNING false
+#endif
+
+#ifndef YB_FILTER_PRESSURE_LOW_WARNING_THRESHOLD
+  // Bar
+  #define YB_FILTER_PRESSURE_LOW_WARNING_THRESHOLD 0.5
+#endif
+
+#ifndef YB_FILTER_PRESSURE_LOW_WARNING_DELAY
+  #define YB_FILTER_PRESSURE_LOW_WARNING_DELAY 5000
+#endif
+
 #ifndef YB_ENABLE_PRODUCT_FLOWRATE_HIGH_CHECK
   #define YB_ENABLE_PRODUCT_FLOWRATE_HIGH_CHECK true
 #endif
@@ -722,6 +749,14 @@ struct BrineomaticConfig {
     bool enableFilterPressureLowCheck = YB_ENABLE_FILTER_PRESSURE_LOW_CHECK;
     float filterPressureLowThreshold = YB_FILTER_PRESSURE_LOW_THRESHOLD;
     uint32_t filterPressureLowDelay = YB_FILTER_PRESSURE_LOW_DELAY;
+
+    bool enableFilterPressureHighWarning = YB_ENABLE_FILTER_PRESSURE_HIGH_WARNING;
+    float filterPressureHighWarningThreshold = YB_FILTER_PRESSURE_HIGH_WARNING_THRESHOLD;
+    uint32_t filterPressureHighWarningDelay = YB_FILTER_PRESSURE_HIGH_WARNING_DELAY;
+
+    bool enableFilterPressureLowWarning = YB_ENABLE_FILTER_PRESSURE_LOW_WARNING;
+    float filterPressureLowWarningThreshold = YB_FILTER_PRESSURE_LOW_WARNING_THRESHOLD;
+    uint32_t filterPressureLowWarningDelay = YB_FILTER_PRESSURE_LOW_WARNING_DELAY;
 
     bool enableProductFlowrateHighCheck = YB_ENABLE_PRODUCT_FLOWRATE_HIGH_CHECK;
     float productFlowrateHighThreshold = YB_PRODUCT_FLOWRATE_HIGH_THRESHOLD;
