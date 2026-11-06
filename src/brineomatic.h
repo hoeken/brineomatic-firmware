@@ -284,6 +284,24 @@ class Brineomatic
     float getBatteryLevel();
     float getMotorTemperatureMaximum();
 
+    // A warning reports a sensor value past its warning threshold for longer
+    // than its delay.  It never stops the watermaker; the cutoffs do that.
+    // Adding a sensor: a new index, a name here and one line in updateWarnings().
+    struct SensorWarning {
+      const char* name;
+      bool active = false;
+      uint32_t start = 0;
+    };
+    enum WarningIndex : uint8_t {
+      WARNING_FILTER_PRESSURE_HIGH,
+      WARNING_FILTER_PRESSURE_LOW,
+      WARNING_COUNT
+    };
+    SensorWarning warnings[WARNING_COUNT] = {
+      {"FILTER_PRESSURE_HIGH"},
+      {"FILTER_PRESSURE_LOW"},
+    };
+
     SensorStatsTable stats;
     SensorHistory history;
 
@@ -376,6 +394,8 @@ class Brineomatic
     float tankLevelFull = 0.99; // 0 = empty, 1 = full (runtime, not persisted)
 
     void resetErrorTimers();
+    void updateWarnings();
+    void updateWarning(SensorWarning& warning, bool condition, uint32_t delay, const char* label, float value, const char* units);
 
     bool checkStopFlag(Result& result);
     bool checkTankLevel();

@@ -112,20 +112,12 @@
         "colors": [bootstrapColors.primary, bootstrapColors.success, bootstrapColors.warning, bootstrapColors.danger]
       },
       "filter_pressure": {
-        // span and colour bands follow the configured sensor range and
-        // low/high pressure thresholds, see getFilterPressureGaugeMax()
+        // span and colour bands follow the configured sensor range, cutoffs
+        // and warnings, see getFilterPressureGaugeMax() and getFilterPressureBands()
         get min() { return 0; },
         get max() { return YB.bom.getFilterPressureGaugeMax(); },
-        get thresholds() {
-          const cfg = YB.config.brineomatic;
-          const max = this.max;
-          const lowBar = parseFloat(cfg.filter_pressure_low_threshold);
-          const highBar = parseFloat(cfg.filter_pressure_high_threshold);
-          const low = lowBar > 0 ? Math.min(YB.bom.convertPressure(lowBar, "Bar", cfg.pressure_units), max) : 0;
-          const high = highBar > 0 ? Math.min(YB.bom.convertPressure(highBar, "Bar", cfg.pressure_units), max) : max;
-          return [0, low, high, max];
-        },
-        "colors": [bootstrapColors.secondary, bootstrapColors.danger, bootstrapColors.success, bootstrapColors.danger]
+        get thresholds() { return YB.bom.getFilterPressureBands().map(b => b[0]); },
+        get colors() { return YB.bom.getFilterPressureBands().map(b => b[1]); }
       },
       "membrane_pressure": {
         get min() { return Math.round(YB.bom.convertPressure(0, "Bar", YB.config.brineomatic.pressure_units)); },
@@ -504,6 +496,13 @@
     } else
       $('#bomPickledSinceRow').hide();
 
+    // no state class: warnings show in whatever state reports them
+    if (Array.isArray(msg.warnings) && msg.warnings.length) {
+      $('#bomWarnings').html(msg.warnings.map(w => this.warningText[w] || w).join('<br/>'));
+      $('#bomWarningsRow').show();
+    } else
+      $('#bomWarningsRow').hide();
+
     if (msg.depickle_result)
       this.showResult("#bomDePickleResult", msg.depickle_result);
 
@@ -776,16 +775,76 @@
     });
   }
 
+  // readable names for the warnings in the update
+  Brineomatic.prototype.warningText = {
+    FILTER_PRESSURE_HIGH: "Filter pressure high",
+    FILTER_PRESSURE_LOW: "Filter pressure low"
+  };
+
+  // Colour bands of the filter pressure gauge as [upper edge, colour] pairs in
+  // display units: red below the low cutoff, yellow up to an enabled low
+  // warning, green, yellow from an enabled high warning, red above the high
+  // cutoff.  A warning at or beyond its cutoff (only possible with that cutoff
+  // switched off) takes the cutoff's place, so its yellow band runs to the edge.
+  Brineomatic.prototype.getFilterPressureBands = function () {
+    const cfg = YB.config.brineomatic;
+    const colors = YB.Util.getBootstrapColors();
+    const max = this.getFilterPressureGaugeMax();
+    const toUnits = (bar) => Math.min(YB.bom.convertPressure(bar, "Bar", cfg.pressure_units), max);
+
+    const lowBar = parseFloat(cfg.filter_pressure_low_threshold);
+    const highBar = parseFloat(cfg.filter_pressure_high_threshold);
+    const low = lowBar > 0 ? toUnits(lowBar) : 0;
+    const high = highBar > 0 ? toUnits(highBar) : max;
+
+    const lowWarnBar = parseFloat(cfg.filter_pressure_low_warning_threshold);
+    const highWarnBar = parseFloat(cfg.filter_pressure_high_warning_threshold);
+    const lowWarn = cfg.enable_filter_pressure_low_warning && lowWarnBar > 0 ? toUnits(lowWarnBar) : null;
+    let highWarn = cfg.enable_filter_pressure_high_warning && highWarnBar > 0 ? toUnits(highWarnBar) : null;
+    // keep the edges rising if a low warning ended up above the high one
+    if (lowWarn !== null && highWarn !== null)
+      highWarn = Math.max(highWarn, lowWarn);
+
+    const bands = [[0, colors.secondary]];
+
+    if (lowWarn !== null && lowWarn <= low)
+      bands.push([lowWarn, colors.warning]);
+    else {
+      bands.push([low, colors.danger]);
+      if (lowWarn !== null)
+        bands.push([Math.min(lowWarn, high), colors.warning]);
+    }
+
+    if (highWarn !== null && highWarn >= high) {
+      bands.push([highWarn, colors.success]);
+      bands.push([max, colors.warning]);
+    } else if (highWarn !== null) {
+      bands.push([highWarn, colors.success]);
+      bands.push([high, colors.warning]);
+      bands.push([max, colors.danger]);
+    } else {
+      bands.push([high, colors.success]);
+      bands.push([max, colors.danger]);
+    }
+    return bands;
+  };
+
   // Upper end of the filter pressure gauge and graph, in display units.  The
-  // high pressure threshold plus 25% keeps its cutoff tick on the scale with
-  // room above it, capped at what the sensor can measure.  Without either
-  // setting it falls back to the old fixed 3.45 bar (a 50 psi sensor).
+  // higher of the high cutoff and an enabled high warning, plus 25%, keeps
+  // both on the scale with room above, capped at what the sensor can measure.
+  // Without either setting it falls back to the old fixed 3.45 bar (a 50 psi
+  // sensor).
   Brineomatic.prototype.getFilterPressureGaugeMax = function () {
     const cfg = YB.config.brineomatic;
     const sensorMax = parseFloat(cfg.filter_pressure_sensor_max);
     const high = parseFloat(cfg.filter_pressure_high_threshold);
+    const highWarn = parseFloat(cfg.filter_pressure_high_warning_threshold);
 
-    let maxBar = high > 0 ? high * 1.25 : 3.45;
+    let top = high > 0 ? high : 0;
+    if (cfg.enable_filter_pressure_high_warning && highWarn > top)
+      top = highWarn;
+
+    let maxBar = top > 0 ? top * 1.25 : 3.45;
     if (sensorMax > 0)
       maxBar = Math.min(maxBar, sensorMax);
 
@@ -1066,6 +1125,10 @@
                       <tr id="bomPickleResultRow" class="bomIDLE bomPICKLED" style="display: none">
                           <th>Pickle Result</th>
                           <td><span id="bomPickleResult"></span></td>
+                      </tr>
+                      <tr id="bomWarningsRow" style="display: none">
+                          <th>Warning</th>
+                          <td><span id="bomWarnings" class="text-warning"></span></td>
                       </tr>
                       <tr id="bomPickledSinceRow" class="bomPICKLED" style="display: none">
                           <th>Pickled Since</th>
@@ -2940,6 +3003,38 @@
 
       <div class="mb-3">
         <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="enable_filter_pressure_high_warning">
+          <label class="form-check-label" for="enable_filter_pressure_high_warning">
+            Filter Pressure High Warning
+          </label>
+          <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode. Only reports, never stops the watermaker.
+          <br/>
+          <span class="requires_sensor_type requires_filter_pressure_sensor">Requires <span class="badge text-bg-danger">filter pressure sensor</span></span>
+        </div>
+      </div>
+
+      <div id="enable_filter_pressure_high_warning_form" class="row mb-3">
+        <div class="col-12 col-md-6">
+          <div class="input-group has-validation mb-3">
+            <input type="text" class="form-control text-end" id="filter_pressure_high_warning_threshold">
+            <span class="input-group-text pressureUnits">Bar</span>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="input-group has-validation">
+            <input type="text" class="form-control text-end" id="filter_pressure_high_warning_delay">
+            <span class="input-group-text">Delay (ms)</span>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" id="enable_filter_pressure_low_check">
           <label class="form-check-label" for="enable_filter_pressure_low_check">
             Filter Pressure Low
@@ -2964,6 +3059,38 @@
         <div class="col-12 col-md-6">
           <div class="input-group has-validation">
             <input type="text" class="form-control text-end" id="filter_pressure_low_delay">
+            <span class="input-group-text">Delay (ms)</span>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="enable_filter_pressure_low_warning">
+          <label class="form-check-label" for="enable_filter_pressure_low_warning">
+            Filter Pressure Low Warning
+          </label>
+          <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-text">
+          Checked during <span class="badge text-bg-success">RUNNING</span> mode. Only reports, never stops the watermaker.
+          <br/>
+          <span class="requires_sensor_type requires_filter_pressure_sensor">Requires <span class="badge text-bg-danger">filter pressure sensor</span></span>
+        </div>
+      </div>
+
+      <div id="enable_filter_pressure_low_warning_form" class="row mb-3">
+        <div class="col-12 col-md-6">
+          <div class="input-group has-validation mb-3">
+            <input type="text" class="form-control text-end" id="filter_pressure_low_warning_threshold">
+            <span class="input-group-text pressureUnits">Bar</span>
+            <div class="invalid-feedback"></div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="input-group has-validation">
+            <input type="text" class="form-control text-end" id="filter_pressure_low_warning_delay">
             <span class="input-group-text">Delay (ms)</span>
             <div class="invalid-feedback"></div>
           </div>
@@ -3556,6 +3683,16 @@
     let filter_pressure_low_threshold = YB.bom.convertPressure(data.filter_pressure_low_threshold, "Bar", YB.config.brineomatic.pressure_units);
     filter_pressure_low_threshold = this.formatReadable(filter_pressure_low_threshold);
     $("#filter_pressure_low_threshold").val(filter_pressure_low_threshold);
+    $("#enable_filter_pressure_high_warning").prop('checked', data.enable_filter_pressure_high_warning);
+    $("#filter_pressure_high_warning_delay").val(data.filter_pressure_high_warning_delay);
+    let filter_pressure_high_warning_threshold = YB.bom.convertPressure(data.filter_pressure_high_warning_threshold, "Bar", YB.config.brineomatic.pressure_units);
+    filter_pressure_high_warning_threshold = this.formatReadable(filter_pressure_high_warning_threshold);
+    $("#filter_pressure_high_warning_threshold").val(filter_pressure_high_warning_threshold);
+    $("#enable_filter_pressure_low_warning").prop('checked', data.enable_filter_pressure_low_warning);
+    $("#filter_pressure_low_warning_delay").val(data.filter_pressure_low_warning_delay);
+    let filter_pressure_low_warning_threshold = YB.bom.convertPressure(data.filter_pressure_low_warning_threshold, "Bar", YB.config.brineomatic.pressure_units);
+    filter_pressure_low_warning_threshold = this.formatReadable(filter_pressure_low_warning_threshold);
+    $("#filter_pressure_low_warning_threshold").val(filter_pressure_low_warning_threshold);
 
     $("#enable_product_flowrate_high_check").prop('checked', data.enable_product_flowrate_high_check);
     $("#product_flowrate_high_threshold").val(this.formatReadable(YB.bom.convertFlowrate(data.product_flowrate_high_threshold, "lph", YB.config.brineomatic.flowrate_units)));
@@ -3709,6 +3846,8 @@
       convertPressureField("#membrane_pressure_low_threshold");
       convertPressureField("#filter_pressure_high_threshold");
       convertPressureField("#filter_pressure_low_threshold");
+      convertPressureField("#filter_pressure_high_warning_threshold");
+      convertPressureField("#filter_pressure_low_warning_threshold");
       convertPressureField("#flush_filter_pressure_low_threshold");
 
       //now do everything else.
@@ -4234,11 +4373,15 @@
   Brineomatic.prototype.updateFilterPressureVisibility = function (hasSensor) {
     $("#enable_filter_pressure_high_check").prop("disabled", !hasSensor);
     $("#enable_filter_pressure_low_check").prop("disabled", !hasSensor);
+    $("#enable_filter_pressure_high_warning").prop("disabled", !hasSensor);
+    $("#enable_filter_pressure_low_warning").prop("disabled", !hasSensor);
     $("#enable_flush_filter_pressure_low_check").prop("disabled", !hasSensor);
 
     if (!hasSensor) {
       $("#enable_filter_pressure_high_check").prop("checked", false);
       $("#enable_filter_pressure_low_check").prop("checked", false);
+      $("#enable_filter_pressure_high_warning").prop("checked", false);
+      $("#enable_filter_pressure_low_warning").prop("checked", false);
       $("#enable_flush_filter_pressure_low_check").prop("checked", false);
     }
 
@@ -4540,6 +4683,16 @@
     let filter_pressure_low_threshold = parseFloat($("#filter_pressure_low_threshold").val());
     data.filter_pressure_low_threshold = YB.bom.convertPressure(filter_pressure_low_threshold, YB.config.brineomatic.pressure_units, "Bar");
     data.filter_pressure_low_delay = parseInt($("#filter_pressure_low_delay").val());
+
+    data.enable_filter_pressure_high_warning = $("#enable_filter_pressure_high_warning").prop("checked");
+    let filter_pressure_high_warning_threshold = parseFloat($("#filter_pressure_high_warning_threshold").val());
+    data.filter_pressure_high_warning_threshold = YB.bom.convertPressure(filter_pressure_high_warning_threshold, YB.config.brineomatic.pressure_units, "Bar");
+    data.filter_pressure_high_warning_delay = parseInt($("#filter_pressure_high_warning_delay").val());
+
+    data.enable_filter_pressure_low_warning = $("#enable_filter_pressure_low_warning").prop("checked");
+    let filter_pressure_low_warning_threshold = parseFloat($("#filter_pressure_low_warning_threshold").val());
+    data.filter_pressure_low_warning_threshold = YB.bom.convertPressure(filter_pressure_low_warning_threshold, YB.config.brineomatic.pressure_units, "Bar");
+    data.filter_pressure_low_warning_delay = parseInt($("#filter_pressure_low_warning_delay").val());
 
     data.enable_product_flowrate_high_check = $("#enable_product_flowrate_high_check").prop("checked");
     data.product_flowrate_high_threshold = YB.bom.convertFlowrate(parseFloat($("#product_flowrate_high_threshold").val()), YB.config.brineomatic.flowrate_units, "lph");
@@ -5172,6 +5325,12 @@
       enable_filter_pressure_low_check: { inclusion: [true, false] },
       filter_pressure_low_threshold: when((a) => a.enable_filter_pressure_low_check, { numericality: { greaterThan: 0 } }),
       filter_pressure_low_delay: when((a) => a.enable_filter_pressure_low_check, { numericality: { greaterThanOrEqualTo: 0 } }),
+      enable_filter_pressure_high_warning: { inclusion: [true, false] },
+      filter_pressure_high_warning_threshold: when((a) => a.enable_filter_pressure_high_warning, { numericality: { greaterThan: 0 } }),
+      filter_pressure_high_warning_delay: when((a) => a.enable_filter_pressure_high_warning, { numericality: { greaterThanOrEqualTo: 0 } }),
+      enable_filter_pressure_low_warning: { inclusion: [true, false] },
+      filter_pressure_low_warning_threshold: when((a) => a.enable_filter_pressure_low_warning, { numericality: { greaterThan: 0 } }),
+      filter_pressure_low_warning_delay: when((a) => a.enable_filter_pressure_low_warning, { numericality: { greaterThanOrEqualTo: 0 } }),
 
       enable_product_flowrate_high_check: { inclusion: [true, false] },
       product_flowrate_high_threshold: when((a) => a.enable_product_flowrate_high_check, { numericality: { greaterThan: 0 } }),
@@ -5298,6 +5457,25 @@
     let data = this.getSafeguardsConfigFormData();
     let schema = this.getSafeguardsConfigSchema();
     let errors = validate(data, schema);
+
+    // with both warnings on, a low threshold at or above the high one would raise both at once
+    if (data.enable_filter_pressure_low_warning && data.enable_filter_pressure_high_warning
+        && data.filter_pressure_low_warning_threshold >= data.filter_pressure_high_warning_threshold) {
+      errors = errors || {};
+      errors.filter_pressure_low_warning_threshold = ["The low warning must be below the high warning."];
+    }
+
+    // a warning past its enabled cutoff would never show, the cutoff stops the run first
+    if (data.enable_filter_pressure_high_warning && data.enable_filter_pressure_high_check
+        && data.filter_pressure_high_warning_threshold >= data.filter_pressure_high_threshold) {
+      errors = errors || {};
+      errors.filter_pressure_high_warning_threshold = ["The high warning must be below the high cutoff."];
+    }
+    if (data.enable_filter_pressure_low_warning && data.enable_filter_pressure_low_check
+        && data.filter_pressure_low_warning_threshold <= data.filter_pressure_low_threshold) {
+      errors = errors || {};
+      errors.filter_pressure_low_warning_threshold = ["The low warning must be above the low cutoff."];
+    }
 
     YB.Util.showFormValidationResults(data, errors);
 
